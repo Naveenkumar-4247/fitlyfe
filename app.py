@@ -1,6 +1,7 @@
 import re
 import json
-from datetime import date, timedelta
+from datetime import date, timedelta, datetime
+from zoneinfo import ZoneInfo
 
 from flask import (
     Flask,
@@ -281,8 +282,8 @@ with app.app_context():
 
     db.create_all()
 
-    # Lightweight migrations keep existing local/PostgreSQL databases
-    # compatible when FitLyfe gains new profile/tracking fields.
+    # Lightweight migrations keep existing local/PostgreSQL
+    # databases compatible when FitLyfe gains new fields.
     def _add_column_if_missing(
         table_name,
         column_name,
@@ -344,6 +345,20 @@ with app.app_context():
 # ============================================================
 # HELPER FUNCTIONS
 # ============================================================
+
+def india_today():
+    """
+    Return today's date according to India Standard Time (IST).
+
+    Render servers normally use UTC, so date.today() can return
+    yesterday during the early morning hours in India.
+    """
+    return datetime.now(
+        ZoneInfo("Asia/Kolkata")
+    ).date()
+
+
+# ------------------------------------------------------------
 
 def get_current_user():
 
@@ -723,7 +738,7 @@ def calculate_current_streak(user_id):
     if not completed_dates:
         return 0
 
-    today = date.today()
+    today = india_today()
 
     if today in completed_dates:
 
@@ -764,7 +779,7 @@ def get_historical_weekly_progress(
     number_of_weeks=4
 ):
 
-    today = date.today()
+    today = india_today()
 
     current_week = week_start_for(
         today
@@ -1071,16 +1086,11 @@ def register():
                 password
             )
         )
+
         db.session.add(user)
 
         # ====================================================
         # DATABASE DIAGNOSTIC
-        # ====================================================
-        #
-        # This prints the database connection being used by
-        # Flask WITHOUT showing the database password.
-        #
-        # DO NOT remove this until we finish testing.
         # ====================================================
 
         print(
@@ -1088,10 +1098,6 @@ def register():
             db.engine.url.render_as_string(
                 hide_password=True
             )
-        )
-
-        db.session.add(
-            user
         )
 
         # ----------------------------------------------------
@@ -1102,8 +1108,6 @@ def register():
 
             db.session.commit()
 
-            # Diagnostic confirming that SQLAlchemy successfully
-            # committed the new user.
             print(
                 "REGISTER SAVED:",
                 user.id,
@@ -2225,7 +2229,7 @@ def save_goal():
     if not week_start:
 
         week_start = week_start_for(
-            date.today()
+            india_today()
         )
 
     try:
@@ -2356,7 +2360,7 @@ def get_daily_log():
         parse_date(
             request.args.get("date")
         )
-        or date.today()
+        or india_today()
     )
 
     log = (
@@ -2431,7 +2435,7 @@ def save_daily_log():
 
     if not log_date:
 
-        log_date = date.today()
+        log_date = india_today()
 
     workout_value = data.get(
         "workout_done",
@@ -2662,7 +2666,7 @@ def get_daily_goals():
 
     if not selected_date:
 
-        selected_date = date.today()
+        selected_date = india_today()
 
     goals = (
         DailyGoal.query
@@ -2748,7 +2752,7 @@ def create_daily_goal():
 
     if not goal_date:
 
-        goal_date = date.today()
+        goal_date = india_today()
 
     description = str(
         data.get(
@@ -2953,14 +2957,14 @@ def calendar_data():
         year = int(
             request.args.get(
                 "year",
-                date.today().year
+                india_today().year
             )
         )
 
         month = int(
             request.args.get(
                 "month",
-                date.today().month
+                india_today().month
             )
         )
 
@@ -2972,8 +2976,8 @@ def calendar_data():
         TypeError
     ):
 
-        year = date.today().year
-        month = date.today().month
+        year = india_today().year
+        month = india_today().month
 
     import calendar as _calendar
 
@@ -3030,7 +3034,7 @@ def calendar_data():
             goal
         )
 
-    today = date.today()
+    today = india_today()
 
     days = []
 
@@ -3157,10 +3161,10 @@ def dashboard_data():
         parse_date(
             request.args.get("date")
         )
-        or date.today()
+        or india_today()
     )
 
-    today = date.today()
+    today = india_today()
 
     selected_goals = (
         DailyGoal.query
