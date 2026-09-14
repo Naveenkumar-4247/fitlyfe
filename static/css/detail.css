@@ -1,0 +1,2854 @@
+/* =========================================================
+   FITLYFE DETAIL PAGE
+   PREMIUM FITNESS HUB
+========================================================= */
+
+:root {
+    --detail-bg: #020604;
+    --detail-card: rgba(7, 18, 13, 0.72);
+    --detail-border: rgba(99, 230, 163, 0.15);
+
+    --detail-green: #63e6a3;
+    --detail-green-bright: #7af0b2;
+
+    --detail-white: #f5f7f6;
+    --detail-muted: #7d8a83;
+}
+
+
+/* =========================================================
+   PAGE
+========================================================= */
+
+.detail-page {
+    position: relative;
+
+    min-height: calc(100vh - 90px);
+
+    overflow: hidden;
+
+    background:
+        radial-gradient(
+            circle at 10% 25%,
+            rgba(17, 105, 61, 0.17),
+            transparent 30%
+        ),
+        radial-gradient(
+            circle at 90% 65%,
+            rgba(20, 130, 75, 0.11),
+            transparent 28%
+        ),
+        #020604;
+
+    color: var(--detail-white);
+}
+
+
+/* =========================================================
+   BACKGROUND GRID
+========================================================= */
+
+.detail-bg-grid {
+    position: absolute;
+
+    inset: 0;
+
+    pointer-events: none;
+
+    opacity: 0.45;
+
+    background-image:
+        linear-gradient(
+            rgba(99, 230, 163, 0.035) 1px,
+            transparent 1px
+        ),
+        linear-gradient(
+            90deg,
+            rgba(99, 230, 163, 0.035) 1px,
+            transparent 1px
+        );
+
+    background-size: 55px 55px;
+
+    mask-image:
+        linear-gradient(
+            to bottom,
+            black,
+            transparent 90%
+        );
+}
+
+
+/* =========================================================
+   GLOW
+========================================================= */
+
+.detail-glow {
+    position: absolute;
+
+    width: 450px;
+    height: 450px;
+
+    border-radius: 50%;
+
+    filter: blur(100px);
+
+    pointer-events: none;
+
+    opacity: 0.12;
+
+    animation:
+        glowMove 9s ease-in-out infinite alternate;
+}
+
+.detail-glow-left {
+    top: 180px;
+    left: -280px;
+
+    background:
+        var(--detail-green);
+}
+
+.detail-glow-right {
+    top: 500px;
+    right: -280px;
+
+    background:
+        #20c878;
+
+    animation-delay:
+        2s;
+}
+
+
+@keyframes glowMove {
+
+    from {
+        transform:
+            translateY(-20px)
+            scale(1);
+    }
+
+    to {
+        transform:
+            translateY(35px)
+            scale(1.12);
+    }
+
+}
+
+
+/* =========================================================
+   PARTICLES
+========================================================= */
+
+.floating-particle {
+    position: absolute;
+
+    width: 4px;
+    height: 4px;
+
+    border-radius: 50%;
+
+    background:
+        var(--detail-green);
+
+    box-shadow:
+        0 0 12px var(--detail-green);
+
+    opacity: 0.55;
+
+    animation:
+        particleFloat 7s ease-in-out infinite;
+}
+
+
+.particle-one {
+    top: 18%;
+    left: 12%;
+}
+
+
+.particle-two {
+    top: 36%;
+    right: 17%;
+
+    animation-delay:
+        1.5s;
+}
+
+
+.particle-three {
+    top: 70%;
+    left: 25%;
+
+    animation-delay:
+        3s;
+}
+
+
+.particle-four {
+    top: 82%;
+    right: 28%;
+
+    animation-delay:
+        4s;
+}
+
+
+.particle-five {
+    top: 48%;
+    left: 55%;
+
+    animation-delay:
+        2s;
+}
+
+
+@keyframes particleFloat {
+
+    0%,
+    100% {
+        transform:
+            translateY(0);
+
+        opacity:
+            0.25;
+    }
+
+    50% {
+        transform:
+            translateY(-25px);
+
+        opacity:
+            0.8;
+    }
+
+}
+
+
+/* =========================================================
+   MAIN CONTAINER
+========================================================= */
+
+.detail-container {
+    position: relative;
+
+    width:
+        min(1400px, 92%);
+
+    margin:
+        0 auto;
+
+    padding:
+        42px 0 70px;
+
+    z-index:
+        2;
+}
+
+
+/* =========================================================
+   TOP BAR
+========================================================= */
+
+.detail-topbar {
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 30px;
+
+    margin-bottom:
+        75px;
+
+    animation:
+        topReveal 0.8s ease both;
+}
+
+
+@keyframes topReveal {
+
+    from {
+        opacity: 0;
+
+        transform:
+            translateY(-18px);
+    }
+
+    to {
+        opacity: 1;
+
+        transform:
+            translateY(0);
+    }
+
+}
+
+
+/* =========================================================
+   BRAND
+========================================================= */
+
+.detail-brand {
+    display: flex;
+
+    align-items: center;
+
+    gap: 13px;
+}
+
+
+.brand-dot {
+    width: 9px;
+    height: 9px;
+
+    border-radius: 50%;
+
+    background:
+        var(--detail-green);
+
+    box-shadow:
+        0 0 8px var(--detail-green),
+        0 0 20px rgba(99, 230, 163, 0.5);
+
+    animation:
+        brandPulse 2s ease-in-out infinite;
+}
+
+
+@keyframes brandPulse {
+
+    0%,
+    100% {
+        transform:
+            scale(1);
+
+        opacity:
+            0.75;
+    }
+
+    50% {
+        transform:
+            scale(1.35);
+
+        opacity:
+            1;
+    }
+
+}
+
+
+.brand-name {
+    display: block;
+
+    font-family:
+        "Sora",
+        sans-serif;
+
+    font-size:
+        24px;
+
+    font-weight:
+        800;
+
+    letter-spacing:
+        4px;
+
+    color:
+        var(--detail-green);
+}
+
+
+.brand-subtitle {
+    display: block;
+
+    margin-top:
+        2px;
+
+    font-size:
+        8px;
+
+    font-weight:
+        700;
+
+    letter-spacing:
+        2.5px;
+
+    color:
+        #536159;
+}
+
+
+/* =========================================================
+   PROFILE MINI CARD
+========================================================= */
+
+.profile-mini-card {
+    position: relative;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 13px;
+
+    min-width:
+        235px;
+
+    padding:
+        11px;
+
+    border:
+        1px solid
+        var(--detail-border);
+
+    border-radius:
+        17px;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(13, 31, 23, 0.88),
+            rgba(5, 12, 9, 0.78)
+        );
+
+    color:
+        white;
+
+    text-align:
+        left;
+
+    cursor:
+        pointer;
+
+    transition:
+        transform 0.35s ease,
+        border-color 0.35s ease,
+        box-shadow 0.35s ease;
+
+    overflow:
+        hidden;
+}
+
+
+.profile-mini-card::before {
+    content:
+        "";
+
+    position:
+        absolute;
+
+    inset:
+        0;
+
+    background:
+        linear-gradient(
+            120deg,
+            transparent 25%,
+            rgba(99, 230, 163, 0.08),
+            transparent 75%
+        );
+
+    transform:
+        translateX(-100%);
+
+    transition:
+        transform 0.7s ease;
+}
+
+
+.profile-mini-card:hover::before {
+    transform:
+        translateX(100%);
+}
+
+
+.profile-mini-card:hover {
+    transform:
+        translateY(-4px);
+
+    border-color:
+        rgba(99, 230, 163, 0.45);
+
+    box-shadow:
+        0 15px 45px rgba(0, 0, 0, 0.4),
+        0 0 25px rgba(99, 230, 163, 0.08);
+}
+
+
+.profile-avatar {
+    width:
+        48px;
+
+    height:
+        48px;
+
+    flex-shrink:
+        0;
+
+    display:
+        grid;
+
+    place-items:
+        center;
+
+    border-radius:
+        13px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #63e6a3,
+            #20b96e
+        );
+
+    color:
+        #031108;
+
+    font-size:
+        20px;
+
+    font-weight:
+        800;
+
+    box-shadow:
+        0 0 25px
+        rgba(99, 230, 163, 0.16);
+}
+
+
+.profile-mini-info {
+    display:
+        flex;
+
+    flex-direction:
+        column;
+
+    min-width:
+        0;
+}
+
+
+.profile-label {
+    font-size:
+        8px;
+
+    letter-spacing:
+        2px;
+
+    color:
+        #68766e;
+}
+
+
+.profile-mini-info strong {
+    margin-top:
+        2px;
+
+    font-size:
+        14px;
+
+    color:
+        white;
+
+    white-space:
+        nowrap;
+
+    overflow:
+        hidden;
+
+    text-overflow:
+        ellipsis;
+}
+
+
+.view-profile-text {
+    margin-top:
+        2px;
+
+    font-size:
+        9px;
+
+    color:
+        var(--detail-green);
+}
+
+
+.profile-arrow {
+    margin-left:
+        auto;
+
+    color:
+        var(--detail-green);
+
+    font-size:
+        20px;
+
+    transition:
+        transform 0.3s ease;
+}
+
+
+.profile-mini-card:hover .profile-arrow {
+    transform:
+        translate(3px, -3px);
+}
+
+
+/* =========================================================
+   WELCOME SECTION
+========================================================= */
+
+.welcome-section {
+    position:
+        relative;
+
+    min-height:
+        300px;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        space-between;
+
+    margin-bottom:
+        40px;
+
+    animation:
+        welcomeReveal 1s 0.15s ease both;
+}
+
+
+@keyframes welcomeReveal {
+
+    from {
+        opacity:
+            0;
+
+        transform:
+            translateY(25px);
+    }
+
+    to {
+        opacity:
+            1;
+
+        transform:
+            translateY(0);
+    }
+
+}
+
+
+.welcome-content {
+    position:
+        relative;
+
+    z-index:
+        2;
+
+    max-width:
+        750px;
+}
+
+
+.welcome-eyebrow {
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    gap:
+        10px;
+
+    margin-bottom:
+        16px;
+
+    color:
+        var(--detail-green);
+
+    font-size:
+        11px;
+
+    font-weight:
+        700;
+
+    letter-spacing:
+        3px;
+}
+
+
+.welcome-eyebrow span {
+    width:
+        28px;
+
+    height:
+        1px;
+
+    background:
+        var(--detail-green);
+
+    box-shadow:
+        0 0 10px
+        var(--detail-green);
+}
+
+
+/* =========================================================
+   WELCOME TITLE
+========================================================= */
+
+.welcome-title {
+    margin:
+        0;
+
+    font-family:
+        "Sora",
+        sans-serif;
+
+    font-size:
+        clamp(38px, 5vw, 65px);
+
+    line-height:
+        1.08;
+
+    letter-spacing:
+        -2.5px;
+
+    font-weight:
+        700;
+
+    color:
+        var(--detail-white);
+}
+
+
+.welcome-title span {
+    color:
+        var(--detail-green);
+
+    text-shadow:
+        0 0 25px
+        rgba(99, 230, 163, 0.16);
+}
+
+
+.welcome-subtitle {
+    margin-top:
+        18px;
+
+    color:
+        #77827c;
+
+    font-size:
+        15px;
+
+    line-height:
+        1.7;
+}
+
+
+.welcome-subtitle strong {
+    color:
+        #d9dfdc;
+}
+
+
+.welcome-line {
+    width:
+        210px;
+
+    height:
+        3px;
+
+    margin-top:
+        25px;
+
+    background:
+        rgba(99, 230, 163, 0.1);
+
+    overflow:
+        hidden;
+}
+
+
+.welcome-line span {
+    display:
+        block;
+
+    width:
+        65px;
+
+    height:
+        100%;
+
+    background:
+        var(--detail-green);
+
+    box-shadow:
+        0 0 15px
+        var(--detail-green);
+
+    animation:
+        lineMove 2.5s ease-in-out infinite;
+}
+
+
+@keyframes lineMove {
+
+    0% {
+        transform:
+            translateX(-65px);
+    }
+
+    50% {
+        transform:
+            translateX(210px);
+    }
+
+    100% {
+        transform:
+            translateX(-65px);
+    }
+
+}
+
+
+/* =========================================================
+   ORBIT
+========================================================= */
+
+.hero-orbit {
+    position:
+        relative;
+
+    width:
+        310px;
+
+    height:
+        310px;
+
+    margin-right:
+        50px;
+
+    flex-shrink:
+        0;
+}
+
+
+.orbit {
+    position:
+        absolute;
+
+    inset:
+        0;
+
+    border:
+        1px solid
+        rgba(99, 230, 163, 0.12);
+
+    border-radius:
+        50%;
+}
+
+
+.orbit-one {
+    animation:
+        orbitRotate 18s linear infinite;
+}
+
+
+.orbit-two {
+    inset:
+        35px;
+
+    border-color:
+        rgba(99, 230, 163, 0.09);
+
+    animation:
+        orbitRotate 12s linear infinite reverse;
+}
+
+
+.orbit-three {
+    inset:
+        68px;
+
+    border-color:
+        rgba(99, 230, 163, 0.18);
+
+    animation:
+        orbitRotate 8s linear infinite;
+}
+
+
+.orbit-core {
+    position:
+        absolute;
+
+    top:
+        50%;
+
+    left:
+        50%;
+
+    width:
+        90px;
+
+    height:
+        90px;
+
+    display:
+        grid;
+
+    place-items:
+        center;
+
+    transform:
+        translate(-50%, -50%);
+
+    border-radius:
+        50%;
+
+    border:
+        1px solid
+        rgba(99, 230, 163, 0.55);
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(99, 230, 163, 0.17),
+            rgba(3, 15, 9, 0.9)
+        );
+
+    color:
+        var(--detail-green);
+
+    font-family:
+        "Sora",
+        sans-serif;
+
+    font-size:
+        18px;
+
+    font-weight:
+        800;
+
+    box-shadow:
+        0 0 35px
+        rgba(99, 230, 163, 0.12),
+        inset 0 0 30px
+        rgba(99, 230, 163, 0.08);
+
+    animation:
+        corePulse 3s ease-in-out infinite;
+}
+
+
+@keyframes orbitRotate {
+
+    from {
+        transform:
+            rotate(0deg);
+    }
+
+    to {
+        transform:
+            rotate(360deg);
+    }
+
+}
+
+
+@keyframes corePulse {
+
+    0%,
+    100% {
+        box-shadow:
+            0 0 30px
+            rgba(99, 230, 163, 0.08);
+    }
+
+    50% {
+        box-shadow:
+            0 0 55px
+            rgba(99, 230, 163, 0.22);
+    }
+
+}
+
+
+/* =========================================================
+   MOTIVATION CARD
+========================================================= */
+
+.motivation-card {
+    position:
+        relative;
+
+    min-height:
+        170px;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    text-align:
+        center;
+
+    padding:
+        35px 80px;
+
+    margin-bottom:
+        90px;
+
+    border:
+        1px solid
+        rgba(99, 230, 163, 0.14);
+
+    border-radius:
+        24px;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(10, 30, 20, 0.75),
+            rgba(3, 12, 8, 0.7)
+        );
+
+    box-shadow:
+        0 20px 60px
+        rgba(0, 0, 0, 0.25);
+
+    overflow:
+        hidden;
+
+    animation:
+        quoteReveal 1s 0.35s ease both;
+}
+
+
+@keyframes quoteReveal {
+
+    from {
+        opacity:
+            0;
+
+        transform:
+            translateY(30px)
+            scale(0.98);
+    }
+
+    to {
+        opacity:
+            1;
+
+        transform:
+            translateY(0)
+            scale(1);
+    }
+
+}
+
+
+.motivation-card::before {
+    content:
+        "";
+
+    position:
+        absolute;
+
+    left:
+        0;
+
+    top:
+        0;
+
+    bottom:
+        0;
+
+    width:
+        3px;
+
+    background:
+        linear-gradient(
+            transparent,
+            var(--detail-green),
+            transparent
+        );
+
+    box-shadow:
+        0 0 18px
+        var(--detail-green);
+}
+
+
+.motivation-card::after {
+    content:
+        "";
+
+    position:
+        absolute;
+
+    width:
+        250px;
+
+    height:
+        250px;
+
+    left:
+        50%;
+
+    top:
+        50%;
+
+    transform:
+        translate(-50%, -50%);
+
+    border-radius:
+        50%;
+
+    background:
+        rgba(99, 230, 163, 0.035);
+
+    filter:
+        blur(45px);
+
+    pointer-events:
+        none;
+}
+
+
+.quote-line-decoration {
+    position:
+        absolute;
+
+    top:
+        0;
+
+    left:
+        50%;
+
+    width:
+        80px;
+
+    height:
+        2px;
+
+    transform:
+        translateX(-50%);
+
+    background:
+        var(--detail-green);
+
+    box-shadow:
+        0 0 15px
+        var(--detail-green);
+}
+
+
+.quote-symbol {
+    position:
+        absolute;
+
+    left:
+        35px;
+
+    top:
+        22px;
+
+    font-family:
+        Georgia,
+        serif;
+
+    font-size:
+        72px;
+
+    line-height:
+        1;
+
+    color:
+        rgba(99, 230, 163, 0.25);
+}
+
+
+.quote-right {
+    left:
+        auto;
+
+    right:
+        35px;
+
+    top:
+        auto;
+
+    bottom:
+        8px;
+}
+
+
+.motivation-content {
+    position:
+        relative;
+
+    z-index:
+        2;
+
+    max-width:
+        760px;
+}
+
+
+.motivation-label {
+    display:
+        block;
+
+    margin-bottom:
+        10px;
+
+    color:
+        var(--detail-green);
+
+    font-size:
+        9px;
+
+    font-weight:
+        700;
+
+    letter-spacing:
+        3px;
+}
+
+
+.motivation-content h2 {
+    margin:
+        0;
+
+    font-family:
+        "Sora",
+        sans-serif;
+
+    font-size:
+        clamp(22px, 3vw, 32px);
+
+    line-height:
+        1.3;
+
+    font-weight:
+        600;
+}
+
+
+.motivation-content h2 span {
+    color:
+        var(--detail-green);
+}
+
+
+.motivation-content p {
+    margin:
+        9px 0 0;
+
+    color:
+        #67736c;
+
+    font-size:
+        12px;
+}
+
+
+.heartbeat {
+    position:
+        absolute;
+
+    right:
+        35px;
+
+    bottom:
+        23px;
+
+    width:
+        100px;
+
+    opacity:
+        0.35;
+}
+
+
+.heartbeat svg {
+    width:
+        100%;
+}
+
+
+.heartbeat path {
+    fill:
+        none;
+
+    stroke:
+        var(--detail-green);
+
+    stroke-width:
+        2;
+
+    stroke-dasharray:
+        200;
+
+    animation:
+        heartbeatDraw 2.5s linear infinite;
+}
+
+
+@keyframes heartbeatDraw {
+
+    from {
+        stroke-dashoffset:
+            200;
+    }
+
+    to {
+        stroke-dashoffset:
+            0;
+    }
+
+}
+
+
+/* =========================================================
+   MODULE HEADING
+========================================================= */
+
+.module-heading {
+    display:
+        flex;
+
+    align-items:
+        end;
+
+    justify-content:
+        space-between;
+
+    gap:
+        30px;
+
+    margin-bottom:
+        30px;
+
+    animation:
+        headingReveal 0.9s 0.5s ease both;
+}
+
+
+@keyframes headingReveal {
+
+    from {
+        opacity:
+            0;
+
+        transform:
+            translateY(20px);
+    }
+
+    to {
+        opacity:
+            1;
+
+        transform:
+            translateY(0);
+    }
+
+}
+
+
+.module-eyebrow {
+    color:
+        var(--detail-green);
+
+    font-size:
+        9px;
+
+    font-weight:
+        700;
+
+    letter-spacing:
+        3px;
+}
+
+
+.module-heading h2 {
+    margin:
+        8px 0 0;
+
+    font-family:
+        "Sora",
+        sans-serif;
+
+    font-size:
+        clamp(25px, 3vw, 36px);
+
+    line-height:
+        1.2;
+
+    font-weight:
+        600;
+}
+
+
+.module-heading h2 span {
+    color:
+        var(--detail-green);
+}
+
+
+.module-heading > p {
+    margin:
+        0 0 5px;
+
+    color:
+        #56635c;
+
+    font-size:
+        12px;
+}
+
+
+/* =========================================================
+   MODULE GRID
+========================================================= */
+
+.module-grid {
+    display:
+        grid;
+
+    grid-template-columns:
+        repeat(3, 1fr);
+
+    gap:
+        20px;
+}
+
+
+/* =========================================================
+   MODULE CARD
+========================================================= */
+
+.main-module {
+    position:
+        relative;
+
+    min-height:
+        350px;
+
+    display:
+        flex;
+
+    flex-direction:
+        column;
+
+    justify-content:
+        space-between;
+
+    padding:
+        30px;
+
+    border:
+        1px solid
+        rgba(99, 230, 163, 0.13);
+
+    border-radius:
+        24px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(10, 25, 17, 0.88),
+            rgba(3, 10, 7, 0.9)
+        );
+
+    text-decoration:
+        none;
+
+    color:
+        white;
+
+    overflow:
+        hidden;
+
+    transform:
+        translateY(30px);
+
+    opacity:
+        0;
+
+    animation:
+        cardReveal 0.8s ease forwards;
+
+    transition:
+        transform 0.45s cubic-bezier(.2,.8,.2,1),
+        border-color 0.4s ease,
+        box-shadow 0.4s ease;
+}
+
+
+.dashboard-module {
+    animation-delay:
+        0.55s;
+}
+
+
+.bmi-module {
+    animation-delay:
+        0.7s;
+}
+
+
+.diet-module {
+    animation-delay:
+        0.85s;
+}
+
+
+@keyframes cardReveal {
+
+    to {
+        opacity:
+            1;
+
+        transform:
+            translateY(0);
+    }
+
+}
+
+
+.main-module:hover {
+    transform:
+        translateY(-10px);
+
+    border-color:
+        rgba(99, 230, 163, 0.4);
+
+    box-shadow:
+        0 25px 65px
+        rgba(0, 0, 0, 0.45),
+        0 0 35px
+        rgba(99, 230, 163, 0.06);
+}
+
+
+.main-module::before {
+    content:
+        "";
+
+    position:
+        absolute;
+
+    inset:
+        0;
+
+    background:
+        linear-gradient(
+            120deg,
+            transparent 20%,
+            rgba(99, 230, 163, 0.055),
+            transparent 80%
+        );
+
+    transform:
+        translateX(-100%);
+
+    transition:
+        transform 0.8s ease;
+}
+
+
+.main-module:hover::before {
+    transform:
+        translateX(100%);
+}
+
+
+/* =========================================================
+   NUMBER
+========================================================= */
+
+.module-number {
+    position:
+        absolute;
+
+    top:
+        25px;
+
+    right:
+        28px;
+
+    color:
+        rgba(99, 230, 163, 0.25);
+
+    font-family:
+        "Sora",
+        sans-serif;
+
+    font-size:
+        11px;
+
+    font-weight:
+        700;
+
+    letter-spacing:
+        2px;
+}
+
+
+/* =========================================================
+   ICON
+========================================================= */
+
+.module-icon {
+    width:
+        58px;
+
+    height:
+        58px;
+
+    display:
+        grid;
+
+    place-items:
+        center;
+
+    border:
+        1px solid
+        rgba(99, 230, 163, 0.18);
+
+    border-radius:
+        16px;
+
+    color:
+        var(--detail-green);
+
+    background:
+        rgba(99, 230, 163, 0.05);
+
+    transition:
+        transform 0.4s ease,
+        background 0.4s ease,
+        box-shadow 0.4s ease;
+}
+
+
+.module-icon svg {
+    width:
+        28px;
+
+    height:
+        28px;
+}
+
+
+.main-module:hover .module-icon {
+    transform:
+        rotate(-5deg)
+        scale(1.08);
+
+    background:
+        rgba(99, 230, 163, 0.1);
+
+    box-shadow:
+        0 0 25px
+        rgba(99, 230, 163, 0.12);
+}
+
+
+/* =========================================================
+   MODULE CONTENT
+========================================================= */
+
+.module-content {
+    position:
+        relative;
+
+    z-index:
+        2;
+
+    margin-top:
+        40px;
+}
+
+
+.module-small-title {
+    color:
+        #59675f;
+
+    font-size:
+        9px;
+
+    font-weight:
+        700;
+
+    letter-spacing:
+        2.5px;
+}
+
+
+.module-content h3 {
+    margin:
+        8px 0 12px;
+
+    font-family:
+        "Sora",
+        sans-serif;
+
+    font-size:
+        28px;
+
+    font-weight:
+        600;
+
+    color:
+        #f5f7f6;
+
+    transition:
+        color 0.3s ease;
+}
+
+
+.main-module:hover .module-content h3 {
+    color:
+        var(--detail-green);
+}
+
+
+.module-content p {
+    max-width:
+        340px;
+
+    margin:
+        0;
+
+    color:
+        #69756e;
+
+    font-size:
+        12px;
+
+    line-height:
+        1.8;
+}
+
+
+/* =========================================================
+   MODULE FOOTER
+========================================================= */
+
+.module-footer {
+    position:
+        relative;
+
+    z-index:
+        2;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        space-between;
+
+    padding-top:
+        22px;
+
+    border-top:
+        1px solid
+        rgba(99, 230, 163, 0.08);
+
+    color:
+        #8c9891;
+
+    font-size:
+        11px;
+
+    font-weight:
+        600;
+}
+
+
+.module-arrow {
+    color:
+        var(--detail-green);
+
+    font-size:
+        22px;
+
+    transition:
+        transform 0.3s ease;
+}
+
+
+.main-module:hover .module-arrow {
+    transform:
+        translateX(7px);
+}
+
+
+/* =========================================================
+   BOTTOM
+========================================================= */
+
+.detail-bottom {
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    gap:
+        20px;
+
+    margin-top:
+        80px;
+
+    animation:
+        bottomReveal 1s 1s ease both;
+}
+
+
+@keyframes bottomReveal {
+
+    from {
+        opacity:
+            0;
+    }
+
+    to {
+        opacity:
+            1;
+    }
+
+}
+
+
+.bottom-line {
+    flex:
+        1;
+
+    height:
+        1px;
+
+    background:
+        linear-gradient(
+            to right,
+            transparent,
+            rgba(99, 230, 163, 0.15)
+        );
+}
+
+
+.bottom-line:last-child {
+    background:
+        linear-gradient(
+            to left,
+            transparent,
+            rgba(99, 230, 163, 0.15)
+        );
+}
+
+
+.detail-bottom p {
+    margin:
+        0;
+
+    color:
+        #4e5a53;
+
+    font-size:
+        10px;
+
+    text-align:
+        center;
+
+    letter-spacing:
+        0.5px;
+}
+
+
+.detail-bottom p span {
+    color:
+        var(--detail-green);
+
+    font-weight:
+        700;
+
+    letter-spacing:
+        2px;
+}
+
+
+/* =========================================================
+   PROFILE MODAL
+   FIXED VIEWPORT CENTERING
+========================================================= */
+
+.profile-modal {
+    position:
+        fixed !important;
+
+    top:
+        0 !important;
+
+    right:
+        0 !important;
+
+    bottom:
+        0 !important;
+
+    left:
+        0 !important;
+
+    width:
+        100vw !important;
+
+    height:
+        100vh !important;
+
+    z-index:
+        99999 !important;
+
+    display:
+        flex !important;
+
+    align-items:
+        center !important;
+
+    justify-content:
+        center !important;
+
+    box-sizing:
+        border-box;
+
+    padding:
+        24px !important;
+
+    margin:
+        0 !important;
+
+    visibility:
+        hidden;
+
+    opacity:
+        0;
+
+    pointer-events:
+        none;
+
+    overflow:
+        hidden;
+
+    transition:
+        opacity 0.35s ease,
+        visibility 0.35s ease;
+}
+
+
+/* =========================================================
+   ACTIVE MODAL
+========================================================= */
+
+.profile-modal.active {
+    visibility:
+        visible;
+
+    opacity:
+        1;
+
+    pointer-events:
+        auto;
+}
+
+
+/* =========================================================
+   MODAL BACKDROP
+========================================================= */
+
+.profile-modal-backdrop {
+    position:
+        absolute;
+
+    top:
+        0;
+
+    right:
+        0;
+
+    bottom:
+        0;
+
+    left:
+        0;
+
+    width:
+        100%;
+
+    height:
+        100%;
+
+    background:
+        rgba(0, 5, 3, 0.78);
+
+    backdrop-filter:
+        blur(15px);
+
+    -webkit-backdrop-filter:
+        blur(15px);
+
+    cursor:
+        default;
+}
+
+
+/* =========================================================
+   POPUP
+========================================================= */
+
+.profile-popup {
+    position:
+        relative;
+
+    z-index:
+        2;
+
+    width:
+        min(600px, calc(100vw - 48px));
+
+    max-width:
+        600px;
+
+    max-height:
+        calc(100vh - 48px);
+
+    box-sizing:
+        border-box;
+
+    margin:
+        0 !important;
+
+    padding:
+        34px;
+
+    overflow-x:
+        hidden;
+
+    overflow-y:
+        auto;
+
+    flex:
+        0 1 auto;
+
+    border:
+        1px solid
+        rgba(99, 230, 163, 0.22);
+
+    border-radius:
+        26px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(10, 27, 18, 0.98),
+            rgba(3, 10, 7, 0.99)
+        );
+
+    box-shadow:
+        0 40px 100px
+        rgba(0, 0, 0, 0.65),
+        0 0 60px
+        rgba(99, 230, 163, 0.07);
+
+    transform:
+        translate3d(0, 30px, 0)
+        scale(0.94);
+
+    transform-origin:
+        center center;
+
+    transition:
+        transform 0.45s
+        cubic-bezier(.2,.8,.2,1);
+}
+
+
+/* =========================================================
+   POPUP ACTIVE
+========================================================= */
+
+.profile-modal.active .profile-popup {
+    transform:
+        translate3d(0, 0, 0)
+        scale(1);
+}
+
+
+/* =========================================================
+   POPUP GLOW
+========================================================= */
+
+.popup-glow {
+    position:
+        absolute;
+
+    width:
+        220px;
+
+    height:
+        220px;
+
+    top:
+        -140px;
+
+    left:
+        50%;
+
+    transform:
+        translateX(-50%);
+
+    border-radius:
+        50%;
+
+    background:
+        var(--detail-green);
+
+    opacity:
+        0.09;
+
+    filter:
+        blur(70px);
+
+    pointer-events:
+        none;
+}
+
+
+/* =========================================================
+   CLOSE
+========================================================= */
+
+.popup-close {
+    position:
+        absolute;
+
+    top:
+        20px;
+
+    right:
+        22px;
+
+    z-index:
+        5;
+
+    width:
+        38px;
+
+    height:
+        38px;
+
+    display:
+        grid;
+
+    place-items:
+        center;
+
+    padding:
+        0;
+
+    border:
+        1px solid
+        rgba(99, 230, 163, 0.13);
+
+    border-radius:
+        50%;
+
+    background:
+        rgba(99, 230, 163, 0.04);
+
+    color:
+        #9ba69f;
+
+    font-size:
+        24px;
+
+    line-height:
+        1;
+
+    cursor:
+        pointer;
+
+    transition:
+        all 0.3s ease;
+}
+
+
+.popup-close:hover {
+    color:
+        var(--detail-green);
+
+    border-color:
+        rgba(99, 230, 163, 0.4);
+
+    transform:
+        rotate(90deg);
+}
+
+
+/* =========================================================
+   POPUP HEADER
+========================================================= */
+
+.popup-profile-header {
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    gap:
+        18px;
+
+    padding-right:
+        40px;
+
+    padding-bottom:
+        25px;
+
+    border-bottom:
+        1px solid
+        rgba(99, 230, 163, 0.1);
+}
+
+
+.popup-avatar {
+    width:
+        70px;
+
+    height:
+        70px;
+
+    flex-shrink:
+        0;
+
+    display:
+        grid;
+
+    place-items:
+        center;
+
+    border-radius:
+        20px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #63e6a3,
+            #20b96e
+        );
+
+    color:
+        #031108;
+
+    font-family:
+        "Sora",
+        sans-serif;
+
+    font-size:
+        27px;
+
+    font-weight:
+        800;
+
+    box-shadow:
+        0 0 35px
+        rgba(99, 230, 163, 0.15);
+}
+
+
+.popup-eyebrow {
+    color:
+        var(--detail-green);
+
+    font-size:
+        9px;
+
+    font-weight:
+        700;
+
+    letter-spacing:
+        2.5px;
+}
+
+
+.popup-profile-header h2 {
+    margin:
+        5px 0 2px;
+
+    font-family:
+        "Sora",
+        sans-serif;
+
+    font-size:
+        27px;
+
+    color:
+        white;
+}
+
+
+.popup-profile-header p {
+    margin:
+        0;
+
+    color:
+        #66736b;
+
+    font-size:
+        11px;
+}
+
+
+/* =========================================================
+   DETAILS
+========================================================= */
+
+.popup-details {
+    display:
+        grid;
+
+    grid-template-columns:
+        repeat(2, 1fr);
+
+    gap:
+        10px;
+
+    padding:
+        22px 0;
+}
+
+
+.popup-detail {
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    gap:
+        12px;
+
+    min-height:
+        72px;
+
+    padding:
+        12px;
+
+    box-sizing:
+        border-box;
+
+    border:
+        1px solid
+        rgba(99, 230, 163, 0.08);
+
+    border-radius:
+        15px;
+
+    background:
+        rgba(99, 230, 163, 0.025);
+
+    transition:
+        transform 0.3s ease,
+        border-color 0.3s ease,
+        background 0.3s ease;
+}
+
+
+.popup-detail:hover {
+    transform:
+        translateY(-3px);
+
+    border-color:
+        rgba(99, 230, 163, 0.22);
+
+    background:
+        rgba(99, 230, 163, 0.045);
+}
+
+
+.popup-detail-icon {
+    width:
+        38px;
+
+    height:
+        38px;
+
+    flex-shrink:
+        0;
+
+    display:
+        grid;
+
+    place-items:
+        center;
+
+    border-radius:
+        11px;
+
+    background:
+        rgba(99, 230, 163, 0.07);
+
+    color:
+        var(--detail-green);
+
+    font-size:
+        16px;
+}
+
+
+.popup-detail span {
+    display:
+        block;
+
+    margin-bottom:
+        4px;
+
+    color:
+        #59665f;
+
+    font-size:
+        7px;
+
+    font-weight:
+        700;
+
+    letter-spacing:
+        1.7px;
+}
+
+
+.popup-detail strong {
+    display:
+        block;
+
+    color:
+        #e6ebe8;
+
+    font-size:
+        11px;
+
+    font-weight:
+        600;
+
+    word-break:
+        break-word;
+}
+
+
+/* =========================================================
+   POPUP FOOTER
+========================================================= */
+
+.popup-footer {
+    padding-top:
+        5px;
+}
+
+
+.edit-profile-btn {
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    gap:
+        8px;
+
+    width:
+        100%;
+
+    padding:
+        13px 18px;
+
+    box-sizing:
+        border-box;
+
+    border:
+        1px solid
+        rgba(99, 230, 163, 0.35);
+
+    border-radius:
+        12px;
+
+    background:
+        rgba(99, 230, 163, 0.07);
+
+    color:
+        var(--detail-green);
+
+    text-decoration:
+        none;
+
+    font-size:
+        12px;
+
+    font-weight:
+        600;
+
+    transition:
+        all 0.3s ease;
+}
+
+
+.edit-profile-btn:hover {
+    background:
+        var(--detail-green);
+
+    color:
+        #041008;
+
+    box-shadow:
+        0 10px 30px
+        rgba(99, 230, 163, 0.18);
+
+    transform:
+        translateY(-2px);
+}
+
+
+/* =========================================================
+   MODAL SCROLLBAR
+========================================================= */
+
+.profile-popup::-webkit-scrollbar {
+    width:
+        5px;
+}
+
+
+.profile-popup::-webkit-scrollbar-track {
+    background:
+        transparent;
+}
+
+
+.profile-popup::-webkit-scrollbar-thumb {
+    background:
+        rgba(99, 230, 163, 0.25);
+
+    border-radius:
+        10px;
+}
+
+
+/* =========================================================
+   TABLET
+========================================================= */
+
+@media (max-width: 900px) {
+
+    .detail-container {
+        width:
+            90%;
+
+        padding-top:
+            30px;
+    }
+
+
+    .detail-topbar {
+        margin-bottom:
+            50px;
+    }
+
+
+    .welcome-section {
+        min-height:
+            auto;
+
+        padding-bottom:
+            30px;
+    }
+
+
+    .hero-orbit {
+        width:
+            230px;
+
+        height:
+            230px;
+
+        margin-right:
+            0;
+    }
+
+
+    .module-grid {
+        grid-template-columns:
+            1fr;
+    }
+
+
+    .main-module {
+        min-height:
+            300px;
+    }
+
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 650px) {
+
+    .detail-container {
+        width:
+            92%;
+    }
+
+
+    .detail-topbar {
+        align-items:
+            flex-start;
+
+        flex-direction:
+            column;
+    }
+
+
+    .profile-mini-card {
+        width:
+            100%;
+    }
+
+
+    .welcome-section {
+        display:
+            block;
+    }
+
+
+    .welcome-title {
+        font-size:
+            39px;
+
+        letter-spacing:
+            -1.5px;
+    }
+
+
+    .welcome-subtitle {
+        font-size:
+            13px;
+    }
+
+
+    .hero-orbit {
+        width:
+            190px;
+
+        height:
+            190px;
+
+        margin:
+            45px auto 10px;
+    }
+
+
+    .orbit-core {
+        width:
+            65px;
+
+        height:
+            65px;
+
+        font-size:
+            14px;
+    }
+
+
+    .motivation-card {
+        min-height:
+            190px;
+
+        padding:
+            35px 25px;
+    }
+
+
+    .quote-symbol {
+        left:
+            15px;
+
+        font-size:
+            50px;
+    }
+
+
+    .quote-right {
+        right:
+            15px;
+    }
+
+
+    .motivation-content h2 {
+        font-size:
+            20px;
+    }
+
+
+    .heartbeat {
+        display:
+            none;
+    }
+
+
+    .module-heading {
+        display:
+            block;
+    }
+
+
+    .module-heading > p {
+        margin-top:
+            8px;
+    }
+
+
+    .main-module {
+        min-height:
+            330px;
+
+        padding:
+            25px;
+    }
+
+
+    .popup-details {
+        grid-template-columns:
+            1fr;
+    }
+
+
+    .profile-modal {
+        width:
+            100vw !important;
+
+        height:
+            100vh !important;
+
+        padding:
+            14px !important;
+    }
+
+
+    .profile-popup {
+        width:
+            calc(100vw - 28px);
+
+        max-width:
+            calc(100vw - 28px);
+
+        max-height:
+            calc(100vh - 28px);
+
+        padding:
+            25px 20px;
+
+        border-radius:
+            21px;
+    }
+
+
+    .popup-avatar {
+        width:
+            58px;
+
+        height:
+            58px;
+
+        border-radius:
+            16px;
+
+        font-size:
+            22px;
+    }
+
+
+    .popup-profile-header h2 {
+        font-size:
+            21px;
+    }
+
+
+    .popup-close {
+        top:
+            15px;
+
+        right:
+            15px;
+    }
+
+
+    .detail-bottom {
+        margin-top:
+            55px;
+    }
+
+
+    .detail-bottom p {
+        font-size:
+            8px;
+    }
+
+}
+
+
+/* =========================================================
+   REDUCED MOTION
+========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .detail-page *,
+    .detail-page *::before,
+    .detail-page *::after {
+        animation-duration:
+            0.01ms !important;
+
+        animation-iteration-count:
+            1 !important;
+
+        scroll-behavior:
+            auto !important;
+
+        transition-duration:
+            0.01ms !important;
+    }
+
+}

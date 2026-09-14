@@ -1,0 +1,216 @@
+/* =========================================================
+   FITLYFE PREMIUM MOTION SYSTEM
+   ========================================================= */
+
+:root {
+    --fit-green: #39ff88;
+    --fit-mint: #63e6a3;
+    --fit-bg: #020604;
+    --fit-panel: rgba(7, 16, 11, .78);
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body.fitlyfe-shell {
+    background:
+        radial-gradient(circle at 15% 15%, rgba(57,255,136,.055), transparent 28rem),
+        radial-gradient(circle at 85% 70%, rgba(99,230,163,.045), transparent 30rem),
+        #020604;
+    overflow-x: hidden;
+}
+
+#mainContent {
+    position: relative;
+    z-index: 2;
+    animation: fitPageIn .65s cubic-bezier(.2,.8,.2,1) both;
+}
+
+.ambient-layer {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.ambient-orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(70px);
+    opacity: .11;
+    mix-blend-mode: screen;
+}
+
+.ambient-orb-one {
+    width: 28rem;
+    height: 28rem;
+    left: -10rem;
+    top: 15vh;
+    background: #39ff88;
+    animation: ambientFloatOne 18s ease-in-out infinite alternate;
+}
+
+.ambient-orb-two {
+    width: 24rem;
+    height: 24rem;
+    right: -8rem;
+    top: 55vh;
+    background: #63e6a3;
+    animation: ambientFloatTwo 22s ease-in-out infinite alternate;
+}
+
+.ambient-orb-three {
+    width: 18rem;
+    height: 18rem;
+    left: 45%;
+    top: -9rem;
+    background: #00ffb3;
+    animation: ambientFloatThree 16s ease-in-out infinite alternate;
+}
+
+.ambient-noise {
+    position: absolute;
+    inset: 0;
+    opacity: .035;
+    background-image:
+        linear-gradient(rgba(255,255,255,.06) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.06) 1px, transparent 1px);
+    background-size: 48px 48px;
+    mask-image: linear-gradient(to bottom, black, transparent 80%);
+}
+
+#mainNavbar {
+    position: relative;
+    z-index: 50;
+    backdrop-filter: blur(18px);
+    background: rgba(2,6,4,.72) !important;
+    border-bottom: 1px solid rgba(99,230,163,.09);
+}
+
+#mainNavbar .nav-link {
+    position: relative;
+    transition: color .25s ease, transform .25s ease;
+}
+
+#mainNavbar .nav-link::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    bottom: 1px;
+    width: 0;
+    height: 2px;
+    border-radius: 99px;
+    background: var(--fit-green);
+    box-shadow: 0 0 12px rgba(57,255,136,.75);
+    transform: translateX(-50%);
+    transition: width .28s ease;
+}
+
+#mainNavbar .nav-link:hover,
+#mainNavbar .nav-link.active {
+    color: var(--fit-green) !important;
+    transform: translateY(-1px);
+}
+
+#mainNavbar .nav-link:hover::after,
+#mainNavbar .nav-link.active::after {
+    width: 70%;
+}
+
+#mainNavbar .btn {
+    transition: transform .25s ease, box-shadow .25s ease;
+}
+
+#mainNavbar .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 28px rgba(57,255,136,.14);
+}
+
+.logo {
+    transition: transform .5s cubic-bezier(.2,.8,.2,1), filter .5s ease;
+}
+
+.navbar-brand:hover .logo {
+    transform: rotate(-5deg) scale(1.06);
+    filter: drop-shadow(0 0 12px rgba(57,255,136,.45));
+}
+
+.scroll-top-btn {
+    z-index: 80 !important;
+    transition: opacity .25s ease, transform .25s ease !important;
+}
+
+.page-progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 0%;
+    height: 2px;
+    z-index: 100;
+    background: linear-gradient(90deg, var(--fit-mint), var(--fit-green));
+    box-shadow: 0 0 16px rgba(57,255,136,.9);
+    transition: width .1s linear;
+}
+
+.fitlyfe-shell .toast {
+    backdrop-filter: blur(18px);
+    box-shadow: 0 18px 50px rgba(0,0,0,.3);
+}
+
+@keyframes fitPageIn {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes ambientFloatOne {
+    from { transform: translate3d(0,0,0) scale(1); }
+    to { transform: translate3d(18rem,-8rem,0) scale(1.25); }
+}
+
+@keyframes ambientFloatTwo {
+    from { transform: translate3d(0,0,0) scale(1); }
+    to { transform: translate3d(-16rem,5rem,0) scale(1.3); }
+}
+
+@keyframes ambientFloatThree {
+    from { transform: translate3d(-6rem,0,0) scale(.9); }
+    to { transform: translate3d(10rem,8rem,0) scale(1.2); }
+}
+
+@media (max-width: 700px) {
+    .ambient-orb {
+        filter: blur(55px);
+        opacity: .07;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+
+    #mainContent {
+        animation: none;
+    }
+
+    .ambient-orb {
+        animation: none !important;
+    }
+}
+
+.fit-reveal {
+    opacity: 0;
+    transform: translateY(18px) scale(.985);
+    transition: opacity .7s ease, transform .7s cubic-bezier(.2,.8,.2,1);
+}
+.fit-reveal.fit-revealed {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+}
+@media (prefers-reduced-motion: reduce) {
+    .fit-reveal {
+        opacity: 1;
+        transform: none;
+        transition: none;
+    }
+}

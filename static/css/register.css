@@ -1,0 +1,1586 @@
+/* =========================================================
+   FITLYFE REGISTER PAGE
+   Modern animated authentication design
+========================================================= */
+
+
+/* =========================================================
+   1. PAGE
+========================================================= */
+
+.register-page {
+
+    position: relative;
+
+    min-height: calc(100vh - 89px);
+
+    display: flex;
+    align-items: center;
+
+    overflow: hidden;
+
+    padding: 70px 8%;
+
+    background:
+        radial-gradient(
+            circle at 15% 50%,
+            rgba(99, 230, 163, 0.08),
+            transparent 30%
+        ),
+        radial-gradient(
+            circle at 90% 20%,
+            rgba(99, 230, 163, 0.05),
+            transparent 30%
+        ),
+        #01230c;
+}
+
+
+/* =========================================================
+   2. BACKGROUND
+========================================================= */
+
+.register-bg {
+
+    position: absolute;
+
+    inset: 0;
+
+    overflow: hidden;
+
+    pointer-events: none;
+
+    z-index: 0;
+}
+
+
+/* =========================================================
+   3. GLOW EFFECTS
+========================================================= */
+
+.register-glow {
+
+    position: absolute;
+
+    border-radius: 50%;
+
+    filter: blur(70px);
+
+    opacity: 0.25;
+
+    animation:
+        glowFloat 8s ease-in-out infinite;
+}
+
+
+.register-glow-1 {
+
+    width: 350px;
+    height: 350px;
+
+    left: -120px;
+    top: 10%;
+
+    background:
+        rgba(99, 230, 163, 0.25);
+}
+
+
+.register-glow-2 {
+
+    width: 280px;
+    height: 280px;
+
+    right: 5%;
+    top: -100px;
+
+    background:
+        rgba(99, 230, 163, 0.18);
+
+    animation-delay: -3s;
+}
+
+
+.register-glow-3 {
+
+    width: 300px;
+    height: 300px;
+
+    right: 30%;
+    bottom: -150px;
+
+    background:
+        rgba(70, 180, 120, 0.15);
+
+    animation-delay: -5s;
+}
+
+
+@keyframes glowFloat {
+
+    0%,
+    100% {
+        transform: translate(0, 0) scale(1);
+    }
+
+    50% {
+        transform:
+            translate(30px, -25px)
+            scale(1.12);
+    }
+
+}
+
+
+/* =========================================================
+   4. PARTICLES
+========================================================= */
+
+.register-particle {
+
+    position: absolute;
+
+    width: 4px;
+    height: 4px;
+
+    border-radius: 50%;
+
+    background: #63e6a3;
+
+    opacity: 0.4;
+
+    box-shadow:
+        0 0 10px
+        rgba(99, 230, 163, 0.8);
+
+    animation:
+        particleFloat 7s ease-in-out infinite;
+}
+
+
+.particle-1 {
+    left: 10%;
+    top: 25%;
+}
+
+.particle-2 {
+    left: 35%;
+    top: 15%;
+
+    animation-delay: -2s;
+}
+
+.particle-3 {
+    left: 25%;
+    bottom: 20%;
+
+    animation-delay: -4s;
+}
+
+.particle-4 {
+    right: 30%;
+    top: 20%;
+
+    animation-delay: -1s;
+}
+
+.particle-5 {
+    right: 12%;
+    bottom: 25%;
+
+    animation-delay: -3s;
+}
+
+.particle-6 {
+    right: 45%;
+    bottom: 10%;
+
+    animation-delay: -5s;
+}
+
+
+@keyframes particleFloat {
+
+    0%,
+    100% {
+        transform:
+            translateY(0)
+            scale(1);
+
+        opacity: 0.25;
+    }
+
+    50% {
+        transform:
+            translateY(-35px)
+            scale(1.5);
+
+        opacity: 0.8;
+    }
+
+}
+
+
+/* =========================================================
+   5. MAIN CONTAINER
+========================================================= */
+
+.register-container {
+
+    position: relative;
+
+    z-index: 2;
+
+    width: 100%;
+    max-width: 1250px;
+
+    margin: auto;
+
+    display: grid;
+
+    grid-template-columns:
+        1fr 460px;
+
+    align-items: center;
+
+    gap: 100px;
+}
+
+
+/* =========================================================
+   6. LEFT INTRO
+========================================================= */
+
+.register-intro {
+
+    animation:
+        introReveal 0.9s
+        cubic-bezier(0.22, 1, 0.36, 1)
+        forwards;
+
+    opacity: 0;
+}
+
+
+@keyframes introReveal {
+
+    from {
+
+        opacity: 0;
+
+        transform:
+            translateX(-50px);
+
+    }
+
+    to {
+
+        opacity: 1;
+
+        transform:
+            translateX(0);
+
+    }
+
+}
+
+
+/* =========================================================
+   7. BADGE
+========================================================= */
+
+.intro-badge {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 9px;
+
+    padding: 8px 15px;
+
+    margin-bottom: 24px;
+
+    border:
+        1px solid
+        rgba(99, 230, 163, 0.25);
+
+    border-radius: 50px;
+
+    background:
+        rgba(99, 230, 163, 0.06);
+
+    color: #63e6a3;
+
+    font-size: 0.78rem;
+
+    font-weight: 700;
+
+    letter-spacing: 3px;
+
+    backdrop-filter: blur(10px);
+}
+
+
+.intro-dot {
+
+    width: 7px;
+    height: 7px;
+
+    border-radius: 50%;
+
+    background: #63e6a3;
+
+    box-shadow:
+        0 0 12px
+        rgba(99, 230, 163, 0.9);
+
+    animation:
+        dotPulse 1.7s ease-in-out infinite;
+}
+
+
+@keyframes dotPulse {
+
+    0%,
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+
+    50% {
+        transform: scale(1.6);
+        opacity: 0.5;
+    }
+
+}
+
+
+/* =========================================================
+   8. INTRO TITLE
+========================================================= */
+
+.register-intro h1 {
+
+    max-width: 650px;
+
+    margin: 0 0 25px;
+
+    color: #ffffff;
+
+    font-size:
+        clamp(3rem, 5vw, 5.5rem);
+
+    font-weight: 800;
+
+    line-height: 1.02;
+
+    letter-spacing: -3px;
+}
+
+
+.register-intro h1 span {
+
+    display: block;
+
+    color: #63e6a3;
+
+    text-shadow:
+        0 0 35px
+        rgba(99, 230, 163, 0.15);
+}
+
+
+/* =========================================================
+   9. INTRO DESCRIPTION
+========================================================= */
+
+.register-intro > p {
+
+    max-width: 570px;
+
+    margin-bottom: 35px;
+
+    color:
+        rgba(255, 255, 255, 0.65);
+
+    font-size: 1.05rem;
+
+    line-height: 1.8;
+}
+
+
+/* =========================================================
+   10. FEATURES
+========================================================= */
+
+.intro-features {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 13px;
+}
+
+
+.intro-feature {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+    color:
+        rgba(255, 255, 255, 0.78);
+
+    font-size: 0.92rem;
+
+    transition:
+        transform 0.3s ease,
+        color 0.3s ease;
+}
+
+
+.intro-feature:hover {
+
+    color: #ffffff;
+
+    transform:
+        translateX(8px);
+}
+
+
+.feature-icon {
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    width: 25px;
+    height: 25px;
+
+    border-radius: 50%;
+
+    background:
+        rgba(99, 230, 163, 0.1);
+
+    border:
+        1px solid
+        rgba(99, 230, 163, 0.25);
+
+    color: #63e6a3;
+
+    font-size: 13px;
+
+    font-weight: 700;
+}
+
+
+/* =========================================================
+   11. CARD WRAPPER
+========================================================= */
+
+.register-card-wrapper {
+
+    position: relative;
+
+    animation:
+        cardReveal 0.9s
+        0.15s
+        cubic-bezier(0.22, 1, 0.36, 1)
+        forwards;
+
+    opacity: 0;
+}
+
+
+@keyframes cardReveal {
+
+    from {
+
+        opacity: 0;
+
+        transform:
+            translateY(40px)
+            scale(0.97);
+
+    }
+
+    to {
+
+        opacity: 1;
+
+        transform:
+            translateY(0)
+            scale(1);
+
+    }
+
+}
+
+
+/* =========================================================
+   12. REGISTER CARD
+========================================================= */
+
+.register-card {
+
+    position: relative;
+
+    padding: 2px;
+
+    border-radius: 25px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(99, 230, 163, 0.35),
+            rgba(255, 255, 255, 0.05),
+            rgba(99, 230, 163, 0.12)
+        );
+
+    box-shadow:
+        0 30px 80px
+        rgba(0, 0, 0, 0.45),
+
+        0 0 50px
+        rgba(99, 230, 163, 0.05);
+
+    overflow: hidden;
+
+    transition:
+        transform 0.4s ease,
+        box-shadow 0.4s ease;
+}
+
+
+.register-card:hover {
+
+    transform:
+        translateY(-5px);
+
+    box-shadow:
+        0 35px 90px
+        rgba(0, 0, 0, 0.5),
+
+        0 0 60px
+        rgba(99, 230, 163, 0.1);
+}
+
+
+/* =========================================================
+   13. CARD CONTENT
+========================================================= */
+
+.register-card-content {
+
+    position: relative;
+
+    padding: 38px 40px;
+
+    border-radius: 23px;
+
+    background:
+        rgba(7, 15, 10, 0.94);
+
+    backdrop-filter:
+        blur(20px);
+
+    z-index: 2;
+}
+
+
+/* =========================================================
+   14. CARD GLOW
+========================================================= */
+
+.card-glow {
+
+    position: absolute;
+
+    width: 180px;
+    height: 180px;
+
+    right: -80px;
+    top: -80px;
+
+    border-radius: 50%;
+
+    background:
+        rgba(99, 230, 163, 0.15);
+
+    filter: blur(45px);
+
+    pointer-events: none;
+
+    animation:
+        cardGlow 5s ease-in-out infinite;
+}
+
+
+@keyframes cardGlow {
+
+    0%,
+    100% {
+        transform:
+            scale(1);
+    }
+
+    50% {
+        transform:
+            scale(1.4);
+    }
+
+}
+
+
+/* =========================================================
+   15. CARD HEADER
+========================================================= */
+
+.register-header {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 15px;
+
+    margin-bottom: 32px;
+}
+
+
+.register-icon {
+
+    width: 48px;
+    height: 48px;
+
+    flex-shrink: 0;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 14px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #63e6a3,
+            #42c784
+        );
+
+    color: #062010;
+
+    font-size: 28px;
+
+    font-weight: 500;
+
+    box-shadow:
+        0 8px 25px
+        rgba(99, 230, 163, 0.2);
+
+    animation:
+        iconFloat 3s ease-in-out infinite;
+}
+
+
+@keyframes iconFloat {
+
+    0%,
+    100% {
+        transform:
+            translateY(0);
+    }
+
+    50% {
+        transform:
+            translateY(-4px);
+    }
+
+}
+
+
+.register-header h2 {
+
+    margin: 0;
+
+    color: #ffffff;
+
+    font-size: 1.65rem;
+
+    font-weight: 700;
+}
+
+
+.register-header p {
+
+    margin: 3px 0 0;
+
+    color:
+        rgba(255, 255, 255, 0.45);
+
+    font-size: 0.82rem;
+}
+
+
+/* =========================================================
+   16. FORM FIELD
+========================================================= */
+
+.register-field {
+
+    position: relative;
+
+    margin-bottom: 21px;
+}
+
+
+.register-field label {
+
+    display: block;
+
+    margin-bottom: 7px;
+
+    color:
+        rgba(255, 255, 255, 0.78);
+
+    font-size: 0.82rem;
+
+    font-weight: 600;
+
+    transition:
+        color 0.3s ease;
+}
+
+
+.input-wrapper {
+
+    position: relative;
+
+    display: flex;
+
+    align-items: center;
+}
+
+
+.input-icon {
+
+    position: absolute;
+
+    left: 2px;
+
+    color:
+        rgba(99, 230, 163, 0.55);
+
+    font-size: 15px;
+
+    width: 22px;
+
+    text-align: center;
+
+    z-index: 2;
+
+    transition:
+        color 0.3s ease,
+        transform 0.3s ease;
+}
+
+
+.register-field input {
+
+    width: 100%;
+
+    padding:
+        10px 38px 10px 30px;
+
+    border: none;
+
+    border-bottom:
+        1px solid
+        rgba(255, 255, 255, 0.16);
+
+    outline: none;
+
+    background: transparent;
+
+    color: #ffffff;
+
+    font-family:
+        "Poppins",
+        sans-serif;
+
+    font-size: 0.9rem;
+
+    transition:
+        border-color 0.3s ease;
+}
+
+
+.register-field input::placeholder {
+
+    color:
+        rgba(255, 255, 255, 0.3);
+}
+
+
+.register-field input:focus {
+
+    border-bottom-color:
+        rgba(99, 230, 163, 0.6);
+}
+
+
+.register-field:focus-within label {
+
+    color: #63e6a3;
+}
+
+
+.register-field:focus-within .input-icon {
+
+    color: #63e6a3;
+
+    transform:
+        scale(1.1);
+}
+
+
+/* =========================================================
+   17. ANIMATED INPUT LINE
+========================================================= */
+
+.input-line {
+
+    position: absolute;
+
+    left: 0;
+    bottom: 0;
+
+    width: 0;
+
+    height: 2px;
+
+    border-radius: 5px;
+
+    background:
+        linear-gradient(
+            90deg,
+            #63e6a3,
+            #b5ffd6
+        );
+
+    transition:
+        width 0.4s ease;
+
+    pointer-events: none;
+}
+
+
+.register-field:focus-within
+.input-line {
+
+    width: 100%;
+
+    box-shadow:
+        0 0 12px
+        rgba(99, 230, 163, 0.35);
+}
+
+
+/* =========================================================
+   18. PASSWORD TOGGLE
+========================================================= */
+
+.password-toggle {
+
+    position: absolute;
+
+    right: 2px;
+
+    top: 50%;
+
+    transform:
+        translateY(-50%);
+
+    border: none;
+
+    background: transparent;
+
+    color:
+        rgba(255, 255, 255, 0.4);
+
+    cursor: pointer;
+
+    padding: 4px;
+
+    font-size: 14px;
+
+    transition:
+        color 0.25s ease,
+        transform 0.25s ease;
+}
+
+
+.password-toggle:hover {
+
+    color: #63e6a3;
+
+    transform:
+        translateY(-50%)
+        scale(1.1);
+}
+
+
+/* =========================================================
+   19. AUTOFILL
+========================================================= */
+
+.register-field input:-webkit-autofill,
+.register-field input:-webkit-autofill:hover,
+.register-field input:-webkit-autofill:focus {
+
+    -webkit-text-fill-color: #ffffff;
+
+    -webkit-box-shadow:
+        0 0 0 1000px
+        #07100a
+        inset;
+
+    transition:
+        background-color 5000s ease-in-out 0s;
+}
+
+
+/* =========================================================
+   20. PASSWORD STATUS
+========================================================= */
+
+.password-status {
+
+    min-height: 18px;
+
+    margin-top: -8px;
+
+    margin-bottom: 7px;
+
+    font-size: 0.72rem;
+
+    transition:
+        opacity 0.3s ease;
+}
+
+
+.password-match {
+
+    color: #63e6a3;
+
+    animation:
+        statusIn 0.3s ease;
+}
+
+
+.password-no-match {
+
+    color: #ff7272;
+
+    animation:
+        statusIn 0.3s ease;
+}
+
+
+@keyframes statusIn {
+
+    from {
+        opacity: 0;
+        transform:
+            translateY(-4px);
+    }
+
+    to {
+        opacity: 1;
+        transform:
+            translateY(0);
+    }
+
+}
+
+
+/* =========================================================
+   21. REGISTER BUTTON
+========================================================= */
+
+.register-submit {
+
+    position: relative;
+
+    width: 100%;
+
+    height: 54px;
+
+    margin-top: 5px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 10px;
+
+    overflow: hidden;
+
+    border: none;
+
+    border-radius: 12px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #63e6a3,
+            #45cf89
+        );
+
+    color: #06180d;
+
+    font-family:
+        "Poppins",
+        sans-serif;
+
+    font-size: 0.95rem;
+
+    font-weight: 700;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 10px 30px
+        rgba(99, 230, 163, 0.15);
+
+    transition:
+        transform 0.3s ease,
+        box-shadow 0.3s ease;
+}
+
+
+.register-submit:hover {
+
+    transform:
+        translateY(-3px);
+
+    box-shadow:
+        0 15px 35px
+        rgba(99, 230, 163, 0.28);
+}
+
+
+.register-submit:active {
+
+    transform:
+        translateY(0)
+        scale(0.98);
+}
+
+
+.button-arrow {
+
+    font-size: 20px;
+
+    transition:
+        transform 0.3s ease;
+}
+
+
+.register-submit:hover
+.button-arrow {
+
+    transform:
+        translateX(5px);
+}
+
+
+/* =========================================================
+   22. BUTTON SHINE
+========================================================= */
+
+.button-shine {
+
+    position: absolute;
+
+    top: 0;
+    left: -100%;
+
+    width: 60%;
+    height: 100%;
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            rgba(255, 255, 255, 0.35),
+            transparent
+        );
+
+    transform:
+        skewX(-20deg);
+
+    transition:
+        left 0.7s ease;
+}
+
+
+.register-submit:hover
+.button-shine {
+
+    left: 130%;
+}
+
+
+/* =========================================================
+   23. LOADING
+========================================================= */
+
+.register-loading {
+
+    opacity: 0.75;
+
+    cursor:
+        wait;
+
+    transform: none !important;
+}
+
+
+.register-loading .button-arrow {
+
+    display: none;
+}
+
+
+/* =========================================================
+   24. FOOTER
+========================================================= */
+
+.register-footer {
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    gap: 5px;
+
+    margin-top: 24px;
+
+    color:
+        rgba(255, 255, 255, 0.42);
+
+    font-size: 0.78rem;
+}
+
+
+.register-footer a {
+
+    color: #63e6a3;
+
+    font-weight: 600;
+
+    text-decoration: none;
+
+    transition:
+        color 0.25s ease;
+}
+
+
+.register-footer a:hover {
+
+    color: #a1ffd0;
+
+}
+
+
+/* =========================================================
+   25. ERROR TOAST
+========================================================= */
+
+.register-toast {
+
+    position: fixed;
+
+    top: 105px;
+    right: 30px;
+
+    width: 390px;
+
+    max-width:
+        calc(100vw - 40px);
+
+    min-height: 60px;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+    padding: 14px 16px;
+
+    background:
+        rgba(31, 13, 16, 0.96);
+
+    border:
+        1px solid
+        rgba(255, 92, 92, 0.55);
+
+    border-left:
+        4px solid
+        #ff5c5c;
+
+    border-radius: 12px;
+
+    color: #ffffff;
+
+    box-shadow:
+        0 20px 50px
+        rgba(0, 0, 0, 0.45);
+
+    backdrop-filter:
+        blur(15px);
+
+    z-index: 999999;
+
+    animation:
+        registerToastIn
+        0.45s
+        cubic-bezier(
+            0.22,
+            1,
+            0.36,
+            1
+        );
+}
+
+
+.register-toast-icon {
+
+    width: 28px;
+    height: 28px;
+
+    flex-shrink: 0;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: #ff5c5c;
+
+    color: white;
+
+    font-weight: 800;
+}
+
+
+.register-toast-message {
+
+    flex: 1;
+
+    font-size: 0.8rem;
+
+    line-height: 1.5;
+
+    word-break: break-word;
+}
+
+
+.register-toast-close {
+
+    width: 28px;
+    height: 28px;
+
+    padding: 0;
+
+    border: none;
+
+    background: transparent;
+
+    color: white;
+
+    font-size: 23px;
+
+    cursor: pointer;
+
+    opacity: 0.7;
+
+    transition:
+        opacity 0.2s ease,
+        transform 0.2s ease;
+}
+
+
+.register-toast-close:hover {
+
+    opacity: 1;
+
+    transform:
+        rotate(90deg);
+}
+
+
+.register-toast.toast-hide {
+
+    animation:
+        registerToastOut
+        0.35s
+        ease forwards;
+}
+
+
+@keyframes registerToastIn {
+
+    from {
+
+        opacity: 0;
+
+        transform:
+            translateX(100px);
+
+    }
+
+    to {
+
+        opacity: 1;
+
+        transform:
+            translateX(0);
+
+    }
+
+}
+
+
+@keyframes registerToastOut {
+
+    from {
+
+        opacity: 1;
+
+        transform:
+            translateX(0);
+
+    }
+
+    to {
+
+        opacity: 0;
+
+        transform:
+            translateX(100px);
+
+    }
+
+}
+
+
+/* =========================================================
+   26. TABLET
+========================================================= */
+
+@media (max-width: 1100px) {
+
+    .register-page {
+
+        padding:
+            60px 5%;
+    }
+
+    .register-container {
+
+        grid-template-columns:
+            1fr 420px;
+
+        gap: 50px;
+    }
+
+    .register-intro h1 {
+
+        font-size:
+            clamp(
+                2.8rem,
+                5vw,
+                4.5rem
+            );
+    }
+
+}
+
+
+/* =========================================================
+   27. MOBILE
+========================================================= */
+
+@media (max-width: 850px) {
+
+    .register-page {
+
+        min-height:
+            calc(100vh - 75px);
+
+        padding:
+            50px 20px;
+    }
+
+
+    .register-container {
+
+        grid-template-columns: 1fr;
+
+        max-width: 520px;
+
+        gap: 45px;
+    }
+
+
+    .register-intro {
+
+        text-align: center;
+    }
+
+
+    .register-intro h1 {
+
+        font-size:
+            clamp(
+                2.6rem,
+                11vw,
+                4rem
+            );
+
+        letter-spacing: -2px;
+    }
+
+
+    .register-intro > p {
+
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+
+    .intro-features {
+
+        align-items: center;
+    }
+
+
+    .register-card-content {
+
+        padding:
+            32px 28px;
+    }
+
+}
+
+
+/* =========================================================
+   28. SMALL MOBILE
+========================================================= */
+
+@media (max-width: 500px) {
+
+    .register-page {
+
+        padding:
+            35px 15px;
+    }
+
+
+    .register-card-content {
+
+        padding:
+            27px 22px;
+    }
+
+
+    .register-header {
+
+        margin-bottom: 25px;
+    }
+
+
+    .register-header h2 {
+
+        font-size:
+            1.4rem;
+    }
+
+
+    .register-icon {
+
+        width: 43px;
+        height: 43px;
+
+        font-size: 23px;
+    }
+
+
+    .register-toast {
+
+        top: 85px;
+
+        right: 15px;
+        left: 15px;
+
+        width: auto;
+
+        max-width: none;
+    }
+
+
+    .register-footer {
+
+        flex-direction: column;
+
+        gap: 3px;
+    }
+
+}
+
+
+/* =========================================================
+   29. REDUCED MOTION
+========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+    *,
+    *::before,
+    *::after {
+
+        animation-duration:
+            0.01ms !important;
+
+        animation-iteration-count:
+            1 !important;
+
+        transition-duration:
+            0.01ms !important;
+    }
+
+}
+
+.email-availability {
+    display: block;
+    min-height: 1.15rem;
+    margin-top: .45rem;
+    font-size: .78rem;
+    transition: .2s ease;
+}
+.email-availability.exists { color: #ff6b6b; }
+.email-availability.available { color: #63e6a3; }

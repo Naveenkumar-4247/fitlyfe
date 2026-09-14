@@ -1,0 +1,440 @@
+{% extends "base.html" %}
+
+{% block title %}Login - FitLyfe{% endblock %}
+
+
+{% block extra_css %}
+
+<link
+    rel="stylesheet"
+    href="{{ url_for('static', filename='css/login.css') }}"
+>
+
+{% endblock %}
+
+
+{% block content %}
+
+<section class="login-section">
+
+    <!-- =====================================================
+         BACKGROUND DECORATION
+    ====================================================== -->
+
+    <div class="login-grid"></div>
+
+    <div class="login-glow login-glow-one"></div>
+    <div class="login-glow login-glow-two"></div>
+    <div class="login-glow login-glow-three"></div>
+
+
+    <!-- Floating particles -->
+
+    <span class="login-particle particle-1"></span>
+    <span class="login-particle particle-2"></span>
+    <span class="login-particle particle-3"></span>
+    <span class="login-particle particle-4"></span>
+    <span class="login-particle particle-5"></span>
+    <span class="login-particle particle-6"></span>
+
+
+    <!-- =====================================================
+         LEFT DECORATION
+    ====================================================== -->
+
+    <div class="login-side-decoration login-left-decoration">
+
+        <div class="side-line"></div>
+
+        <div class="side-content">
+
+            <span class="side-number">01</span>
+
+            <span class="side-label">
+                TRACK
+            </span>
+
+            <p>
+                Monitor your<br>
+                daily progress.
+            </p>
+
+        </div>
+
+        <div class="side-dot"></div>
+
+    </div>
+
+
+    <!-- =====================================================
+         RIGHT DECORATION
+    ====================================================== -->
+
+    <div class="login-side-decoration login-right-decoration">
+
+        <div class="side-line"></div>
+
+        <div class="side-content">
+
+            <span class="side-number">02</span>
+
+            <span class="side-label">
+                IMPROVE
+            </span>
+
+            <p>
+                Build better<br>
+                daily habits.
+            </p>
+
+        </div>
+
+        <div class="side-dot"></div>
+
+    </div>
+
+
+    <!-- =====================================================
+         LEFT FLOATING STAT
+    ====================================================== -->
+
+    <div class="login-floating-card floating-left">
+
+        <div class="floating-icon">
+            ↗
+        </div>
+
+        <div>
+            <span class="floating-value">
+                +24%
+            </span>
+
+            <span class="floating-text">
+                Progress
+            </span>
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         RIGHT FLOATING STAT
+    ====================================================== -->
+
+    <div class="login-floating-card floating-right">
+
+        <div class="floating-icon">
+            ✓
+        </div>
+
+        <div>
+            <span class="floating-value">
+                7
+            </span>
+
+            <span class="floating-text">
+                Day Streak
+            </span>
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         LOGIN CARD
+    ====================================================== -->
+
+    <div class="login-card">
+
+
+        <!-- CARD TOP GLOW -->
+
+        <div class="card-glow"></div>
+
+
+        <!-- =================================================
+             LOGO
+        ================================================== -->
+
+        <div class="login-icon">
+
+            <span>FIT</span>
+
+        </div>
+
+
+        <!-- =================================================
+             HEADING
+        ================================================== -->
+
+        <h1>
+            Welcome <span class="hl">Back</span>
+        </h1>
+
+
+        <p class="login-subtitle">
+            Login to continue your progress.
+        </p>
+
+
+        <!-- =================================================
+             LOGIN FORM
+        ================================================== -->
+
+        <form
+            method="POST"
+            action="{{ url_for('login') }}"
+        >
+
+
+            <!-- EMAIL -->
+
+            <div class="login-form-group">
+
+                <label for="email">
+                    Email
+                </label>
+
+
+                <div class="input-wrapper">
+
+                    <span class="input-icon">
+                        ✉
+                    </span>
+
+
+                    <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        placeholder="Enter your email"
+                        autocomplete="email"
+                        required
+                    >
+
+                </div>
+
+            </div>
+
+
+            <!-- PASSWORD -->
+
+            <div class="login-form-group">
+
+                <label for="password">
+                    Password
+                </label>
+
+
+                <div class="input-wrapper">
+
+                    <span class="input-icon">
+                        🔒
+                    </span>
+
+
+                    <input
+                        type="password"
+                        id="password"
+                        name="password"
+                        placeholder="Enter your password"
+                        autocomplete="current-password"
+                        minlength="5"
+                        required
+                    >
+
+
+                    <button
+                        type="button"
+                        class="password-toggle"
+                        id="passwordToggle"
+                        aria-label="Show password"
+                    >
+                        👁
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <!-- LOGIN BUTTON -->
+
+            <button
+                type="submit"
+                class="btn-login"
+            >
+
+                <span>
+                    Login
+                </span>
+
+                <span class="login-arrow">
+                    →
+                </span>
+
+            </button>
+
+        </form>
+
+
+        <!-- =================================================
+             REGISTER
+        ================================================== -->
+
+        <p class="login-footer">
+
+            Don't have an account?
+
+            <a href="{{ url_for('register') }}">
+                Register here
+            </a>
+
+        </p>
+
+
+        <!-- CARD BOTTOM DETAIL -->
+
+        <div class="login-card-bottom">
+
+            <span></span>
+
+            <small>
+                FITLYFE • GOAL TRACKING ANALYTICS
+            </small>
+
+            <span></span>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         BOTTOM CENTER DECORATION
+    ====================================================== -->
+
+    <div class="login-bottom-decoration">
+
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+
+    </div>
+
+
+</section>
+
+
+<!-- =====================================================
+     LOGIN JAVASCRIPT
+====================================================== -->
+
+<script>
+
+document.addEventListener("DOMContentLoaded", function () {
+
+
+    /* =====================================================
+       PASSWORD SHOW / HIDE
+    ===================================================== */
+
+    const password =
+        document.getElementById("password");
+
+    const toggle =
+        document.getElementById("passwordToggle");
+
+
+    if (password && toggle) {
+
+        toggle.addEventListener(
+            "click",
+            function () {
+
+                if (password.type === "password") {
+
+                    password.type = "text";
+
+                    toggle.textContent = "🙈";
+
+                    toggle.setAttribute(
+                        "aria-label",
+                        "Hide password"
+                    );
+
+                } else {
+
+                    password.type = "password";
+
+                    toggle.textContent = "👁";
+
+                    toggle.setAttribute(
+                        "aria-label",
+                        "Show password"
+                    );
+
+                }
+
+            }
+        );
+
+    }
+
+
+    /* =====================================================
+       LOGIN CARD ENTRANCE
+    ===================================================== */
+
+    const card =
+        document.querySelector(".login-card");
+
+
+    if (card) {
+
+        setTimeout(function () {
+
+            card.classList.add(
+                "login-card-visible"
+            );
+
+        }, 100);
+
+    }
+
+
+    /* =====================================================
+       FLOATING CARDS ENTRANCE
+    ===================================================== */
+
+    const floatingCards =
+        document.querySelectorAll(
+            ".login-floating-card"
+        );
+
+
+    floatingCards.forEach(
+        function (item, index) {
+
+            setTimeout(
+                function () {
+
+                    item.classList.add(
+                        "floating-visible"
+                    );
+
+                },
+                400 + (index * 200)
+            );
+
+        }
+    );
+
+
+});
+
+</script>
+
+{% endblock %}

@@ -1,0 +1,539 @@
+{% extends "base.html" %}
+
+{% block title %}Features - FitLyfe{% endblock %}
+
+{% block extra_css %}
+
+<link rel="stylesheet"
+      href="{{ url_for('static', filename='css/features.css') }}">
+
+{% endblock %}
+
+
+{% block content %}
+
+<!-- =========================================================
+     FEATURES HERO
+========================================================= -->
+
+<section class="features-hero">
+
+    <div class="features-orb orb-one"></div>
+    <div class="features-orb orb-two"></div>
+
+    <div class="features-grid"></div>
+
+    <div class="features-hero-content">
+
+        <span class="features-badge">
+            FITLYFE PLATFORM
+        </span>
+
+        <h1>
+            Everything You Need
+            <br>
+            To <span class="hl">Build Better Habits.</span>
+        </h1>
+
+        <p>
+            FitLyfe brings fitness tracking, goal management,
+            analytics and intelligent insights together in one
+            powerful platform.
+        </p>
+
+    </div>
+
+</section>
+
+
+<!-- =========================================================
+     FEATURES INTRO
+========================================================= -->
+
+<section class="features-intro">
+
+    <span class="section-label">
+        POWERED BY YOUR DATA
+    </span>
+
+    <h2>
+        Your Routine.
+        <span class="hl">Your Data.</span>
+        Your Progress.
+    </h2>
+
+    <p>
+        FitLyfe transforms your everyday fitness activities into
+        meaningful information that helps you understand your
+        performance, improve your consistency and stay closer
+        to your goals.
+    </p>
+
+</section>
+
+
+<!-- =========================================================
+     FEATURE GRID
+========================================================= -->
+
+<section class="features-grid-section">
+
+    <!-- FEATURE 01 -->
+
+    <div class="feature-card">
+
+        <div class="feature-number">
+            01
+        </div>
+
+        <div class="feature-icon">
+            🎯
+        </div>
+
+        <h2>
+            Goal <span class="hl">Tracking</span>
+        </h2>
+
+        <p>
+            Set personalized weekly fitness goals and monitor
+            your progress throughout the week. FitLyfe helps
+            turn long-term ambitions into measurable daily actions.
+        </p>
+
+        <span class="feature-tag">
+            GOAL MANAGEMENT
+        </span>
+
+    </div>
+
+
+    <!-- FEATURE 02 -->
+
+    <div class="feature-card">
+
+        <div class="feature-number">
+            02
+        </div>
+
+        <div class="feature-icon">
+            📊
+        </div>
+
+        <h2>
+            Progress <span class="hl">Analytics</span>
+        </h2>
+
+        <p>
+            Visualize your fitness journey through charts,
+            progress indicators and performance statistics.
+            Understand where you are improving and where you need
+            to stay consistent.
+        </p>
+
+        <span class="feature-tag">
+            DATA ANALYTICS
+        </span>
+
+    </div>
+
+
+    <!-- FEATURE 03 -->
+
+    <div class="feature-card">
+
+        <div class="feature-number">
+            03
+        </div>
+
+        <div class="feature-icon">
+            🏋️
+        </div>
+
+        <h2>
+            Daily <span class="hl">Workout Tracking</span>
+        </h2>
+
+        <p>
+            Record your daily workouts and track your activity
+            over time. Your workout history becomes valuable data
+            for understanding your overall consistency.
+        </p>
+
+        <span class="feature-tag">
+            ACTIVITY TRACKING
+        </span>
+
+    </div>
+
+
+    <!-- FEATURE 04 -->
+
+    <div class="feature-card featured">
+
+        <div class="feature-number">
+            04
+        </div>
+
+        <div class="feature-icon">
+            🤖
+        </div>
+
+        <h2>
+            AI Goal <span class="hl">Prediction</span>
+        </h2>
+
+        <p>
+            FitLyfe analyzes your recorded progress and uses
+            machine learning to estimate your likelihood of
+            achieving your current fitness goals.
+        </p>
+
+        <span class="feature-tag">
+            MACHINE LEARNING
+        </span>
+
+    </div>
+
+
+    <!-- FEATURE 05 -->
+
+    <div class="feature-card">
+
+        <div class="feature-number">
+            05
+        </div>
+
+        <div class="feature-icon">
+            🥗
+        </div>
+
+        <h2>
+            AI <span class="hl">Diet Chart</span>
+        </h2>
+
+        <p>
+            Generate personalized diet suggestions based on
+            your fitness requirements and goals, helping you
+            make better nutritional decisions.
+        </p>
+
+        <span class="feature-tag">
+            SMART NUTRITION
+        </span>
+
+    </div>
+
+
+    <!-- FEATURE 06 -->
+
+    <div class="feature-card">
+
+        <div class="feature-number">
+            06
+        </div>
+
+        <div class="feature-icon">
+            💧
+        </div>
+
+        <h2>
+            Daily <span class="hl">Habits</span>
+        </h2>
+
+        <p>
+            Track important daily habits such as water intake,
+            calories, sleep and mood so you can see how your
+            lifestyle influences your fitness progress.
+        </p>
+
+        <span class="feature-tag">
+            HABIT TRACKING
+        </span>
+
+    </div>
+
+
+    <!-- FEATURE 07 -->
+
+    <div class="feature-card">
+
+        <div class="feature-number">
+            07
+        </div>
+
+        <div class="feature-icon">
+            🔥
+        </div>
+
+        <h2>
+            Consistency <span class="hl">Score</span>
+        </h2>
+
+        <p>
+            Measure how consistently you follow your planned
+            routine. Small daily actions become visible through
+            your consistency and performance data.
+        </p>
+
+        <span class="feature-tag">
+            PERFORMANCE
+        </span>
+
+    </div>
+
+
+    <!-- FEATURE 08 -->
+
+    <div class="feature-card">
+
+        <div class="feature-number">
+            08
+        </div>
+
+        <div class="feature-icon">
+            😴
+        </div>
+
+        <h2>
+            Sleep & <span class="hl">Mood</span>
+        </h2>
+
+        <p>
+            Record sleep duration and daily mood alongside
+            your fitness activities to create a broader picture
+            of your everyday routine.
+        </p>
+
+        <span class="feature-tag">
+            WELLNESS DATA
+        </span>
+
+    </div>
+
+
+    <!-- FEATURE 09 -->
+
+    <div class="feature-card">
+
+        <div class="feature-number">
+            09
+        </div>
+
+        <div class="feature-icon">
+            🧠
+        </div>
+
+        <h2>
+            Smart <span class="hl">Insights</span>
+        </h2>
+
+        <p>
+            Convert your fitness history into understandable
+            insights that help you identify patterns and make
+            better decisions about your routine.
+        </p>
+
+        <span class="feature-tag">
+            DATA-DRIVEN
+        </span>
+
+    </div>
+
+</section>
+
+
+<!-- =========================================================
+     HOW IT WORKS
+========================================================= -->
+
+<section class="how-section">
+
+    <div class="how-heading">
+
+        <span class="section-label">
+            SIMPLE PROCESS
+        </span>
+
+        <h2>
+            Your Journey.
+            <span class="hl">Simplified.</span>
+        </h2>
+
+    </div>
+
+
+    <div class="journey">
+
+        <div class="journey-line"></div>
+
+
+        <div class="journey-step">
+
+            <div class="journey-circle">
+                01
+            </div>
+
+            <h3>
+                Set
+            </h3>
+
+            <p>
+                Define your fitness goals.
+            </p>
+
+        </div>
+
+
+        <div class="journey-step">
+
+            <div class="journey-circle">
+                02
+            </div>
+
+            <h3>
+                Track
+            </h3>
+
+            <p>
+                Record your daily activities.
+            </p>
+
+        </div>
+
+
+        <div class="journey-step">
+
+            <div class="journey-circle">
+                03
+            </div>
+
+            <h3>
+                Analyze
+            </h3>
+
+            <p>
+                Understand your performance.
+            </p>
+
+        </div>
+
+
+        <div class="journey-step">
+
+            <div class="journey-circle">
+                04
+            </div>
+
+            <h3>
+                Improve
+            </h3>
+
+            <p>
+                Use insights to keep progressing.
+            </p>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =========================================================
+     FINAL CTA
+========================================================= -->
+
+<section class="features-cta">
+
+    <div class="cta-glow"></div>
+
+    <span class="section-label">
+        START TODAY
+    </span>
+
+    <h2>
+        Your Progress
+        <span class="hl">Starts Here.</span>
+    </h2>
+
+    <p>
+        Stop guessing. Start tracking.
+        Turn your everyday effort into visible progress.
+    </p>
+
+    <a href="{{ url_for('register') }}"
+       class="features-cta-btn">
+
+        Start Your Journey
+        <span>→</span>
+
+    </a>
+
+</section>
+
+
+<!-- =========================================================
+     FEATURES ANIMATION
+========================================================= -->
+
+<script>
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    const elements =
+        document.querySelectorAll(
+            ".feature-card, .journey-step, .features-intro"
+        );
+
+    if ("IntersectionObserver" in window) {
+
+        const observer =
+            new IntersectionObserver(
+                function (entries) {
+
+                    entries.forEach(function (entry) {
+
+                        if (entry.isIntersecting) {
+
+                            entry.target.classList.add(
+                                "feature-visible"
+                            );
+
+                            observer.unobserve(
+                                entry.target
+                            );
+
+                        }
+
+                    });
+
+                },
+                {
+                    threshold: 0.15
+                }
+            );
+
+        elements.forEach(function (element) {
+
+            observer.observe(element);
+
+        });
+
+    } else {
+
+        elements.forEach(function (element) {
+
+            element.classList.add(
+                "feature-visible"
+            );
+
+        });
+
+    }
+
+});
+
+</script>
+
+
+{% endblock %}

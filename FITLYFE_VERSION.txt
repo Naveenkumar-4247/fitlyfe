@@ -1,0 +1,16 @@
+FITLYFE 4.0 VERIFIED BUILD
+
+This build contains:
+- Login -> first-time Profile Setup -> Detail
+- Returning Login -> Detail
+- Case-insensitive duplicate-email protection + live email check
+- Per-user daily goals with /api/daily-goals plus legacy /api/goals compatibility
+- Per-user calendar and daily journal
+- Per-user dashboard analytics
+- Robust legacy fitness-goal normalization for AI Diet
+- Gemini AI Diet when GEMINI_API_KEY is configured
+- Local personalized AI Diet fallback when Gemini is unavailable
+
+IMPORTANT:
+Run THIS folder's app.py. Stop any older FitLyfe Flask server first.
+After starting, open http://127.0.0.1:5000 and press CTRL+F5 once.

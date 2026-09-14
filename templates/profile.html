@@ -1,0 +1,702 @@
+{% extends "base.html" %}
+
+{% block title %}My Profile - FitLyfe{% endblock %}
+
+{% block extra_css %}
+
+<link
+    rel="stylesheet"
+    href="{{ url_for('static', filename='css/profile.css') }}"
+>
+
+{% endblock %}
+
+
+{% block content %}
+
+<section class="profile-section">
+
+    <div class="profile-bg-overlay"></div>
+
+    <div class="profile-setup-card">
+
+        <div class="card-glow"></div>
+
+
+        <!-- =================================================
+             HEADER
+        ================================================== -->
+
+        <div class="profile-header">
+
+            <div class="profile-badge">
+                <span>FITLYFE</span>
+            </div>
+
+            <h1 class="profile-title">
+
+                <span class="green">
+                    Profile
+                </span>
+
+                <span class="white">
+                    Setup
+                </span>
+
+            </h1>
+
+            <p class="profile-subtitle">
+                Welcome, {{ user.name }}!
+            </p>
+
+            <p
+                id="profile-quote"
+                class="profile-quote"
+            >
+                "Your body achieves what your mind believes."
+            </p>
+
+        </div>
+
+
+        <!-- =================================================
+             PROGRESS
+        ================================================== -->
+
+        <div class="profile-progress">
+
+            <div class="progress-line">
+
+                <div id="progress-fill"></div>
+
+            </div>
+
+            <div class="progress-steps">
+
+                <span class="progress-dot active">1</span>
+
+                <span class="progress-dot">2</span>
+
+                <span class="progress-dot">3</span>
+
+                <span class="progress-dot">4</span>
+
+                <span class="progress-dot">5</span>
+
+                <span class="progress-dot">6</span>
+
+                <span class="progress-dot">7</span>
+
+                <span class="progress-dot">8</span>
+
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             PROFILE FORM
+        ================================================== -->
+
+        <form
+            id="profileForm"
+            method="POST"
+            action="{% if next_page %}{{ url_for('profile', next=next_page) }}{% else %}{{ url_for('profile') }}{% endif %}"
+        >
+
+            <!-- =================================================
+                 REDIRECT DESTINATION
+
+                 IMPORTANT:
+                 This preserves where the user should go
+                 after saving the profile.
+
+                 Examples:
+
+                 /detail
+
+                 /bmi-calculator
+            ================================================== -->
+
+            <input
+                type="hidden"
+                id="profileNext"
+                name="next"
+                value="{{ next_page or '' }}"
+            >
+
+
+            <!-- =================================================
+                 STEP 1 - NAME
+            ================================================== -->
+
+            <div class="form-step active">
+
+                <div class="step-number">
+                    01
+                </div>
+
+                <h2 class="step-heading">
+                    What's your name?
+                </h2>
+
+                <p class="step-description">
+                    Let's start by getting to know you.
+                </p>
+
+                <input
+                    type="text"
+                    id="name"
+                    name="name"
+                    value="{{ user.name if user else '' }}"
+                    placeholder="Enter your name"
+                    required
+                    autocomplete="name"
+                >
+
+                <div class="step-buttons">
+
+                    <button
+                        type="button"
+                        class="btn-next"
+                    >
+                        Next
+                        <span>→</span>
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 STEP 2 - EMAIL
+            ================================================== -->
+
+            <div class="form-step">
+
+                <div class="step-number">
+                    02
+                </div>
+
+                <h2 class="step-heading">
+                    What's your email?
+                </h2>
+
+                <p class="step-description">
+                    We'll use this to keep your FitLyfe profile connected.
+                </p>
+
+                <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    value="{{ user.email if user else '' }}"
+                    placeholder="Enter your email"
+                    required
+                    autocomplete="email"
+                >
+
+                <div class="step-buttons">
+
+                    <button
+                        type="button"
+                        class="btn-back"
+                    >
+                        ← Back
+                    </button>
+
+                    <button
+                        type="button"
+                        class="btn-next"
+                    >
+                        Next
+                        <span>→</span>
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 STEP 3 - AGE
+            ================================================== -->
+
+            <div class="form-step">
+
+                <div class="step-number">
+                    03
+                </div>
+
+                <h2 class="step-heading">
+                    How old are you?
+                </h2>
+
+                <p class="step-description">
+                    Your age helps us personalize your fitness analytics.
+                </p>
+
+                <input
+                    type="number"
+                    id="age"
+                    name="age"
+                    min="10"
+                    max="100"
+                    value="{{ user.age if user else '' }}"
+                    placeholder="Enter your age"
+                    required
+                >
+
+                <div class="step-buttons">
+
+                    <button
+                        type="button"
+                        class="btn-back"
+                    >
+                        ← Back
+                    </button>
+
+                    <button
+                        type="button"
+                        class="btn-next"
+                    >
+                        Next
+                        <span>→</span>
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 STEP 4 - GENDER
+            ================================================== -->
+
+            <div class="form-step">
+
+                <div class="step-number">
+                    04
+                </div>
+
+                <h2 class="step-heading">
+                    What's your gender?
+                </h2>
+
+                <p class="step-description">
+                    This helps FitLyfe estimate your BMR and daily calorie needs more accurately.
+                </p>
+
+
+                <select
+                    id="gender"
+                    name="gender"
+                    required
+                >
+
+                    <option
+                        value=""
+                        disabled
+                        {% if not user.gender %}
+                        selected
+                        {% endif %}
+                    >
+                        Select your gender
+                    </option>
+
+
+                    <option
+                        value="male"
+                        {% if user.gender == 'male' %}
+                        selected
+                        {% endif %}
+                    >
+                        Male
+                    </option>
+
+
+                    <option
+                        value="female"
+                        {% if user.gender == 'female' %}
+                        selected
+                        {% endif %}
+                    >
+                        Female
+                    </option>
+
+                </select>
+
+
+                <div class="step-buttons">
+
+                    <button
+                        type="button"
+                        class="btn-back"
+                    >
+                        ← Back
+                    </button>
+
+                    <button
+                        type="button"
+                        class="btn-next"
+                    >
+                        Next
+                        <span>→</span>
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 STEP 5 - HEIGHT
+            ================================================== -->
+
+            <div class="form-step">
+
+                <div class="step-number">
+                    05
+                </div>
+
+                <h2 class="step-heading">
+                    What's your height?
+                </h2>
+
+                <p class="step-description">
+                    Enter your height in centimeters.
+                </p>
+
+
+                <div class="input-with-unit">
+
+                    <input
+                        type="number"
+                        id="height"
+                        name="height"
+                        step="0.1"
+                        min="50"
+                        max="250"
+                        value="{{ user.height if user else '' }}"
+                        placeholder="Enter your height"
+                        required
+                    >
+
+                    <span>
+                        cm
+                    </span>
+
+                </div>
+
+
+                <div class="step-buttons">
+
+                    <button
+                        type="button"
+                        class="btn-back"
+                    >
+                        ← Back
+                    </button>
+
+                    <button
+                        type="button"
+                        class="btn-next"
+                    >
+                        Next
+                        <span>→</span>
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 STEP 6 - WEIGHT
+            ================================================== -->
+
+            <div class="form-step">
+
+                <div class="step-number">
+                    06
+                </div>
+
+                <h2 class="step-heading">
+                    What's your weight?
+                </h2>
+
+                <p class="step-description">
+                    This helps FitLyfe calculate your fitness metrics.
+                </p>
+
+
+                <div class="input-with-unit">
+
+                    <input
+                        type="number"
+                        id="weight"
+                        name="weight"
+                        step="0.1"
+                        min="20"
+                        max="300"
+                        value="{{ user.weight if user else '' }}"
+                        placeholder="Enter your weight"
+                        required
+                    >
+
+                    <span>
+                        kg
+                    </span>
+
+                </div>
+
+
+                <div class="step-buttons">
+
+                    <button
+                        type="button"
+                        class="btn-back"
+                    >
+                        ← Back
+                    </button>
+
+                    <button
+                        type="button"
+                        class="btn-next"
+                    >
+                        Next
+                        <span>→</span>
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 STEP 7 - ACTIVITY LEVEL
+            ================================================== -->
+
+            <div class="form-step">
+
+                <div class="step-number">
+                    07
+                </div>
+
+                <h2 class="step-heading">
+                    How active are you?
+                </h2>
+
+                <p class="step-description">
+                    Select the activity level that best describes your routine.
+                </p>
+
+
+                <select
+                    id="activity_level"
+                    name="activity_level"
+                    required
+                >
+
+                    <option
+                        value=""
+                        disabled
+                        {% if not user.activity_level %}
+                        selected
+                        {% endif %}
+                    >
+                        Select activity level
+                    </option>
+
+
+                    <option
+                        value="sedentary"
+                        {% if user.activity_level == 'sedentary' %}
+                        selected
+                        {% endif %}
+                    >
+                        Sedentary
+                    </option>
+
+
+                    <option
+                        value="light"
+                        {% if user.activity_level == 'light' %}
+                        selected
+                        {% endif %}
+                    >
+                        Lightly Active
+                    </option>
+
+
+                    <option
+                        value="moderate"
+                        {% if user.activity_level == 'moderate' %}
+                        selected
+                        {% endif %}
+                    >
+                        Moderately Active
+                    </option>
+
+
+                    <option
+                        value="active"
+                        {% if user.activity_level == 'active' %}
+                        selected
+                        {% endif %}
+                    >
+                        Active
+                    </option>
+
+
+                    <option
+                        value="very_active"
+                        {% if user.activity_level == 'very_active' %}
+                        selected
+                        {% endif %}
+                    >
+                        Very Active
+                    </option>
+
+                </select>
+
+
+                <div class="step-buttons">
+
+                    <button
+                        type="button"
+                        class="btn-back"
+                    >
+                        ← Back
+                    </button>
+
+                    <button
+                        type="button"
+                        class="btn-next"
+                    >
+                        Next
+                        <span>→</span>
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 STEP 8 - FITNESS GOAL
+            ================================================== -->
+
+            <div class="form-step">
+
+                <div class="step-number">
+                    08
+                </div>
+
+                <h2 class="step-heading">
+                    What's your fitness goal?
+                </h2>
+
+                <p class="step-description">
+                    Choose the goal you want FitLyfe to help you achieve.
+                </p>
+
+
+                <select
+                    id="goal"
+                    name="goal"
+                    required
+                >
+
+                    <option
+                        value=""
+                        disabled
+                        {% if not user.goal %}
+                        selected
+                        {% endif %}
+                    >
+                        Select your goal
+                    </option>
+
+
+                    <option
+                        value="weight_loss"
+                        {% if user.goal == 'weight_loss' %}
+                        selected
+                        {% endif %}
+                    >
+                        Lose Weight
+                    </option>
+
+
+                    <option
+                        value="maintenance"
+                        {% if user.goal == 'maintenance' %}
+                        selected
+                        {% endif %}
+                    >
+                        Maintain Weight
+                    </option>
+
+
+                    <option
+                        value="muscle_gain"
+                        {% if user.goal == 'muscle_gain' %}
+                        selected
+                        {% endif %}
+                    >
+                        Build Muscle
+                    </option>
+
+
+                    <option
+                        value="endurance"
+                        {% if user.goal == 'endurance' %}
+                        selected
+                        {% endif %}
+                    >
+                        Improve Endurance
+                    </option>
+
+                </select>
+
+
+                <div class="step-buttons">
+
+                    <button
+                        type="button"
+                        class="btn-back"
+                    >
+                        ← Back
+                    </button>
+
+
+                    <button
+                        type="submit"
+                        class="btn-profile"
+                    >
+                        Save Profile
+                        <span>✓</span>
+                    </button>
+
+                </div>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</section>
+
+{% endblock %}
+
+
+{% block extra_js %}
+
+<script
+    src="{{ url_for('static', filename='js/profile.js') }}"
+></script>
+
+{% endblock %}

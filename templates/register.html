@@ -1,0 +1,624 @@
+{% extends "base.html" %}
+
+{% block title %}Register - FitLyfe{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/register.css') }}">
+{% endblock %}
+
+{% block content %}
+
+<section class="register-page">
+
+    <!-- Animated background -->
+    <div class="register-bg">
+        <div class="register-glow register-glow-1"></div>
+        <div class="register-glow register-glow-2"></div>
+        <div class="register-glow register-glow-3"></div>
+
+        <div class="register-particle particle-1"></div>
+        <div class="register-particle particle-2"></div>
+        <div class="register-particle particle-3"></div>
+        <div class="register-particle particle-4"></div>
+        <div class="register-particle particle-5"></div>
+        <div class="register-particle particle-6"></div>
+    </div>
+
+
+    <!-- Error Toast -->
+    {% if error %}
+
+    <div
+        class="register-toast"
+        id="registerErrorToast"
+        role="alert"
+        aria-live="assertive"
+        aria-atomic="true"
+    >
+
+        <span class="register-toast-icon">!</span>
+
+        <span class="register-toast-message">
+            {{ error }}
+        </span>
+
+        <button
+            type="button"
+            class="register-toast-close"
+            onclick="closeRegisterToast()"
+            aria-label="Close error message"
+        >
+            &times;
+        </button>
+
+    </div>
+
+    {% endif %}
+
+
+    <!-- Main Register Layout -->
+    <div class="register-container">
+
+
+        <!-- LEFT SIDE -->
+        <div class="register-intro">
+
+            <div class="intro-badge">
+                <span class="intro-dot"></span>
+                FITLYFE
+            </div>
+
+            <h1>
+                Start Your
+                <span>Fitness Journey.</span>
+            </h1>
+
+            <p>
+                Create your account and start tracking your
+                goals, daily habits, workouts and progress
+                with FitLyfe.
+            </p>
+
+
+            <!-- Small feature indicators -->
+            <div class="intro-features">
+
+                <div class="intro-feature">
+                    <span class="feature-icon">✓</span>
+                    <span>Track Your Goals</span>
+                </div>
+
+                <div class="intro-feature">
+                    <span class="feature-icon">✓</span>
+                    <span>Analyze Your Progress</span>
+                </div>
+
+                <div class="intro-feature">
+                    <span class="feature-icon">✓</span>
+                    <span>Build Better Habits</span>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- RIGHT REGISTER CARD -->
+        <div class="register-card-wrapper">
+
+            <div class="register-card">
+
+                <!-- Card glow -->
+                <div class="card-glow"></div>
+
+
+                <div class="register-card-content">
+
+                    <!-- Header -->
+                    <div class="register-header">
+
+                        <div class="register-icon">
+                            <span>+</span>
+                        </div>
+
+                        <div>
+                            <h2>
+                                Create Account
+                            </h2>
+
+                            <p>
+                                Join FitLyfe today
+                            </p>
+                        </div>
+
+                    </div>
+
+
+                    <!-- Form -->
+                    <form
+                        method="POST"
+                        action="{{ url_for('register') }}"
+                        novalidate
+                        id="registerForm"
+                    >
+
+
+                        <!-- Full Name -->
+                        <div class="register-field">
+
+                            <label for="name">
+                                Full Name
+                            </label>
+
+                            <div class="input-wrapper">
+
+                                <span class="input-icon">
+                                    👤
+                                </span>
+
+                                <input
+                                    type="text"
+                                    id="name"
+                                    name="name"
+                                    placeholder="Enter your full name"
+                                    value="{{ name|default('') }}"
+                                    autocomplete="name"
+                                    required
+                                >
+
+                            </div>
+
+                            <span class="input-line"></span>
+
+                        </div>
+
+
+                        <!-- Email -->
+                        <div class="register-field">
+
+                            <label for="email">
+                                Email Address
+                            </label>
+
+                            <div class="input-wrapper">
+
+                                <span class="input-icon">
+                                    @
+                                </span>
+
+                                <input
+                                    type="email"
+                                    id="email"
+                                    name="email"
+                                    placeholder="Enter your email"
+                                    value="{{ email|default('') }}"
+                                    autocomplete="email"
+                                    required
+                                >
+
+                            </div>
+
+                            <span class="input-line"></span>
+
+                            <span id="emailAvailability" class="email-availability {% if email_exists %}exists{% endif %}" aria-live="polite">
+                                {% if email_exists %}✕ Email already registered — please login.{% endif %}
+                            </span>
+
+                        </div>
+
+
+                        <!-- Password -->
+                        <div class="register-field">
+
+                            <label for="password">
+                                Password
+                            </label>
+
+                            <div class="input-wrapper">
+
+                                <span class="input-icon">
+                                    🔒
+                                </span>
+
+                                <input
+                                    type="password"
+                                    id="password"
+                                    name="password"
+                                    placeholder="Create a password"
+                                    minlength="4"
+                                    autocomplete="new-password"
+                                    required
+                                >
+
+                                <button
+                                    type="button"
+                                    class="password-toggle"
+                                    data-target="password"
+                                    aria-label="Show password"
+                                >
+                                    👁
+                                </button>
+
+                            </div>
+
+                            <span class="input-line"></span>
+
+                        </div>
+
+
+                        <!-- Confirm Password -->
+                        <div class="register-field">
+
+                            <label for="confirm_password">
+                                Confirm Password
+                            </label>
+
+                            <div class="input-wrapper">
+
+                                <span class="input-icon">
+                                    🔐
+                                </span>
+
+                                <input
+                                    type="password"
+                                    id="confirm_password"
+                                    name="confirm_password"
+                                    placeholder="Confirm your password"
+                                    minlength="4"
+                                    autocomplete="new-password"
+                                    required
+                                >
+
+                                <button
+                                    type="button"
+                                    class="password-toggle"
+                                    data-target="confirm_password"
+                                    aria-label="Show password"
+                                >
+                                    👁
+                                </button>
+
+                            </div>
+
+                            <span class="input-line"></span>
+
+                        </div>
+
+
+                        <!-- Password Match -->
+                        <div
+                            class="password-status"
+                            id="passwordStatus"
+                        ></div>
+
+
+                        <!-- Register Button -->
+                        <button
+                            type="submit"
+                            class="register-submit"
+                            id="registerSubmit"
+                        >
+
+                            <span class="button-text">
+                                Create Account
+                            </span>
+
+                            <span class="button-arrow">
+                                →
+                            </span>
+
+                            <span class="button-shine"></span>
+
+                        </button>
+
+                    </form>
+
+
+                    <!-- Footer -->
+                    <div class="register-footer">
+
+                        <span>
+                            Already have an account?
+                        </span>
+
+                        <a href="{{ url_for('login') }}">
+                            Login here
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- Register JavaScript -->
+<script>
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    /* =====================================================
+       PASSWORD SHOW / HIDE
+    ===================================================== */
+
+    const passwordToggles =
+        document.querySelectorAll(".password-toggle");
+
+    passwordToggles.forEach(function (button) {
+
+        button.addEventListener("click", function () {
+
+            const targetId =
+                button.getAttribute("data-target");
+
+            const input =
+                document.getElementById(targetId);
+
+            if (!input) {
+                return;
+            }
+
+            if (input.type === "password") {
+
+                input.type = "text";
+
+                button.textContent = "🙈";
+
+                button.setAttribute(
+                    "aria-label",
+                    "Hide password"
+                );
+
+            } else {
+
+                input.type = "password";
+
+                button.textContent = "👁";
+
+                button.setAttribute(
+                    "aria-label",
+                    "Show password"
+                );
+
+            }
+
+        });
+
+    });
+
+
+    /* =====================================================
+       PASSWORD MATCH
+    ===================================================== */
+
+    const password =
+        document.getElementById("password");
+
+    const confirmPassword =
+        document.getElementById("confirm_password");
+
+    const passwordStatus =
+        document.getElementById("passwordStatus");
+
+
+    function checkPasswordMatch() {
+
+        if (
+            !password ||
+            !confirmPassword ||
+            !passwordStatus
+        ) {
+            return;
+        }
+
+        if (!confirmPassword.value) {
+
+            passwordStatus.textContent = "";
+
+            passwordStatus.className =
+                "password-status";
+
+            return;
+
+        }
+
+
+        if (
+            password.value ===
+            confirmPassword.value
+        ) {
+
+            passwordStatus.textContent =
+                "✓ Passwords match";
+
+            passwordStatus.className =
+                "password-status password-match";
+
+        } else {
+
+            passwordStatus.textContent =
+                "✕ Passwords do not match";
+
+            passwordStatus.className =
+                "password-status password-no-match";
+
+        }
+
+    }
+
+
+    if (password) {
+        password.addEventListener(
+            "input",
+            checkPasswordMatch
+        );
+    }
+
+
+    if (confirmPassword) {
+        confirmPassword.addEventListener(
+            "input",
+            checkPasswordMatch
+        );
+    }
+
+
+    /* =====================================================
+       FORM SUBMISSION
+    ===================================================== */
+
+    const registerForm =
+        document.getElementById("registerForm");
+
+    const registerSubmit =
+        document.getElementById("registerSubmit");
+
+
+    if (registerForm) {
+
+        registerForm.addEventListener(
+            "submit",
+            function (event) {
+
+                if (
+                    password &&
+                    confirmPassword &&
+                    password.value !==
+                    confirmPassword.value
+                ) {
+
+                    event.preventDefault();
+
+                    passwordStatus.textContent =
+                        "✕ Passwords do not match";
+
+                    passwordStatus.className =
+                        "password-status password-no-match";
+
+                    confirmPassword.focus();
+
+                    return;
+
+                }
+
+
+                if (registerSubmit) {
+
+                    registerSubmit.classList.add(
+                        "register-loading"
+                    );
+
+                    registerSubmit.querySelector(
+                        ".button-text"
+                    ).textContent =
+                        "Creating Account...";
+
+                }
+
+            }
+        );
+
+    }
+
+});
+
+
+/* =====================================================
+   ERROR TOAST
+===================================================== */
+
+function closeRegisterToast() {
+
+    const toast =
+        document.getElementById(
+            "registerErrorToast"
+        );
+
+    if (!toast) {
+        return;
+    }
+
+    toast.classList.add("toast-hide");
+
+    setTimeout(function () {
+
+        if (toast.parentElement) {
+            toast.remove();
+        }
+
+    }, 350);
+
+}
+
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+
+        const toast =
+            document.getElementById(
+                "registerErrorToast"
+            );
+
+        if (!toast) {
+            return;
+        }
+
+        setTimeout(function () {
+
+            closeRegisterToast();
+
+        }, 5000);
+
+    }
+);
+
+
+
+/* REAL-TIME EMAIL CHECK */
+const emailInput = document.getElementById("email");
+const emailAvailability = document.getElementById("emailAvailability");
+let emailCheckTimer = null;
+
+if (emailInput && emailAvailability) {
+    emailInput.addEventListener("input", function () {
+        clearTimeout(emailCheckTimer);
+        emailAvailability.textContent = "";
+        emailAvailability.className = "email-availability";
+
+        const email = emailInput.value.trim();
+        if (!email) return;
+
+        emailCheckTimer = setTimeout(async function () {
+            try {
+                const response = await fetch(
+                    `/api/check-email?email=${encodeURIComponent(email)}`,
+                    { headers: { "Accept": "application/json" } }
+                );
+                const data = await response.json();
+
+                if (!data.valid) return;
+
+                if (data.exists) {
+                    emailAvailability.textContent = "✕ Email already registered — please login.";
+                    emailAvailability.classList.add("exists");
+                } else {
+                    emailAvailability.textContent = "✓ Email is available.";
+                    emailAvailability.classList.add("available");
+                }
+            } catch (error) {
+                console.debug("Email check failed", error);
+            }
+        }, 350);
+    });
+}
+
+</script>
+
+{% endblock %}

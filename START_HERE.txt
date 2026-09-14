@@ -1,0 +1,16 @@
+FITLYFE 4.0 - START HERE
+
+1. Extract this ZIP to a NEW folder.
+2. Open the NEW FITLYFE folder in VS Code.
+3. Open Terminal.
+4. Run:
+   python -m venv .venv
+   .venv\Scripts\activate
+   pip install -r requirements.txt
+5. Create .env from .env.example and add GEMINI_API_KEY if you want Gemini generation.
+6. Run:
+   python app.py
+7. Open:
+   http://127.0.0.1:5000
+8. If an old FitLyfe server is running, press CTRL+C in that old terminal first.
+9. If the browser appears stale, press CTRL+F5.

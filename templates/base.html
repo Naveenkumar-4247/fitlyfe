@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#050705">
+    <meta name="description" content="FitLyfe - Fitness Goal Tracking and Analytics">
+
+    <title>{% block title %}FitLyfe{% endblock %}</title>
+
+    <!-- GOOGLE FONTS -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=Sora:wght@500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- BOOTSTRAP -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- GLOBAL CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+    <!-- FITLYFE PREMIUM MOTION SYSTEM -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/premium.css') }}">
+
+    <!-- PAGE-SPECIFIC CSS -->
+    {% block extra_css %}{% endblock %}
+</head>
+
+<body class="fitlyfe-shell">
+    <div class="page-progress" id="pageProgress"></div>
+    <div class="ambient-layer" aria-hidden="true">
+        <span class="ambient-orb ambient-orb-one"></span>
+        <span class="ambient-orb ambient-orb-two"></span>
+        <span class="ambient-orb ambient-orb-three"></span>
+        <span class="ambient-noise"></span>
+    </div>
+
+    <!-- NAVBAR -->
+    <nav class="navbar navbar-expand-lg shadow-sm" id="mainNavbar">
+        <div class="container-fluid px-3">
+            <!-- BRAND -->
+            <a class="navbar-brand d-flex align-items-center no-click" href="{{ url_for('home') }}" aria-label="FitLyfe Home">
+                <img src="{{ url_for('static', filename='images/caplogo.jpeg') }}" alt="FitLyfe Logo" class="logo">
+                <h1 class="ms-2 mb-0"><span class="fit-text">FIT</span><span class="lyfe-text">LYFE</span></h1>
+            </a>
+
+            <!-- MOBILE MENU -->
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <!-- NAVIGATION -->
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.endpoint == 'home' %}active{% endif %}" href="{{ url_for('home') }}">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.endpoint == 'about' %}active{% endif %}" href="{{ url_for('about') }}">About</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.endpoint == 'features' %}active{% endif %}" href="{{ url_for('features') }}">Features</a>
+                    </li>
+                    {% if session.user_id %}
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.endpoint == 'dashboard' %}active{% endif %}" href="{{ url_for('dashboard') }}">Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.endpoint == 'profile' %}active{% endif %}" href="{{ url_for('profile') }}">Profile</a>
+                    </li>
+                    {% endif %}
+                </ul>
+
+                <!-- AUTH BUTTONS -->
+                <div class="ms-lg-3 mt-3 mt-lg-0">
+                    {% if session.user_id %}
+                        <a href="{{ url_for('logout') }}" class="btn btn-outline-danger">Logout</a>
+                    {% else %}
+                        <a href="{{ url_for('login') }}" class="btn btn-outline-success me-2">Login</a>
+                        <a href="{{ url_for('register') }}" class="btn btn-success">Register</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- FLASH MESSAGES / TOASTS -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="toast-container" id="flashToastContainer">
+          {% for category, message in messages %}
+            <div class="toast toast-{{ category }}" role="alert" aria-live="assertive" aria-atomic="true">
+              <span class="toast-message">{{ message }}</span>
+              <button type="button" class="toast-close" onclick="closeToast(this)" aria-label="Close">&times;</button>
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <!-- MAIN CONTENT -->
+    <main id="mainContent">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- SCROLL TO TOP -->
+    <button id="scrollTopBtn" class="scroll-top-btn" aria-label="Scroll to top" title="Back to top" type="button">
+        <span class="scroll-top-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                 stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <line x1="12" y1="19" x2="12" y2="5"></line>
+                <polyline points="5 12 12 5 19 12"></polyline>
+            </svg>
+        </span>
+    </button>
+
+    <!-- BOOTSTRAP JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- GLOBAL JS -->
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/premium.js') }}"></script>
+
+    <!-- PAGE-SPECIFIC JS -->
+    {% block extra_js %}{% endblock %}
+
+    <!-- TOAST SCRIPT -->
+    <script>
+        function closeToast(button) {
+            const toast = button.closest(".toast");
+            if (!toast) return;
+            toast.style.opacity = "0";
+            toast.style.transform = "translateX(50px)";
+            setTimeout(function () { toast.remove(); }, 300);
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            const toasts = document.querySelectorAll("#flashToastContainer .toast");
+            toasts.forEach(function (toast) {
+                setTimeout(function () {
+                    if (!toast.parentElement) return;
+                    toast.style.opacity = "0";
+                    toast.style.transform = "translateX(50px)";
+                    setTimeout(function () {
+                        if (toast.parentElement) toast.remove();
+                    }, 300);
+                }, 4000);
+            });
+        });
+    </script>
+</body>
+</html>

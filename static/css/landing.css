@@ -1,0 +1,1315 @@
+/* =========================================================
+   FITLYFE LANDING PAGE
+   landing.css
+
+   IMPORTANT:
+   Every class starts with "landing-"
+   so this CSS will NOT affect other pages.
+========================================================= */
+
+
+/* =========================================================
+   1. LANDING ROOT
+========================================================= */
+
+.landing-page {
+    --landing-bg: #01230c;
+    --landing-black: #050805;
+    --landing-dark: #071108;
+    --landing-card: #0b1710;
+    --landing-accent: #63e6a3;
+    --landing-white: #ffffff;
+    --landing-muted: #a8b5ad;
+
+    width: 100%;
+    overflow: hidden;
+
+    background:
+        radial-gradient(
+            circle at 20% 10%,
+            rgba(99, 230, 163, 0.08),
+            transparent 35%
+        ),
+        var(--landing-bg);
+
+    color: var(--landing-white);
+}
+
+
+/* =========================================================
+   2. HERO SLIDER
+========================================================= */
+
+.landing-slider {
+    position: relative;
+
+    width: 100%;
+    height: calc(100vh - 89px);
+
+    min-height: 650px;
+
+    overflow: hidden;
+
+    background: #020502;
+}
+
+
+/* =========================================================
+   3. SLIDES
+========================================================= */
+
+.landing-slide {
+    position: absolute;
+
+    inset: 0;
+
+    width: 100%;
+    height: 100%;
+
+    opacity: 0;
+    visibility: hidden;
+
+    transform: scale(1.06);
+
+    transition:
+        opacity 1s ease,
+        visibility 1s ease,
+        transform 7s ease;
+}
+
+
+.landing-slide-active {
+    opacity: 1;
+    visibility: visible;
+
+    transform: scale(1);
+}
+
+
+/* =========================================================
+   4. SLIDE IMAGE
+========================================================= */
+
+.landing-slide-image {
+    position: absolute;
+
+    inset: 0;
+
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+    object-position: center;
+
+    display: block;
+}
+
+
+/* =========================================================
+   5. SLIDE OVERLAY
+========================================================= */
+
+.landing-slide-overlay {
+    position: absolute;
+
+    inset: 0;
+
+    background:
+        linear-gradient(
+            90deg,
+            rgba(0, 0, 0, 0.88) 0%,
+            rgba(0, 0, 0, 0.72) 38%,
+            rgba(0, 0, 0, 0.25) 75%,
+            rgba(0, 0, 0, 0.45) 100%
+        );
+
+    z-index: 2;
+}
+
+
+.landing-slide-overlay::after {
+    content: "";
+
+    position: absolute;
+
+    inset: 0;
+
+    background:
+        linear-gradient(
+            0deg,
+            rgba(1, 35, 12, 0.65),
+            transparent 35%
+        );
+}
+
+
+/* =========================================================
+   6. SLIDE CONTENT
+========================================================= */
+
+.landing-slide-content {
+    position: absolute;
+
+    z-index: 5;
+
+    left: 8%;
+
+    top: 50%;
+
+    width: min(700px, 80%);
+
+    transform:
+        translateY(-50%)
+        translateX(-40px);
+
+    opacity: 0;
+
+    transition:
+        opacity 1s ease 0.3s,
+        transform 1s ease 0.3s;
+}
+
+
+.landing-slide-active
+.landing-slide-content {
+    opacity: 1;
+
+    transform:
+        translateY(-50%)
+        translateX(0);
+}
+
+
+/* =========================================================
+   7. EYEBROW
+========================================================= */
+
+.landing-eyebrow {
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    margin-bottom: 22px;
+
+    color: var(--landing-accent);
+
+    font-size: 14px;
+
+    font-weight: 700;
+
+    letter-spacing: 3px;
+
+    text-transform: uppercase;
+}
+
+
+.landing-eyebrow::before {
+    content: "";
+
+    width: 35px;
+    height: 2px;
+
+    background: var(--landing-accent);
+
+    box-shadow:
+        0 0 12px
+        rgba(99, 230, 163, 0.8);
+}
+
+
+/* =========================================================
+   8. HERO TITLE
+========================================================= */
+
+.landing-slide-content h1 {
+    margin: 0 0 25px;
+
+    font-family: "Sora", "Poppins", sans-serif;
+
+    font-size: clamp(
+        3rem,
+        6vw,
+        6rem
+    );
+
+    font-weight: 800;
+
+    line-height: 1.02;
+
+    letter-spacing: -3px;
+
+    color: #ffffff;
+}
+
+
+.landing-slide-content h1 span {
+    display: block;
+
+    color: var(--landing-accent);
+
+    text-shadow:
+        0 0 25px
+        rgba(99, 230, 163, 0.18);
+}
+
+
+/* =========================================================
+   9. HERO DESCRIPTION
+========================================================= */
+
+.landing-slide-content p {
+    max-width: 600px;
+
+    margin: 0 0 35px;
+
+    color: rgba(255, 255, 255, 0.78);
+
+    font-size: 18px;
+
+    line-height: 1.8;
+
+    font-weight: 400;
+}
+
+
+/* =========================================================
+   10. HERO BUTTONS
+========================================================= */
+
+.landing-actions {
+    display: flex;
+
+    align-items: center;
+
+    gap: 16px;
+
+    flex-wrap: wrap;
+}
+
+
+.landing-primary-btn,
+.landing-secondary-btn {
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    min-height: 54px;
+
+    padding: 0 26px;
+
+    border-radius: 50px;
+
+    text-decoration: none;
+
+    font-size: 15px;
+
+    font-weight: 700;
+
+    letter-spacing: 0.4px;
+
+    transition:
+        transform 0.3s ease,
+        background 0.3s ease,
+        box-shadow 0.3s ease,
+        border-color 0.3s ease;
+}
+
+
+.landing-primary-btn {
+    gap: 14px;
+
+    background: var(--landing-accent);
+
+    color: #06150c;
+
+    box-shadow:
+        0 10px 35px
+        rgba(99, 230, 163, 0.25);
+}
+
+
+.landing-primary-btn span {
+    font-size: 21px;
+
+    transition:
+        transform 0.3s ease;
+}
+
+
+.landing-primary-btn:hover {
+    color: #06150c;
+
+    transform: translateY(-4px);
+
+    box-shadow:
+        0 15px 40px
+        rgba(99, 230, 163, 0.4);
+}
+
+
+.landing-primary-btn:hover span {
+    transform: translateX(5px);
+}
+
+
+.landing-secondary-btn {
+    border: 1px solid
+        rgba(255, 255, 255, 0.35);
+
+    background:
+        rgba(255, 255, 255, 0.06);
+
+    color: #ffffff;
+
+    backdrop-filter: blur(10px);
+}
+
+
+.landing-secondary-btn:hover {
+    color: var(--landing-accent);
+
+    border-color: var(--landing-accent);
+
+    transform: translateY(-4px);
+
+    background:
+        rgba(99, 230, 163, 0.08);
+}
+
+
+/* =========================================================
+   11. SLIDER BUTTONS
+========================================================= */
+
+.landing-slider-btn {
+    position: absolute;
+
+    z-index: 20;
+
+    top: 50%;
+
+    width: 58px;
+    height: 58px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border: 1px solid
+        rgba(255, 255, 255, 0.25);
+
+    border-radius: 50%;
+
+    background:
+        rgba(0, 0, 0, 0.35);
+
+    color: #ffffff;
+
+    font-size: 35px;
+
+    line-height: 1;
+
+    cursor: pointer;
+
+    backdrop-filter: blur(10px);
+
+    transform: translateY(-50%);
+
+    transition:
+        background 0.3s ease,
+        border-color 0.3s ease,
+        color 0.3s ease,
+        transform 0.3s ease,
+        box-shadow 0.3s ease;
+}
+
+
+.landing-prev {
+    left: 30px;
+}
+
+
+.landing-next {
+    right: 30px;
+}
+
+
+.landing-slider-btn:hover {
+    background: var(--landing-accent);
+
+    border-color: var(--landing-accent);
+
+    color: #06150c;
+
+    transform:
+        translateY(-50%)
+        scale(1.08);
+
+    box-shadow:
+        0 0 30px
+        rgba(99, 230, 163, 0.35);
+}
+
+
+/* =========================================================
+   12. SLIDER INDICATORS
+========================================================= */
+
+.landing-slider-indicators {
+    position: absolute;
+
+    z-index: 20;
+
+    bottom: 45px;
+
+    left: 50%;
+
+    display: flex;
+
+    gap: 9px;
+
+    transform: translateX(-50%);
+}
+
+
+.landing-indicator {
+    width: 28px;
+    height: 3px;
+
+    border-radius: 10px;
+
+    background:
+        rgba(255, 255, 255, 0.35);
+
+    transition:
+        width 0.4s ease,
+        background 0.4s ease;
+}
+
+
+.landing-indicator.active {
+    width: 55px;
+
+    background: var(--landing-accent);
+
+    box-shadow:
+        0 0 10px
+        rgba(99, 230, 163, 0.5);
+}
+
+
+/* =========================================================
+   13. SCROLL INDICATOR
+========================================================= */
+
+.landing-scroll-indicator {
+    position: absolute;
+
+    z-index: 20;
+
+    right: 40px;
+
+    bottom: 38px;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+    color: rgba(255, 255, 255, 0.55);
+}
+
+
+.landing-scroll-indicator span {
+    display: block;
+
+    width: 35px;
+    height: 1px;
+
+    background:
+        rgba(255, 255, 255, 0.4);
+}
+
+
+.landing-scroll-indicator small {
+    font-size: 9px;
+
+    letter-spacing: 2px;
+}
+
+
+/* =========================================================
+   14. INTRO
+========================================================= */
+
+.landing-intro {
+    position: relative;
+
+    padding: 150px 8%;
+
+    background:
+        radial-gradient(
+            circle at 50% 0%,
+            rgba(99, 230, 163, 0.08),
+            transparent 45%
+        ),
+        var(--landing-bg);
+}
+
+
+.landing-intro-inner {
+    max-width: 900px;
+
+    margin: auto;
+
+    text-align: center;
+}
+
+
+/* =========================================================
+   15. SECTION LABEL
+========================================================= */
+
+.landing-section-label {
+    display: inline-block;
+
+    margin-bottom: 20px;
+
+    color: var(--landing-accent);
+
+    font-size: 12px;
+
+    font-weight: 700;
+
+    letter-spacing: 3px;
+}
+
+
+/* =========================================================
+   16. INTRO TITLE
+========================================================= */
+
+.landing-intro h2 {
+    margin: 0 0 25px;
+
+    font-family: "Sora", sans-serif;
+
+    font-size: clamp(
+        2.2rem,
+        5vw,
+        4.5rem
+    );
+
+    line-height: 1.15;
+
+    letter-spacing: -2px;
+}
+
+
+.landing-intro h2 span {
+    color: var(--landing-accent);
+}
+
+
+.landing-intro p {
+    max-width: 650px;
+
+    margin: auto;
+
+    color: var(--landing-muted);
+
+    font-size: 18px;
+
+    line-height: 1.8;
+}
+
+
+/* =========================================================
+   17. FEATURES SECTION
+========================================================= */
+
+.landing-features {
+    padding: 120px 8% 150px;
+
+    background:
+        linear-gradient(
+            180deg,
+            var(--landing-bg),
+            #020702
+        );
+}
+
+
+/* =========================================================
+   18. SECTION HEADING
+========================================================= */
+
+.landing-section-heading {
+    max-width: 850px;
+
+    margin: 0 auto 100px;
+
+    text-align: center;
+}
+
+
+.landing-section-heading h2 {
+    margin: 0 0 20px;
+
+    font-family: "Sora", sans-serif;
+
+    font-size: clamp(
+        2.3rem,
+        5vw,
+        4.5rem
+    );
+
+    line-height: 1.15;
+
+    letter-spacing: -2px;
+}
+
+
+.landing-section-heading h2 span {
+    color: var(--landing-accent);
+}
+
+
+.landing-section-heading p {
+    color: var(--landing-muted);
+
+    font-size: 17px;
+
+    line-height: 1.7;
+}
+
+
+/* =========================================================
+   19. FEATURE ROW
+========================================================= */
+
+.landing-feature-row {
+    max-width: 1250px;
+
+    margin: 0 auto 150px;
+
+    display: grid;
+
+    grid-template-columns:
+        minmax(0, 1.1fr)
+        minmax(0, 0.9fr);
+
+    align-items: center;
+
+    gap: 90px;
+}
+
+
+.landing-feature-reverse {
+    grid-template-columns:
+        minmax(0, 0.9fr)
+        minmax(0, 1.1fr);
+}
+
+
+.landing-feature-reverse
+.landing-feature-image {
+    order: 2;
+}
+
+
+.landing-feature-reverse
+.landing-feature-content {
+    order: 1;
+}
+
+
+/* =========================================================
+   20. FEATURE IMAGE
+========================================================= */
+
+.landing-feature-image {
+    position: relative;
+
+    overflow: hidden;
+
+    border-radius: 28px;
+
+    border: 1px solid
+        rgba(99, 230, 163, 0.15);
+
+    background: #071108;
+
+    box-shadow:
+        0 30px 80px
+        rgba(0, 0, 0, 0.35);
+}
+
+
+.landing-feature-image::after {
+    content: "";
+
+    position: absolute;
+
+    inset: 0;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(99, 230, 163, 0.08),
+            transparent 50%
+        );
+
+    pointer-events: none;
+}
+
+
+.landing-feature-image img {
+    display: block;
+
+    width: 100%;
+
+    aspect-ratio: 16 / 10;
+
+    object-fit: cover;
+
+    transition:
+        transform 0.8s ease;
+}
+
+
+.landing-feature-image:hover img {
+    transform: scale(1.06);
+}
+
+
+/* =========================================================
+   21. FEATURE NUMBER
+========================================================= */
+
+.landing-image-number {
+    position: absolute;
+
+    z-index: 3;
+
+    top: 20px;
+
+    left: 20px;
+
+    padding: 8px 13px;
+
+    border: 1px solid
+        rgba(99, 230, 163, 0.35);
+
+    border-radius: 30px;
+
+    background:
+        rgba(0, 0, 0, 0.55);
+
+    color: var(--landing-accent);
+
+    font-size: 12px;
+
+    font-weight: 700;
+
+    backdrop-filter: blur(10px);
+}
+
+
+/* =========================================================
+   22. FEATURE CONTENT
+========================================================= */
+
+.landing-feature-content {
+    max-width: 500px;
+}
+
+
+.landing-feature-number {
+    display: block;
+
+    margin-bottom: 20px;
+
+    color: var(--landing-accent);
+
+    font-size: 12px;
+
+    font-weight: 700;
+
+    letter-spacing: 3px;
+}
+
+
+.landing-feature-content h3 {
+    margin: 0 0 25px;
+
+    font-family: "Sora", sans-serif;
+
+    font-size: clamp(
+        2rem,
+        4vw,
+        3.6rem
+    );
+
+    line-height: 1.15;
+
+    letter-spacing: -1.5px;
+}
+
+
+.landing-feature-content h3 span {
+    color: var(--landing-accent);
+}
+
+
+.landing-feature-content p {
+    margin: 0;
+
+    color: var(--landing-muted);
+
+    font-size: 17px;
+
+    line-height: 1.9;
+}
+
+
+.landing-feature-line {
+    width: 70px;
+
+    height: 2px;
+
+    margin-top: 35px;
+
+    background: var(--landing-accent);
+
+    box-shadow:
+        0 0 15px
+        rgba(99, 230, 163, 0.5);
+}
+
+
+/* =========================================================
+   23. FINAL CTA
+========================================================= */
+
+.landing-final {
+    position: relative;
+
+    overflow: hidden;
+
+    padding: 160px 8%;
+
+    text-align: center;
+
+    background:
+        #020702;
+}
+
+
+.landing-final-glow {
+    position: absolute;
+
+    width: 500px;
+    height: 500px;
+
+    top: 50%;
+    left: 50%;
+
+    border-radius: 50%;
+
+    background:
+        rgba(99, 230, 163, 0.08);
+
+    filter: blur(100px);
+
+    transform:
+        translate(-50%, -50%);
+}
+
+
+.landing-final-content {
+    position: relative;
+
+    z-index: 2;
+
+    max-width: 900px;
+
+    margin: auto;
+}
+
+
+.landing-final h2 {
+    margin: 0 0 20px;
+
+    font-family: "Sora", sans-serif;
+
+    font-size: clamp(
+        3rem,
+        7vw,
+        6.5rem
+    );
+
+    line-height: 1;
+
+    letter-spacing: -4px;
+}
+
+
+.landing-final h2 span {
+    color: var(--landing-accent);
+
+    text-shadow:
+        0 0 30px
+        rgba(99, 230, 163, 0.2);
+}
+
+
+.landing-final p {
+    margin: 0 0 40px;
+
+    color: var(--landing-muted);
+
+    font-size: 18px;
+}
+
+
+.landing-final-btn {
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 15px;
+
+    min-height: 58px;
+
+    padding: 0 32px;
+
+    border-radius: 50px;
+
+    background: var(--landing-accent);
+
+    color: #06150c;
+
+    text-decoration: none;
+
+    font-weight: 800;
+
+    letter-spacing: 0.5px;
+
+    box-shadow:
+        0 15px 45px
+        rgba(99, 230, 163, 0.25);
+
+    transition:
+        transform 0.3s ease,
+        box-shadow 0.3s ease;
+}
+
+
+.landing-final-btn span {
+    font-size: 22px;
+
+    transition:
+        transform 0.3s ease;
+}
+
+
+.landing-final-btn:hover {
+    color: #06150c;
+
+    transform: translateY(-5px);
+
+    box-shadow:
+        0 20px 55px
+        rgba(99, 230, 163, 0.4);
+}
+
+
+.landing-final-btn:hover span {
+    transform: translateX(5px);
+}
+
+
+/* =========================================================
+   24. FOOTER
+========================================================= */
+
+.landing-footer {
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    padding: 30px 8%;
+
+    border-top: 1px solid
+        rgba(255, 255, 255, 0.08);
+
+    background: #030603;
+}
+
+
+.landing-footer div {
+    font-family: "Sora", sans-serif;
+
+    font-size: 24px;
+
+    font-weight: 800;
+
+    letter-spacing: 2px;
+}
+
+
+.landing-footer-fit {
+    color: var(--landing-accent);
+}
+
+
+.landing-footer p {
+    margin: 0;
+
+    color: #657169;
+
+    font-size: 12px;
+
+    letter-spacing: 1px;
+}
+
+
+/* =========================================================
+   25. SCROLL REVEAL
+========================================================= */
+
+.landing-reveal {
+    opacity: 0;
+
+    transform: translateY(50px);
+
+    transition:
+        opacity 0.9s ease,
+        transform 0.9s ease;
+}
+
+
+.landing-reveal-visible {
+    opacity: 1;
+
+    transform: translateY(0);
+}
+
+
+/* =========================================================
+   26. RESPONSIVE TABLET
+========================================================= */
+
+@media (max-width: 991px) {
+
+    .landing-slider {
+        height: calc(100vh - 80px);
+
+        min-height: 600px;
+    }
+
+
+    .landing-slide-content {
+        left: 7%;
+
+        width: 75%;
+    }
+
+
+    .landing-slide-content h1 {
+        font-size: clamp(
+            2.8rem,
+            7vw,
+            5rem
+        );
+    }
+
+
+    .landing-feature-row,
+    .landing-feature-reverse {
+        grid-template-columns: 1fr;
+
+        gap: 45px;
+
+        margin-bottom: 100px;
+    }
+
+
+    .landing-feature-reverse
+    .landing-feature-image {
+        order: 1;
+    }
+
+
+    .landing-feature-reverse
+    .landing-feature-content {
+        order: 2;
+    }
+
+
+    .landing-feature-content {
+        max-width: 700px;
+    }
+
+
+    .landing-scroll-indicator {
+        display: none;
+    }
+
+}
+
+
+/* =========================================================
+   27. MOBILE
+========================================================= */
+
+@media (max-width: 600px) {
+
+    .landing-slider {
+        height: calc(100vh - 70px);
+
+        min-height: 620px;
+    }
+
+
+    .landing-slide-image {
+        object-position: center;
+    }
+
+
+    .landing-slide-overlay {
+        background:
+            linear-gradient(
+                90deg,
+                rgba(0, 0, 0, 0.85),
+                rgba(0, 0, 0, 0.58)
+            );
+    }
+
+
+    .landing-slide-content {
+        left: 25px;
+
+        width: calc(100% - 50px);
+    }
+
+
+    .landing-slide-content h1 {
+        font-size: 2.7rem;
+
+        letter-spacing: -2px;
+    }
+
+
+    .landing-slide-content p {
+        font-size: 15px;
+
+        line-height: 1.7;
+    }
+
+
+    .landing-primary-btn,
+    .landing-secondary-btn {
+        width: 100%;
+    }
+
+
+    .landing-slider-btn {
+        width: 45px;
+        height: 45px;
+
+        font-size: 28px;
+    }
+
+
+    .landing-prev {
+        left: 12px;
+    }
+
+
+    .landing-next {
+        right: 12px;
+    }
+
+
+    .landing-slider-indicators {
+        bottom: 25px;
+    }
+
+
+    .landing-intro {
+        padding: 100px 25px;
+    }
+
+
+    .landing-features {
+        padding: 90px 25px;
+    }
+
+
+    .landing-section-heading {
+        margin-bottom: 70px;
+    }
+
+
+    .landing-feature-row,
+    .landing-feature-reverse {
+        margin-bottom: 90px;
+    }
+
+
+    .landing-feature-content h3 {
+        font-size: 2.2rem;
+    }
+
+
+    .landing-final {
+        padding: 110px 25px;
+    }
+
+
+    .landing-final h2 {
+        font-size: 3rem;
+
+        letter-spacing: -2px;
+    }
+
+
+    .landing-footer {
+        flex-direction: column;
+
+        gap: 10px;
+
+        text-align: center;
+    }
+
+}
+
+
+/* =========================================================
+   28. REDUCED MOTION
+========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .landing-page *,
+    .landing-page *::before,
+    .landing-page *::after {
+        animation-duration: 0.01ms !important;
+
+        animation-iteration-count: 1 !important;
+
+        scroll-behavior: auto !important;
+
+        transition-duration: 0.01ms !important;
+    }
+
+}

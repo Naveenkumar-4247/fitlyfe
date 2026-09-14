@@ -1,0 +1,893 @@
+{% extends "base.html" %}
+
+{% block title %}BMI Calculator - FitLyfe{% endblock %}
+
+
+{% block extra_css %}
+
+<link rel="stylesheet"
+      href="{{ url_for('static', filename='css/bmi_calculator.css') }}">
+
+{% endblock %}
+
+
+{% block content %}
+
+<section class="bmi-page">
+
+    <!-- =====================================================
+         ANIMATED BACKGROUND
+    ====================================================== -->
+
+    <div class="bmi-background">
+
+        <div class="bg-orb orb-one"></div>
+        <div class="bg-orb orb-two"></div>
+        <div class="bg-orb orb-three"></div>
+
+        <div class="grid-background"></div>
+
+    </div>
+
+
+    <!-- =====================================================
+         MAIN CONTAINER
+    ====================================================== -->
+
+    <div class="bmi-container">
+
+
+        <!-- =================================================
+             TOP LABEL
+        ================================================== -->
+
+        <div class="bmi-eyebrow">
+
+            <span class="eyebrow-dot"></span>
+
+            FITLYFE HEALTH ANALYTICS
+
+        </div>
+
+
+        <!-- =================================================
+             TITLE
+        ================================================== -->
+
+        <div class="bmi-heading">
+
+            <h1>
+                Know Your
+                <span>BMI.</span>
+            </h1>
+
+            <p>
+                Understand your body weight status and estimated
+                daily calorie needs using the information already
+                saved in your FitLyfe profile.
+            </p>
+
+        </div>
+
+
+        <!-- =================================================
+             PROFILE DETAILS CARD
+        ================================================== -->
+
+        <div class="details-card">
+
+
+            <!-- CARD TOP -->
+
+            <div class="card-top">
+
+                <div>
+
+                    <span class="card-label">
+                        YOUR PROFILE
+                    </span>
+
+                    <h2>
+                        Your Saved Details
+                    </h2>
+
+                </div>
+
+
+                <!-- PROFILE INITIAL -->
+
+                <div class="profile-icon">
+
+                    {% if user.name %}
+                        {{ user.name[0]|upper }}
+                    {% else %}
+                        U
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 DETAILS GRID
+            ================================================== -->
+
+            <div class="details-grid">
+
+
+                <!-- AGE -->
+
+                <div class="detail-item">
+
+                    <div class="detail-icon">
+                        <span>◷</span>
+                    </div>
+
+                    <div class="detail-text">
+
+                        <span class="detail-name">
+                            Age
+                        </span>
+
+                        <strong>
+
+                            {% if user.age %}
+                                {{ user.age }} years
+                            {% else %}
+                                Not provided
+                            {% endif %}
+
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <!-- GENDER -->
+
+                <div class="detail-item">
+
+                    <div class="detail-icon">
+                        <span>⚥</span>
+                    </div>
+
+                    <div class="detail-text">
+
+                        <span class="detail-name">
+                            Gender
+                        </span>
+
+                        <strong>
+
+                            {% if user.gender %}
+
+                                {{ user.gender|title }}
+
+                            {% else %}
+
+                                Not provided
+
+                            {% endif %}
+
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <!-- HEIGHT -->
+
+                <div class="detail-item">
+
+                    <div class="detail-icon">
+                        <span>↕</span>
+                    </div>
+
+                    <div class="detail-text">
+
+                        <span class="detail-name">
+                            Height
+                        </span>
+
+                        <strong>
+
+                            {% if user.height %}
+                                {{ user.height }} cm
+                            {% else %}
+                                Not provided
+                            {% endif %}
+
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <!-- WEIGHT -->
+
+                <div class="detail-item">
+
+                    <div class="detail-icon">
+                        <span>◉</span>
+                    </div>
+
+                    <div class="detail-text">
+
+                        <span class="detail-name">
+                            Weight
+                        </span>
+
+                        <strong>
+
+                            {% if user.weight %}
+                                {{ user.weight }} kg
+                            {% else %}
+                                Not provided
+                            {% endif %}
+
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <!-- ACTIVITY -->
+
+                <div class="detail-item">
+
+                    <div class="detail-icon">
+                        <span>⌁</span>
+                    </div>
+
+                    <div class="detail-text">
+
+                        <span class="detail-name">
+                            Activity
+                        </span>
+
+                        <strong>
+
+                            {% if user.activity_level %}
+
+                                {{ user.activity_level
+                                   |replace('_', ' ')
+                                   |title }}
+
+                            {% else %}
+
+                                Not provided
+
+                            {% endif %}
+
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <!-- FITNESS GOAL -->
+
+                <div class="detail-item detail-item-wide">
+
+                    <div class="detail-icon">
+                        <span>◎</span>
+                    </div>
+
+                    <div class="detail-text">
+
+                        <span class="detail-name">
+                            Fitness Goal
+                        </span>
+
+                        <strong>
+
+                            {% if user.goal %}
+
+                                {{ user.goal
+                                   |replace('_', ' ')
+                                   |title }}
+
+                            {% else %}
+
+                                Not provided
+
+                            {% endif %}
+
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+            </div>
+
+
+            <!-- =================================================
+                 DATA FOR JAVASCRIPT
+            ================================================== -->
+
+            <div
+                id="profileData"
+
+                data-age="{{ user.age if user.age is not none else '' }}"
+
+                data-height="{{ user.height if user.height is not none else '' }}"
+
+                data-weight="{{ user.weight if user.weight is not none else '' }}"
+
+                data-activity="{{ user.activity_level if user.activity_level else '' }}"
+
+                data-goal="{{ user.goal if user.goal else '' }}"
+
+                data-gender="{{ user.gender if user.gender else '' }}">
+
+            </div>
+
+
+            <!-- =================================================
+                 CONFIRMATION
+            ================================================== -->
+
+            <div class="confirmation-area">
+
+                <div class="confirmation-icon">
+                    ✓
+                </div>
+
+                <div class="confirmation-content">
+
+                    <h3>
+                        Ready to get your BMI details?
+                    </h3>
+
+                    <p>
+                        FitLyfe will use your saved height and weight
+                        to calculate your BMI and use your profile
+                        gender, age, weight, height, and activity level
+                        to estimate your daily calorie requirements.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 ACTIONS
+            ================================================== -->
+
+            <div class="bmi-actions">
+
+
+                <!-- GET BMI -->
+
+                <button
+                    type="button"
+                    id="confirmDetails"
+                    class="primary-bmi-button">
+
+                    <span class="button-icon">
+                        ✓
+                    </span>
+
+                    <span id="buttonText">
+                        Get My BMI Details
+                    </span>
+
+                    <span class="button-arrow">
+                        →
+                    </span>
+
+                </button>
+
+
+                <!-- CHANGE DETAILS -->
+
+                <a
+                    href="{{ url_for('profile', next=url_for('bmi_calculator')) }}"
+                    class="secondary-bmi-button">
+
+                    <span>✎</span>
+
+                    Change Details
+
+                </a>
+
+
+            </div>
+
+
+        </div>
+
+
+        <!-- =====================================================
+             BMI RESULT SECTION
+        ====================================================== -->
+
+        <div
+            class="result-section"
+            id="resultSection"
+            aria-hidden="true">
+
+
+            <!-- =================================================
+                 RESULT HEADER
+            ================================================== -->
+
+            <div class="result-header">
+
+                <span class="result-eyebrow">
+                    YOUR BMI RESULT
+                </span>
+
+                <h2>
+                    Your Body Mass Index
+                </h2>
+
+                <p>
+                    Here's what your BMI indicates based on
+                    standard adult BMI categories.
+                </p>
+
+            </div>
+
+
+            <!-- =================================================
+                 RESULT CARD
+            ================================================== -->
+
+            <div class="result-card">
+
+
+                <!-- =================================================
+                     LEFT SIDE
+                ================================================== -->
+
+                <div class="result-left">
+
+
+                    <!-- BMI CIRCLE -->
+
+                    <div class="bmi-circle">
+
+                        <svg
+                            class="bmi-progress"
+                            viewBox="0 0 240 240">
+
+                            <circle
+                                class="circle-bg"
+                                cx="120"
+                                cy="120"
+                                r="96">
+                            </circle>
+
+                            <circle
+                                class="circle-progress"
+                                id="circleProgress"
+                                cx="120"
+                                cy="120"
+                                r="96">
+                            </circle>
+
+                        </svg>
+
+
+                        <div class="bmi-number-area">
+
+                            <span class="bmi-small-label">
+                                BMI
+                            </span>
+
+                            <strong id="bmiValue">
+                                0.0
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- BMI CATEGORY -->
+
+                    <div
+                        class="bmi-category"
+                        id="bmiCategory">
+
+                        Calculating...
+
+                    </div>
+
+
+                </div>
+
+
+                <!-- =================================================
+                     RIGHT SIDE
+                ================================================== -->
+
+                <div class="result-right">
+
+
+                    <!-- STATUS -->
+
+                    <div
+                        class="status-badge"
+                        id="statusBadge">
+
+                        <span></span>
+
+                        <strong id="statusText">
+                            Your Result
+                        </strong>
+
+                    </div>
+
+
+                    <!-- TITLE -->
+
+                    <h3 id="resultTitle">
+                        BMI Analysis
+                    </h3>
+
+
+                    <!-- DESCRIPTION -->
+
+                    <p id="resultDescription">
+                        Your BMI result will appear here.
+                    </p>
+
+
+                    <!-- =================================================
+                         BMI SCALE
+                    ================================================== -->
+
+                    <div class="bmi-scale">
+
+
+                        <div class="scale-labels">
+
+                            <span>
+                                Underweight
+                            </span>
+
+                            <span>
+                                Healthy
+                            </span>
+
+                            <span>
+                                Overweight
+                            </span>
+
+                            <span>
+                                Obesity
+                            </span>
+
+                        </div>
+
+
+                        <div class="scale-bar">
+
+                            <div class="scale-segment"></div>
+
+                            <div class="scale-segment"></div>
+
+                            <div class="scale-segment"></div>
+
+                            <div class="scale-segment"></div>
+
+
+                            <div
+                                class="scale-indicator"
+                                id="scaleIndicator">
+                            </div>
+
+                        </div>
+
+
+                        <div class="scale-values">
+
+                            <span>
+                                &lt;18.5
+                            </span>
+
+                            <span>
+                                18.5–24.9
+                            </span>
+
+                            <span>
+                                25–29.9
+                            </span>
+
+                            <span>
+                                30+
+                            </span>
+
+                        </div>
+
+
+                    </div>
+
+
+                </div>
+
+
+            </div>
+
+
+            <!-- =====================================================
+                 CALORIE REQUIREMENTS
+            ====================================================== -->
+
+            <div class="calorie-section">
+
+
+                <div class="calorie-header">
+
+                    <span class="result-eyebrow">
+                        DAILY CALORIE GUIDE
+                    </span>
+
+                    <h2>
+                        Your Daily Calorie Needs
+                    </h2>
+
+                    <p>
+                        Estimated calories based on your saved
+                        age, gender, height, weight, and activity level.
+                    </p>
+
+                </div>
+
+
+                <!-- =================================================
+                     CALORIE CARDS
+                ================================================== -->
+
+                <div class="calorie-grid">
+
+
+                    <!-- MAINTENANCE -->
+
+                    <div class="calorie-card calorie-maintain">
+
+                        <div class="calorie-icon">
+                            ⚖
+                        </div>
+
+                        <div class="calorie-content">
+
+                            <span class="calorie-label">
+                                MAINTAIN WEIGHT
+                            </span>
+
+                            <strong id="maintenanceCalories">
+                                -- kcal
+                            </strong>
+
+                            <p>
+                                Estimated calories needed to
+                                maintain your current weight.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- WEIGHT LOSS -->
+
+                    <div class="calorie-card calorie-loss">
+
+                        <div class="calorie-icon">
+                            ↓
+                        </div>
+
+                        <div class="calorie-content">
+
+                            <span class="calorie-label">
+                                WEIGHT LOSS
+                            </span>
+
+                            <strong id="weightLossCalories">
+                                -- kcal
+                            </strong>
+
+                            <p>
+                                Approximately 500 kcal below
+                                maintenance for gradual weight loss.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- WEIGHT GAIN -->
+
+                    <div class="calorie-card calorie-gain">
+
+                        <div class="calorie-icon">
+                            ↑
+                        </div>
+
+                        <div class="calorie-content">
+
+                            <span class="calorie-label">
+                                WEIGHT GAIN
+                            </span>
+
+                            <strong id="weightGainCalories">
+                                -- kcal
+                            </strong>
+
+                            <p>
+                                Approximately 300 kcal above
+                                maintenance for gradual weight gain.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                </div>
+
+
+                <!-- =================================================
+                     CALORIE SUMMARY
+                ================================================== -->
+
+                <div class="calorie-info">
+
+                    <span>
+                        🔥
+                    </span>
+
+                    <p>
+
+                        <strong>
+                            Estimated maintenance:
+                        </strong>
+
+                        <span id="maintenanceText">
+                            --
+                        </span>
+
+                        kcal/day.
+
+                        Your maintenance calories represent the
+                        estimated energy required to maintain your
+                        current weight at your current activity level.
+
+                        <br>
+
+                        <small>
+                            This estimate also uses your saved
+                            gender and age when calculating BMR.
+                        </small>
+
+                    </p>
+
+                </div>
+
+
+            </div>
+
+
+            <!-- =================================================
+                 PERSONAL INSIGHT
+            ================================================== -->
+
+            <div class="insight-card">
+
+                <div class="insight-glow"></div>
+
+                <div class="insight-icon">
+                    ✦
+                </div>
+
+                <div>
+
+                    <span class="insight-label">
+                        FITLYFE INSIGHT
+                    </span>
+
+                    <h3 id="insightTitle">
+                        Your personalized insight
+                    </h3>
+
+                    <p id="insightText">
+                        Based on your BMI and calorie requirements,
+                        FitLyfe will provide a simple fitness direction.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 DISCLAIMER
+            ================================================== -->
+
+            <div class="bmi-note">
+
+                <span>
+                    ⓘ
+                </span>
+
+                <p>
+
+                    BMI is a general screening measure based on
+                    height and weight. It does not directly measure
+                    body fat or overall health and should not be
+                    treated as a medical diagnosis.
+
+                    Calorie values shown by FitLyfe are estimates
+                    intended for general fitness planning.
+
+                </p>
+
+            </div>
+
+
+            <!-- =================================================
+                 RESULT ACTIONS
+            ================================================== -->
+
+            <div class="result-actions">
+
+
+                <!-- AI DIET PLAN -->
+
+                <a
+                    href="{{ url_for('ai_diet_chart') }}"
+                    class="result-button">
+
+                    Explore AI Diet Plan
+
+                    <span>
+                        →
+                    </span>
+
+                </a>
+
+
+                <!-- DASHBOARD -->
+
+                <a
+                    href="{{ url_for('detail') }}"
+                    class="result-secondary">
+
+                    Back to Details
+
+                </a>
+
+
+            </div>
+
+
+        </div>
+
+
+    </div>
+
+</section>
+
+{% endblock %}
+
+
+{% block extra_js %}
+
+<script
+    src="{{ url_for('static', filename='js/bmi_calculator.js') }}">
+</script>
+
+{% endblock %}

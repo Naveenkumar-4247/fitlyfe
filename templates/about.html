@@ -1,0 +1,1289 @@
+{% extends "base.html" %}
+
+{% block title %}About - FitLyfe{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/about.css') }}">
+{% endblock %}
+
+{% block content %}
+
+<main class="about-page">
+
+    <!-- =====================================================
+         HERO
+    ====================================================== -->
+
+    <section class="about-hero">
+
+        <!-- Background Grid -->
+        <div class="hero-grid"></div>
+
+        <!-- Glow Effects -->
+        <div class="hero-glow hero-glow-one"></div>
+        <div class="hero-glow hero-glow-two"></div>
+
+        <!-- Orbit Effects -->
+        <div class="hero-orbit orbit-one"></div>
+        <div class="hero-orbit orbit-two"></div>
+
+        <!-- Floating Card -->
+        <div class="floating-card floating-card-one">
+            <div class="floating-icon">
+                <i class="fas fa-chart-line"></i>
+            </div>
+
+            <div>
+                <small>TRACK</small>
+                <strong>Daily Progress</strong>
+            </div>
+        </div>
+
+        <div class="floating-card floating-card-two">
+            <div class="floating-icon">
+                <i class="fas fa-brain"></i>
+            </div>
+
+            <div>
+                <small>INTELLIGENCE</small>
+                <strong>Smart Insights</strong>
+            </div>
+        </div>
+
+        <!-- Hero Content -->
+        <div class="hero-content">
+
+            <div class="hero-badge">
+                <span class="badge-dot"></span>
+                ABOUT FITLYFE
+            </div>
+
+            <h1>
+                FIT<span class="green-text">LYFE</span>
+            </h1>
+
+            <h2>
+                Your Goals.
+                <span class="green-text">Your Data.</span>
+                Your Progress.
+            </h2>
+
+            <p>
+                FitLyfe is a fitness and goal-tracking platform designed
+                to turn everyday habits into meaningful progress through
+                data, analytics and intelligent insights.
+            </p>
+
+            <div class="hero-buttons">
+
+                <a href="{{ url_for('register') }}"
+                   class="about-btn primary-btn">
+                    Explore FitLyfe
+                    <span>→</span>
+                </a>
+
+                <!-- CHANGED: Discover More → Meet My Team -->
+                <a href="#team"
+                   class="about-btn secondary-btn"
+                   id="meetTeamButton"
+                   aria-expanded="false"
+                   aria-controls="team">
+
+                    <span>Meet My Team</span>
+                    <span class="team-arrow">↓</span>
+
+                </a>
+
+            </div>
+
+        </div>
+
+        <!-- Scroll Indicator -->
+        <div class="hero-scroll">
+            <span class="scroll-line"></span>
+            SCROLL TO EXPLORE
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         PROJECT
+    ====================================================== -->
+
+    <section class="about-section" id="project">
+
+        <span class="section-number">01</span>
+
+        <div class="section-heading reveal">
+
+            <span class="section-label">
+                THE PROJECT
+            </span>
+
+            <h2>
+                More Than
+                <span class="green-text">Fitness.</span>
+            </h2>
+
+        </div>
+
+
+        <div class="project-layout">
+
+            <div class="project-main reveal">
+
+                <p class="large-text">
+                    FitLyfe brings fitness tracking, daily routines,
+                    goal management and data analytics together in
+                    one intelligent platform.
+                </p>
+
+                <p>
+                    Instead of simply recording your activities,
+                    FitLyfe helps you understand your consistency,
+                    identify patterns and measure how your daily
+                    actions influence your goals.
+                </p>
+
+                <p>
+                    Every workout, calorie target, water intake,
+                    sleep record and daily activity becomes part
+                    of your personal progress data.
+                </p>
+
+            </div>
+
+
+            <div class="project-stat-card reveal">
+
+                <div class="stat-line"></div>
+
+                <span>
+                    FITLYFE APPROACH
+                </span>
+
+                <h3>
+                    Track.
+                    <strong>Analyze.</strong>
+                    Improve.
+                </h3>
+
+                <p>
+                    Turning everyday fitness data into actionable
+                    insights.
+                </p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         WHY FITLYFE
+    ====================================================== -->
+
+    <section class="about-section dark-section">
+
+        <span class="section-number">02</span>
+
+        <div class="section-heading reveal">
+
+            <span class="section-label">
+                WHY FITLYFE
+            </span>
+
+            <h2>
+                Built Around
+                <span class="green-text">Consistency.</span>
+            </h2>
+
+        </div>
+
+
+        <div class="reason-grid">
+
+            <!-- Card 01 -->
+            <div class="reason-card reveal">
+
+                <span class="reason-number">
+                    01
+                </span>
+
+                <div class="reason-icon">
+                    <i class="fas fa-bullseye"></i>
+                </div>
+
+                <h3>
+                    Goal Tracking
+                </h3>
+
+                <p>
+                    Set meaningful fitness goals and monitor your
+                    progress throughout your journey.
+                </p>
+
+            </div>
+
+
+            <!-- Card 02 -->
+            <div class="reason-card reveal">
+
+                <span class="reason-number">
+                    02
+                </span>
+
+                <div class="reason-icon">
+                    <i class="fas fa-chart-column"></i>
+                </div>
+
+                <h3>
+                    Data Analytics
+                </h3>
+
+                <p>
+                    Transform your daily activity records into
+                    understandable visual insights and progress
+                    patterns.
+                </p>
+
+            </div>
+
+
+            <!-- Card 03 -->
+            <div class="reason-card reveal">
+
+                <span class="reason-number">
+                    03
+                </span>
+
+                <div class="reason-icon">
+                    <i class="fas fa-brain"></i>
+                </div>
+
+                <h3>
+                    AI Insights
+                </h3>
+
+                <p>
+                    Use intelligent analysis to understand your
+                    performance and estimate your goal achievement.
+                </p>
+
+            </div>
+
+
+            <!-- Card 04 -->
+            <div class="reason-card reveal">
+
+                <span class="reason-number">
+                    04
+                </span>
+
+                <div class="reason-icon">
+                    <i class="fas fa-fire"></i>
+                </div>
+
+                <h3>
+                    Daily Consistency
+                </h3>
+
+                <p>
+                    Build better habits by making your daily
+                    actions visible and measurable.
+                </p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         SYSTEM FLOW
+    ====================================================== -->
+
+    <section class="about-section">
+
+        <span class="section-number">03</span>
+
+        <div class="section-heading reveal">
+
+            <span class="section-label">
+                HOW IT WORKS
+            </span>
+
+            <h2>
+                From Data To
+                <span class="green-text">Progress.</span>
+            </h2>
+
+        </div>
+
+
+        <div class="system-flow">
+
+            <!-- Step 01 -->
+            <div class="flow-item reveal">
+
+                <div class="flow-number">
+                    01
+                </div>
+
+                <div class="flow-content">
+
+                    <span>
+                        INPUT
+                    </span>
+
+                    <h3>
+                        Track Your Routine
+                    </h3>
+
+                    <p>
+                        Record your workouts, calories, water,
+                        sleep and daily activities.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="flow-line"></div>
+
+
+            <!-- Step 02 -->
+            <div class="flow-item reveal">
+
+                <div class="flow-number">
+                    02
+                </div>
+
+                <div class="flow-content">
+
+                    <span>
+                        PROCESS
+                    </span>
+
+                    <h3>
+                        Organize Your Data
+                    </h3>
+
+                    <p>
+                        Your daily records are structured and
+                        prepared for meaningful analysis.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="flow-line"></div>
+
+
+            <!-- Step 03 -->
+            <div class="flow-item reveal">
+
+                <div class="flow-number">
+                    03
+                </div>
+
+                <div class="flow-content">
+
+                    <span>
+                        ANALYZE
+                    </span>
+
+                    <h3>
+                        Discover Patterns
+                    </h3>
+
+                    <p>
+                        Analytics help identify your habits,
+                        consistency and performance trends.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="flow-line"></div>
+
+
+            <!-- Step 04 -->
+            <div class="flow-item reveal">
+
+                <div class="flow-number">
+                    04
+                </div>
+
+                <div class="flow-content">
+
+                    <span>
+                        INTELLIGENCE
+                    </span>
+
+                    <h3>
+                        Generate Insights
+                    </h3>
+
+                    <p>
+                        Machine learning can use your progress
+                        data to estimate the likelihood of
+                        achieving your goals.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="flow-line"></div>
+
+
+            <!-- Step 05 -->
+            <div class="flow-item reveal">
+
+                <div class="flow-number">
+                    05
+                </div>
+
+                <div class="flow-content">
+
+                    <span>
+                        RESULT
+                    </span>
+
+                    <h3>
+                        Improve Your Journey
+                    </h3>
+
+                    <p>
+                        Use the insights to stay consistent,
+                        adjust your habits and move closer
+                        to your goals.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         INTELLIGENCE
+    ====================================================== -->
+
+    <section class="about-section intelligence-section">
+
+        <div class="intelligence-bg"></div>
+
+        <span class="section-number">04</span>
+
+        <div class="intelligence-layout">
+
+            <div class="intelligence-content reveal">
+
+                <span class="section-label">
+                    DATA + AI
+                </span>
+
+                <h2>
+                    Your Data
+                    Becomes
+                    <span class="green-text">
+                        Intelligence.
+                    </span>
+                </h2>
+
+                <p>
+                    FitLyfe is designed around the idea that
+                    consistent fitness data can reveal useful
+                    patterns about your progress.
+                </p>
+
+                <p>
+                    By combining data visualization with
+                    machine learning, FitLyfe transforms
+                    raw daily records into understandable
+                    insights that help users make better
+                    decisions.
+                </p>
+
+            </div>
+
+
+            <!-- Data Visual -->
+            <div class="data-visual reveal">
+
+                <div class="data-ring">
+
+                    <div class="ring-center">
+
+                        <strong>
+                            DATA
+                        </strong>
+
+                        <span>
+                            → INSIGHT
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="data-point point-one">
+                    <span></span>
+                    GOALS
+                </div>
+
+                <div class="data-point point-two">
+                    <span></span>
+                    ACTIVITY
+                </div>
+
+                <div class="data-point point-three">
+                    <span></span>
+                    HABITS
+                </div>
+
+                <div class="data-point point-four">
+                    <span></span>
+                    PROGRESS
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         FEATURES
+    ====================================================== -->
+
+    <section class="about-section">
+
+        <span class="section-number">05</span>
+
+        <div class="section-heading reveal">
+
+            <span class="section-label">
+                PLATFORM
+            </span>
+
+            <h2>
+                Everything You Need
+                To Stay
+                <span class="green-text">
+                    On Track.
+                </span>
+            </h2>
+
+        </div>
+
+
+        <div class="feature-grid">
+
+            <div class="mini-feature reveal">
+
+                <span>01 / GOALS</span>
+
+                <h3>
+                    Goal Management
+                </h3>
+
+                <p>
+                    Define weekly fitness targets and keep
+                    your objectives visible.
+                </p>
+
+            </div>
+
+
+            <div class="mini-feature reveal">
+
+                <span>02 / TRACK</span>
+
+                <h3>
+                    Daily Tracker
+                </h3>
+
+                <p>
+                    Record workouts, calories, water, sleep
+                    and mood every day.
+                </p>
+
+            </div>
+
+
+            <div class="mini-feature reveal">
+
+                <span>03 / ANALYTICS</span>
+
+                <h3>
+                    Progress Analytics
+                </h3>
+
+                <p>
+                    Understand your performance through
+                    interactive visualizations.
+                </p>
+
+            </div>
+
+
+            <div class="mini-feature reveal">
+
+                <span>04 / AI</span>
+
+                <h3>
+                    ML Prediction
+                </h3>
+
+                <p>
+                    Estimate your goal achievement using
+                    your tracked progress data.
+                </p>
+
+            </div>
+
+
+            <div class="mini-feature reveal">
+
+                <span>05 / NUTRITION</span>
+
+                <h3>
+                    AI Diet Chart
+                </h3>
+
+                <p>
+                    Generate personalized diet guidance
+                    based on your fitness goals.
+                </p>
+
+            </div>
+
+
+            <div class="mini-feature reveal">
+
+                <span>06 / PROFILE</span>
+
+                <h3>
+                    Personal Profile
+                </h3>
+
+                <p>
+                    Manage your fitness information and
+                    keep your personal journey organized.
+                </p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         TEAM
+         COLLAPSIBLE / DROP-DOWN SECTION
+    ====================================================== -->
+
+    <section class="about-section team-section"
+             id="team"
+             aria-hidden="true">
+
+        <div class="team-bg-glow"></div>
+
+        <span class="section-number">06</span>
+
+        <div class="team-heading reveal">
+
+            <span class="section-label">
+                THE TEAM
+            </span>
+
+            <h2>
+                Meet My
+                <span class="green-text">
+                    Team.
+                </span>
+            </h2>
+
+            <p>
+                FitLyfe is the result of teamwork, technical
+                development and a shared interest in building
+                a meaningful data-driven fitness platform.
+            </p>
+
+        </div>
+
+
+        <div class="team-name reveal">
+
+            <span>
+                FITLYFE PROJECT TEAM
+            </span>
+
+            <h3>
+                <span>Four</span>
+                Minds.
+                <span>One</span>
+                Vision.
+            </h3>
+
+        </div>
+
+
+        <div class="team-grid">
+
+            <!-- Member 01 -->
+            <div class="team-card reveal">
+
+                <span class="member-number">
+                    01
+                </span>
+
+                <div class="member-avatar">
+                    NK
+                </div>
+
+                <div class="member-info">
+
+                    <span class="member-label">
+                        TEAM MEMBER
+                    </span>
+
+                    <h3>
+                        Naveen Kumar M
+                    </h3>
+
+                    <p>
+                        Data Science &amp; Project Development
+                    </p>
+
+                    <div class="member-line"></div>
+
+                </div>
+
+            </div>
+
+
+            <!-- Member 02 -->
+            <div class="team-card reveal">
+
+                <span class="member-number">
+                    02
+                </span>
+
+                <div class="member-avatar">
+                    KA
+                </div>
+
+                <div class="member-info">
+
+                    <span class="member-label">
+                        TEAM MEMBER
+                    </span>
+
+                    <h3>
+                        Kishanth A
+                    </h3>
+
+                    <p>
+                        Development &amp; System Design
+                    </p>
+
+                    <div class="member-line"></div>
+
+                </div>
+
+            </div>
+
+
+            <!-- Member 03 -->
+            <div class="team-card reveal">
+
+                <span class="member-number">
+                    03
+                </span>
+
+                <div class="member-avatar">
+                    AV
+                </div>
+
+                <div class="member-info">
+
+                    <span class="member-label">
+                        TEAM MEMBER
+                    </span>
+
+                    <h3>
+                        Ajay Vikram M
+                    </h3>
+
+                    <p>
+                        Analytics &amp; Project Development
+                    </p>
+
+                    <div class="member-line"></div>
+
+                </div>
+
+            </div>
+
+
+            <!-- Member 04 -->
+            <div class="team-card reveal">
+
+                <span class="member-number">
+                    04
+                </span>
+
+                <div class="member-avatar">
+                    TV
+                </div>
+
+                <div class="member-info">
+
+                    <span class="member-label">
+                        TEAM MEMBER
+                    </span>
+
+                    <h3>
+                        Thirumalai Vasan S
+                    </h3>
+
+                    <p>
+                        Development &amp; Data Analytics
+                    </p>
+
+                    <div class="member-line"></div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         VISION
+    ====================================================== -->
+
+    <section class="vision-section">
+
+        <div class="vision-grid"></div>
+
+        <div class="vision-content reveal">
+
+            <span class="section-label">
+                OUR VISION
+            </span>
+
+            <h2>
+                Progress Is
+                <span class="green-text">
+                    Data.
+                </span>
+            </h2>
+
+            <p>
+                Fitness is not about one perfect day.
+                It is about the small actions repeated
+                consistently over time.
+            </p>
+
+            <p>
+                FitLyfe aims to make those actions visible,
+                measurable and meaningful.
+            </p>
+
+            <div class="vision-line"></div>
+
+            <span class="vision-tag">
+                TRACK • ANALYZE • IMPROVE
+            </span>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         FINAL CTA
+    ====================================================== -->
+
+    <section class="about-final">
+
+        <div class="final-glow"></div>
+
+        <h2 class="reveal">
+
+            Start Building
+            Your
+
+            <span class="green-text">
+                Better Routine.
+            </span>
+
+        </h2>
+
+        <p class="reveal">
+
+            Your goals become more achievable when your
+            progress becomes visible.
+
+        </p>
+
+        <a href="{{ url_for('login') }}"
+           class="final-btn reveal">
+
+            Open FitLyfe
+
+            <span>→</span>
+
+        </a>
+
+    </section>
+
+</main>
+
+
+<!-- =====================================================
+     ABOUT PAGE JAVASCRIPT
+====================================================== -->
+
+<script>
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    /* ---------------------------------------------
+       SCROLL REVEAL
+    --------------------------------------------- */
+
+    const revealElements =
+        document.querySelectorAll(".reveal");
+
+    const revealObserver =
+        new IntersectionObserver(
+            (entries, observer) => {
+
+                entries.forEach(entry => {
+
+                    if (entry.isIntersecting) {
+
+                        entry.target.classList.add(
+                            "reveal-visible"
+                        );
+
+                        observer.unobserve(
+                            entry.target
+                        );
+
+                    }
+
+                });
+
+            },
+            {
+                threshold: 0.12
+            }
+        );
+
+
+    revealElements.forEach(element => {
+
+        revealObserver.observe(element);
+
+    });
+
+
+    /* ---------------------------------------------
+       HERO MOUSE MOVEMENT
+    --------------------------------------------- */
+
+    const hero =
+        document.querySelector(".about-hero");
+
+    const glowOne =
+        document.querySelector(".hero-glow-one");
+
+    const glowTwo =
+        document.querySelector(".hero-glow-two");
+
+
+    if (hero && glowOne && glowTwo) {
+
+        hero.addEventListener("mousemove", function (event) {
+
+            const rect =
+                hero.getBoundingClientRect();
+
+            const x =
+                event.clientX - rect.left;
+
+            const y =
+                event.clientY - rect.top;
+
+            const moveX =
+                (x / rect.width - 0.5) * 35;
+
+            const moveY =
+                (y / rect.height - 0.5) * 35;
+
+
+            glowOne.style.transform =
+                `translate(${moveX}px, ${moveY}px)`;
+
+            glowTwo.style.transform =
+                `translate(${-moveX}px, ${-moveY}px)`;
+
+        });
+
+
+        hero.addEventListener("mouseleave", function () {
+
+            glowOne.style.transform =
+                "translate(0, 0)";
+
+            glowTwo.style.transform =
+                "translate(0, 0)";
+
+        });
+
+    }
+
+
+    /* ---------------------------------------------
+       TEAM CARD TILT
+    --------------------------------------------- */
+
+    const teamCards =
+        document.querySelectorAll(".team-card");
+
+
+    teamCards.forEach(card => {
+
+        card.addEventListener("mousemove", function (event) {
+
+            const rect =
+                card.getBoundingClientRect();
+
+            const x =
+                event.clientX - rect.left;
+
+            const y =
+                event.clientY - rect.top;
+
+            const centerX =
+                rect.width / 2;
+
+            const centerY =
+                rect.height / 2;
+
+            const rotateX =
+                ((y - centerY) / centerY) * -3;
+
+            const rotateY =
+                ((x - centerX) / centerX) * 3;
+
+
+            card.style.transform =
+                `perspective(700px)
+                 rotateX(${rotateX}deg)
+                 rotateY(${rotateY}deg)
+                 translateY(-5px)`;
+
+        });
+
+
+        card.addEventListener("mouseleave", function () {
+
+            card.style.transform =
+                "perspective(700px) rotateX(0) rotateY(0) translateY(0)";
+
+        });
+
+    });
+
+
+    /* ---------------------------------------------
+       MEET MY TEAM
+       DROP-DOWN / EXPAND ANIMATION
+    --------------------------------------------- */
+
+    const meetTeamButton =
+        document.getElementById("meetTeamButton");
+
+    const teamSection =
+        document.getElementById("team");
+
+
+    if (meetTeamButton && teamSection) {
+
+        let teamOpen = false;
+
+
+        meetTeamButton.addEventListener("click", function (event) {
+
+            event.preventDefault();
+
+            teamOpen = !teamOpen;
+
+
+            if (teamOpen) {
+
+                /* Open */
+
+                teamSection.classList.add("team-open");
+
+                teamSection.setAttribute(
+                    "aria-hidden",
+                    "false"
+                );
+
+                meetTeamButton.setAttribute(
+                    "aria-expanded",
+                    "true"
+                );
+
+                meetTeamButton.classList.add(
+                    "team-button-active"
+                );
+
+
+                /* Scroll to team */
+
+                setTimeout(() => {
+
+                    teamSection.scrollIntoView({
+                        behavior: "smooth",
+                        block: "start"
+                    });
+
+                }, 120);
+
+
+                /* Animate cards one by one */
+
+                const cards =
+                    teamSection.querySelectorAll(
+                        ".team-card"
+                    );
+
+
+                cards.forEach((card, index) => {
+
+                    card.style.transitionDelay =
+                        `${index * 120}ms`;
+
+                    setTimeout(() => {
+
+                        card.classList.add(
+                            "team-card-visible"
+                        );
+
+                    }, 180 + (index * 120));
+
+                });
+
+
+            } else {
+
+                /* Close */
+
+                teamSection.classList.remove(
+                    "team-open"
+                );
+
+                teamSection.setAttribute(
+                    "aria-hidden",
+                    "true"
+                );
+
+                meetTeamButton.setAttribute(
+                    "aria-expanded",
+                    "false"
+                );
+
+                meetTeamButton.classList.remove(
+                    "team-button-active"
+                );
+
+
+                const cards =
+                    teamSection.querySelectorAll(
+                        ".team-card"
+                    );
+
+
+                cards.forEach(card => {
+
+                    card.classList.remove(
+                        "team-card-visible"
+                    );
+
+                    card.style.transitionDelay =
+                        "0ms";
+
+                });
+
+            }
+
+        });
+
+    }
+
+
+    /* ---------------------------------------------
+       SMOOTH SCROLL
+       OTHER INTERNAL LINKS
+    --------------------------------------------- */
+
+    document.querySelectorAll(
+        'a[href^="#"]:not(#meetTeamButton)'
+    ).forEach(anchor => {
+
+        anchor.addEventListener("click", function (event) {
+
+            const target =
+                document.querySelector(
+                    this.getAttribute("href")
+                );
+
+
+            if (target) {
+
+                event.preventDefault();
+
+                target.scrollIntoView({
+                    behavior: "smooth",
+                    block: "start"
+                });
+
+            }
+
+        });
+
+    });
+
+});
+
+</script>
+
+{% endblock %}

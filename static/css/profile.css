@@ -1,0 +1,1106 @@
+/* =========================================================
+   FITLYFE PROFILE SETUP
+   profile.css
+   ========================================================= */
+
+
+/* =========================================================
+   GOOGLE FONTS
+   ========================================================= */
+
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Sora:wght@400;500;600;700;800&display=swap");
+
+
+/* =========================================================
+   PROFILE SECTION
+   ========================================================= */
+
+.profile-section {
+
+    position: relative;
+
+    min-height: calc(100vh - 80px);
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 70px 25px;
+
+    overflow: hidden;
+
+    background: #002d17;
+}
+
+
+/* =========================================================
+   BACKGROUND
+   ========================================================= */
+
+.profile-section::before {
+
+    content: "";
+
+    position: absolute;
+
+    inset: 0;
+
+    background-image: url("../images/profile-setup-bg.jpg");
+
+    background-size: cover;
+
+    background-position: center;
+
+    background-repeat: no-repeat;
+
+    transform: scale(1.04);
+
+    filter:
+        brightness(0.48)
+        saturate(1.15);
+
+    z-index: 0;
+}
+
+
+.profile-bg-overlay {
+
+    position: absolute;
+
+    inset: 0;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(0, 25, 13, 0.82),
+            rgba(0, 45, 23, 0.68),
+            rgba(0, 0, 0, 0.78)
+        );
+
+    z-index: 1;
+}
+
+
+/* =========================================================
+   PROFILE CARD
+   ========================================================= */
+
+.profile-setup-card {
+
+    position: relative;
+
+    z-index: 2;
+
+    width: 100%;
+
+    max-width: 920px;
+
+    min-height: 650px;
+
+    padding: 55px 75px 60px;
+
+    border-radius: 28px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(20, 25, 22, 0.96),
+            rgba(10, 18, 14, 0.94)
+        );
+
+    border: 1px solid rgba(95, 240, 168, 0.25);
+
+    box-shadow:
+        0 35px 100px rgba(0, 0, 0, 0.65),
+        0 0 60px rgba(31, 184, 114, 0.12),
+        inset 0 1px 0 rgba(255, 255, 255, 0.08);
+
+    overflow: hidden;
+
+    animation:
+        cardEntrance
+        0.9s
+        cubic-bezier(0.16, 1, 0.3, 1)
+        forwards;
+}
+
+
+.card-glow {
+
+    position: absolute;
+
+    width: 420px;
+
+    height: 420px;
+
+    top: -250px;
+
+    left: 50%;
+
+    transform: translateX(-50%);
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(31, 184, 114, 0.25),
+            transparent 70%
+        );
+
+    pointer-events: none;
+
+    filter: blur(10px);
+}
+
+
+/* =========================================================
+   PROFILE HEADER
+   ========================================================= */
+
+.profile-header {
+
+    position: relative;
+
+    z-index: 2;
+
+    text-align: center;
+}
+
+
+.profile-badge {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 7px 16px;
+
+    margin-bottom: 18px;
+
+    border-radius: 30px;
+
+    background: rgba(31, 184, 114, 0.10);
+
+    border: 1px solid rgba(95, 240, 168, 0.25);
+
+    color: #5df0a8;
+
+    font-family: "Sora", sans-serif;
+
+    font-size: 0.68rem;
+
+    font-weight: 700;
+
+    letter-spacing: 0.18em;
+}
+
+
+.profile-title {
+
+    margin: 0;
+
+    font-family: "Sora", sans-serif;
+
+    font-size: clamp(2.5rem, 5vw, 4rem);
+
+    font-weight: 800;
+
+    line-height: 1.05;
+
+    letter-spacing: -0.04em;
+}
+
+
+.profile-title .green {
+
+    color: #5df0a8;
+
+    text-shadow:
+        0 0 25px rgba(93, 240, 168, 0.22);
+}
+
+
+.profile-title .white {
+
+    color: #ffffff;
+}
+
+
+.profile-subtitle {
+
+    margin: 18px 0 8px;
+
+    color: rgba(255, 255, 255, 0.90);
+
+    font-family: "Inter", sans-serif;
+
+    font-size: 1.15rem;
+
+    font-weight: 500;
+}
+
+
+.profile-quote {
+
+    margin: 0 auto;
+
+    min-height: 28px;
+
+    color: #5df0a8;
+
+    font-family: "Inter", sans-serif;
+
+    font-size: 1rem;
+
+    font-weight: 500;
+
+    font-style: italic;
+
+    line-height: 1.5;
+
+    transition:
+        opacity 0.3s ease,
+        transform 0.3s ease;
+}
+
+
+.quote-changing {
+
+    animation:
+        quoteChange
+        0.5s ease;
+}
+
+
+@keyframes quoteChange {
+
+    0% {
+
+        opacity: 0;
+
+        transform:
+            translateY(12px)
+            scale(0.96);
+    }
+
+    60% {
+
+        opacity: 1;
+
+        transform:
+            translateY(-2px)
+            scale(1.01);
+    }
+
+    100% {
+
+        opacity: 1;
+
+        transform:
+            translateY(0)
+            scale(1);
+    }
+}
+
+
+/* =========================================================
+   PROGRESS
+   ========================================================= */
+
+.profile-progress {
+
+    position: relative;
+
+    z-index: 2;
+
+    width: 100%;
+
+    max-width: 700px;
+
+    margin: 42px auto 45px;
+}
+
+
+.progress-line {
+
+    position: absolute;
+
+    top: 15px;
+
+    left: 20px;
+
+    right: 20px;
+
+    height: 2px;
+
+    background: rgba(255, 255, 255, 0.10);
+
+    border-radius: 10px;
+
+    overflow: hidden;
+}
+
+
+#progress-fill {
+
+    width: 0%;
+
+    height: 100%;
+
+    background:
+        linear-gradient(
+            90deg,
+            #1fb872,
+            #5df0a8
+        );
+
+    border-radius: 10px;
+
+    transition:
+        width 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+
+.progress-steps {
+
+    position: relative;
+
+    display: flex;
+
+    justify-content: space-between;
+}
+
+
+.progress-dot {
+
+    width: 32px;
+
+    height: 32px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: #16211b;
+
+    border: 2px solid rgba(255, 255, 255, 0.16);
+
+    color: #6d7972;
+
+    font-family: "Sora", sans-serif;
+
+    font-size: 0.72rem;
+
+    font-weight: 700;
+
+    transition: all 0.4s ease;
+}
+
+
+.progress-dot.active {
+
+    background: #1fb872;
+
+    border-color: #5df0a8;
+
+    color: #062113;
+
+    box-shadow:
+        0 0 0 6px rgba(31, 184, 114, 0.12),
+        0 0 25px rgba(31, 184, 114, 0.35);
+
+    transform: scale(1.12);
+}
+
+
+.progress-dot.completed {
+
+    background: #14894f;
+
+    border-color: #1fb872;
+
+    color: #ffffff;
+}
+
+
+/* =========================================================
+   FORM STEP
+   ========================================================= */
+
+.form-step {
+
+    position: relative;
+
+    z-index: 2;
+
+    display: none;
+
+    flex-direction: column;
+
+    max-width: 650px;
+
+    margin: 0 auto;
+}
+
+
+.form-step.active {
+
+    display: flex;
+
+    animation:
+        stepEntrance
+        0.55s
+        cubic-bezier(0.16, 1, 0.3, 1)
+        both;
+}
+
+
+@keyframes stepEntrance {
+
+    from {
+
+        opacity: 0;
+
+        transform:
+            translateX(35px)
+            scale(0.98);
+    }
+
+    to {
+
+        opacity: 1;
+
+        transform:
+            translateX(0)
+            scale(1);
+    }
+}
+
+
+.step-number {
+
+    margin-bottom: 8px;
+
+    color: #1fb872;
+
+    font-family: "Sora", sans-serif;
+
+    font-size: 0.72rem;
+
+    font-weight: 800;
+
+    letter-spacing: 0.15em;
+}
+
+
+.step-heading {
+
+    margin: 0;
+
+    color: #ffffff;
+
+    font-family: "Sora", sans-serif;
+
+    font-size: clamp(1.7rem, 3vw, 2.25rem);
+
+    font-weight: 700;
+
+    line-height: 1.2;
+}
+
+
+.step-description {
+
+    margin: 9px 0 25px;
+
+    color: #8d9992;
+
+    font-family: "Inter", sans-serif;
+
+    font-size: 0.92rem;
+
+    line-height: 1.6;
+}
+
+
+/* =========================================================
+   INPUTS
+   ========================================================= */
+
+.form-step input,
+.form-step select {
+
+    width: 100%;
+
+    height: 60px;
+
+    padding: 0 20px;
+
+    border: 1px solid rgba(255, 255, 255, 0.14);
+
+    border-radius: 14px;
+
+    outline: none;
+
+    background: rgba(255, 255, 255, 0.045);
+
+    color: #ffffff;
+
+    font-family: "Inter", sans-serif;
+
+    font-size: 1rem;
+
+    font-weight: 500;
+
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.03);
+
+    transition:
+        transform 0.25s ease,
+        border-color 0.25s ease,
+        background 0.25s ease,
+        box-shadow 0.25s ease;
+}
+
+
+.form-step input::placeholder {
+
+    color: #66736b;
+}
+
+
+.form-step input:hover,
+.form-step select:hover {
+
+    border-color:
+        rgba(95, 240, 168, 0.35);
+}
+
+
+.form-step input:focus,
+.form-step select:focus {
+
+    border-color: #5df0a8;
+
+    background:
+        rgba(31, 184, 114, 0.07);
+
+    box-shadow:
+        0 0 0 4px rgba(31, 184, 114, 0.10),
+        0 0 25px rgba(31, 184, 114, 0.08);
+
+    transform:
+        translateY(-1px);
+}
+
+
+.form-step select {
+
+    cursor: pointer;
+}
+
+
+.form-step select option {
+
+    background: #14241c;
+
+    color: #ffffff;
+}
+
+
+/* =========================================================
+   INPUT WITH UNIT
+   ========================================================= */
+
+.input-with-unit {
+
+    position: relative;
+}
+
+
+.input-with-unit input {
+
+    padding-right: 70px;
+}
+
+
+.input-with-unit span {
+
+    position: absolute;
+
+    top: 50%;
+
+    right: 20px;
+
+    transform: translateY(-50%);
+
+    color: #5df0a8;
+
+    font-family: "Sora", sans-serif;
+
+    font-size: 0.85rem;
+
+    font-weight: 700;
+}
+
+
+/* =========================================================
+   BUTTONS
+   ========================================================= */
+
+.step-buttons {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 15px;
+
+    margin-top: 30px;
+}
+
+
+.btn-next,
+.btn-profile {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 10px;
+
+    min-width: 125px;
+
+    min-height: 52px;
+
+    padding: 12px 24px;
+
+    border: none;
+
+    border-radius: 13px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #5df0a8,
+            #1fb872
+        );
+
+    color: #062113;
+
+    font-family: "Sora", sans-serif;
+
+    font-size: 0.9rem;
+
+    font-weight: 800;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 10px 25px rgba(31, 184, 114, 0.25);
+
+    transition:
+        transform 0.25s ease,
+        box-shadow 0.25s ease,
+        filter 0.25s ease;
+}
+
+
+.btn-next:hover,
+.btn-profile:hover {
+
+    transform: translateY(-3px);
+
+    box-shadow:
+        0 16px 35px rgba(31, 184, 114, 0.35);
+
+    filter: brightness(1.05);
+}
+
+
+.btn-next:active,
+.btn-profile:active {
+
+    transform: translateY(0) scale(0.97);
+}
+
+
+.btn-next span {
+
+    font-size: 1.2rem;
+
+    transition:
+        transform 0.25s ease;
+}
+
+
+.btn-next:hover span {
+
+    transform: translateX(5px);
+}
+
+
+.btn-back {
+
+    min-height: 52px;
+
+    padding: 12px 22px;
+
+    border:
+        1px solid rgba(95, 240, 168, 0.45);
+
+    border-radius: 13px;
+
+    background: transparent;
+
+    color: #5df0a8;
+
+    font-family: "Sora", sans-serif;
+
+    font-size: 0.85rem;
+
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition: all 0.25s ease;
+}
+
+
+.btn-back:hover {
+
+    background:
+        rgba(31, 184, 114, 0.10);
+
+    border-color: #5df0a8;
+
+    transform: translateX(-3px);
+}
+
+
+.btn-back:active {
+
+    transform: scale(0.97);
+}
+
+
+/* =========================================================
+   SAVE LOADING SPINNER
+   ========================================================= */
+
+.save-spinner {
+
+    display: inline-block;
+
+    width: 16px;
+
+    height: 16px;
+
+    margin-right: 8px;
+
+    border:
+        2px solid rgba(6, 33, 19, 0.35);
+
+    border-top-color: #062113;
+
+    border-radius: 50%;
+
+    animation:
+        saveSpin
+        0.7s
+        linear
+        infinite;
+}
+
+
+@keyframes saveSpin {
+
+    to {
+
+        transform: rotate(360deg);
+
+    }
+}
+
+
+/* =========================================================
+   BUTTON CLICK ANIMATION
+   ========================================================= */
+
+.button-click {
+
+    animation:
+        buttonClick
+        0.3s
+        ease;
+}
+
+
+@keyframes buttonClick {
+
+    0% {
+
+        transform: scale(1);
+
+    }
+
+    50% {
+
+        transform: scale(0.94);
+
+    }
+
+    100% {
+
+        transform: scale(1);
+
+    }
+}
+
+
+/* =========================================================
+   INPUT FOCUS ANIMATION
+   ========================================================= */
+
+.input-focus {
+
+    transform: scale(1.015);
+
+    box-shadow:
+        0 0 0 3px rgba(31, 184, 114, 0.12),
+        0 8px 25px rgba(31, 184, 114, 0.15);
+}
+
+
+/* =========================================================
+   ENTRANCE
+   ========================================================= */
+
+@keyframes cardEntrance {
+
+    from {
+
+        opacity: 0;
+
+        transform:
+            translateY(35px)
+            scale(0.96);
+    }
+
+    to {
+
+        opacity: 1;
+
+        transform:
+            translateY(0)
+            scale(1);
+    }
+}
+
+
+/* =========================================================
+   RESPONSIVE - TABLET
+   ========================================================= */
+
+@media (max-width: 900px) {
+
+    .profile-setup-card {
+
+        max-width: 760px;
+
+        padding:
+            50px 55px;
+    }
+}
+
+
+/* =========================================================
+   RESPONSIVE - MOBILE
+   ========================================================= */
+
+@media (max-width: 700px) {
+
+    .profile-section {
+
+        min-height:
+            calc(100vh - 70px);
+
+        padding:
+            35px 15px;
+    }
+
+
+    .profile-setup-card {
+
+        min-height: auto;
+
+        padding:
+            40px 25px 45px;
+
+        border-radius: 22px;
+    }
+
+
+    .profile-title {
+
+        font-size: 2.5rem;
+    }
+
+
+    .profile-subtitle {
+
+        font-size: 1rem;
+    }
+
+
+    .profile-quote {
+
+        font-size: 0.88rem;
+    }
+
+
+    .profile-progress {
+
+        margin:
+            35px auto;
+    }
+
+
+    .progress-dot {
+
+        width: 27px;
+
+        height: 27px;
+
+        font-size: 0.62rem;
+    }
+
+
+    .progress-line {
+
+        top: 12px;
+
+        left: 13px;
+
+        right: 13px;
+    }
+
+
+    .step-heading {
+
+        font-size: 1.6rem;
+    }
+
+
+    .form-step input,
+    .form-step select {
+
+        height: 55px;
+    }
+
+
+    .step-buttons {
+
+        margin-top: 25px;
+    }
+
+
+    .btn-next,
+    .btn-profile,
+    .btn-back {
+
+        min-height: 48px;
+
+        padding:
+            10px 18px;
+    }
+}
+
+
+/* =========================================================
+   RESPONSIVE - SMALL MOBILE
+   ========================================================= */
+
+@media (max-width: 450px) {
+
+    .profile-setup-card {
+
+        padding:
+            32px 20px 35px;
+    }
+
+
+    .profile-title {
+
+        font-size: 2.15rem;
+    }
+
+
+    .progress-dot {
+
+        width: 24px;
+
+        height: 24px;
+
+        border-width: 1px;
+
+        font-size: 0.55rem;
+    }
+
+
+    .progress-line {
+
+        top: 11px;
+    }
+
+
+    .step-buttons {
+
+        flex-direction: column-reverse;
+
+        align-items: stretch;
+    }
+
+
+    .btn-next,
+    .btn-profile,
+    .btn-back {
+
+        width: 100%;
+    }
+}
+
+
+/* =========================================================
+   REDUCED MOTION
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .profile-setup-card,
+    .form-step.active,
+    .quote-changing,
+    .button-click {
+
+        animation: none !important;
+    }
+
+
+    *,
+    *::before,
+    *::after {
+
+        transition: none !important;
+    }
+}

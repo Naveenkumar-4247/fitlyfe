@@ -1,0 +1,414 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - FitLyfe{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}?v=40">
+{% endblock %}
+
+{% block content %}
+<section class="fit-dashboard dashboard-page" id="dashboardPage" data-user-id="{{ user.id if user else '' }}">
+
+    <!-- HEADER -->
+    <header class="dashboard-header">
+        <div class="dashboard-header-content">
+            <span class="dashboard-kicker">FITLYFE GOAL ANALYTICS</span>
+            <h1>Welcome back, <span>{{ user.name if user else 'Athlete' }}.</span></h1>
+            <p>Track your daily habits, monitor your consistency, and turn your goals into measurable progress.</p>
+        </div>
+
+        <a href="{{ url_for('detail') }}" class="dashboard-profile dashboard-detail-button">
+            <div class="profile-circle">←</div>
+            <div>
+                <strong>Return to Details</strong>
+                <small>Back to your fitness plan</small>
+            </div>
+        </a>
+    </header>
+
+    <!-- TOP GRID -->
+    <section class="dashboard-top-grid">
+
+        <!-- CALENDAR -->
+        <div class="dashboard-card calendar-card">
+            <div class="card-header">
+                <div>
+                    <span class="card-label">ACTIVITY HISTORY</span>
+                    <h2>Progress Calendar</h2>
+                    <p class="card-subtitle">Select a date to view your goal completion.</p>
+                </div>
+                <div class="calendar-controls">
+                    <button type="button" id="previousMonth" aria-label="Previous month">‹</button>
+                    <button type="button" id="nextMonth" aria-label="Next month">›</button>
+                </div>
+            </div>
+
+            <div class="calendar-month-title" id="calendarMonth">Month Year</div>
+
+            <div class="calendar-weekdays" aria-hidden="true">
+                <span>MON</span><span>TUE</span><span>WED</span><span>THU</span>
+                <span>FRI</span><span>SAT</span><span>SUN</span>
+            </div>
+
+            <div class="calendar-days" id="calendarDays" role="grid" aria-label="Progress calendar"></div>
+
+            <div class="calendar-legend">
+                <div><span class="legend-dot completed"></span> Completed</div>
+                <div><span class="legend-dot partial"></span> Partial</div>
+                <div><span class="legend-dot missed"></span> Missed</div>
+                <div><span class="legend-dot today"></span> Today</div>
+            </div>
+
+            <div class="selected-date-summary" id="selectedDateSummary">
+                <strong id="selectedDate">Today</strong>
+                <span>— <span id="selectedDatePercentage">0%</span> completed</span>
+            </div>
+        </div>
+
+        <!-- TODAY PROGRESS -->
+        <div class="dashboard-card today-progress-card">
+            <div class="card-header">
+                <div>
+                    <span class="card-label">DAILY ROUTINE</span>
+                    <h2>Today's Progress</h2>
+                    <p class="card-subtitle">Your progress across today's goals.</p>
+                </div>
+            </div>
+
+            <div class="progress-main">
+                <div class="progress-ring active" id="todayProgressRing">
+                    <svg viewBox="0 0 120 120" aria-hidden="true">
+                        <circle class="ring-background" cx="60" cy="60" r="50"></circle>
+                        <circle class="ring-progress" id="todayProgressCircle" cx="60" cy="60" r="50"></circle>
+                    </svg>
+                    <div class="ring-content">
+                        <strong id="todayCompletion">0%</strong>
+                        <span>completed</span>
+                    </div>
+                </div>
+
+                <div class="today-stats">
+                    <div class="mini-stat">
+                        <div class="mini-icon">🎯</div>
+                        <div>
+                            <strong id="dailyProgressText">0 / 0</strong>
+                            <small>Goals completed</small>
+                        </div>
+                    </div>
+                    <div class="mini-stat">
+                        <div class="mini-icon">🔥</div>
+                        <div>
+                            <strong id="currentStreak">0 days</strong>
+                            <small>Current streak</small>
+                        </div>
+                    </div>
+                    <div class="mini-stat">
+                        <div class="mini-icon">✓</div>
+                        <div>
+                            <strong id="todayStatus">Pending</strong>
+                            <small>Today's status</small>
+                        </div>
+                    </div>
+                    <div class="mini-stat">
+                        <div class="mini-icon">📈</div>
+                        <div>
+                            <strong id="todayPercentage">0%</strong>
+                            <small>Daily performance</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- WEEKLY SUMMARY -->
+        <div class="dashboard-card weekly-summary-card">
+            <div class="card-header">
+                <div>
+                    <span class="card-label">PERFORMANCE</span>
+                    <h2>Weekly Summary</h2>
+                    <p class="card-subtitle">Your current weekly goal performance.</p>
+                </div>
+                <span class="trend-badge" id="predictionTrend">Building...</span>
+            </div>
+
+            <div class="weekly-progress-number">
+                <strong id="weeklyCompletion">0%</strong>
+                <span>completed this week</span>
+            </div>
+
+            <div class="progress-track">
+                <div class="progress-fill" id="weeklyProgressFill"></div>
+            </div>
+
+            <div class="weekly-summary-stats">
+                <div><strong id="weeklyAverage">0%</strong><span>Average</span></div>
+                <div><strong id="activeDays">0</strong><span>Active days</span></div>
+                <div><strong id="bestStreak">0</strong><span>Best streak</span></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- GOALS -->
+    <section class="goals-section" id="goalsSection">
+        <div class="section-title-row">
+            <div>
+                <span class="card-label">DAILY ROUTINE</span>
+                <h2>Today's Goals</h2>
+                <p>Complete your habits and build consistency.</p>
+                <small id="goalDateLabel" class="goal-date-label">Tracking today's goals</small>
+            </div>
+            <button type="button" id="addGoalButton" class="green-button">
+                <span aria-hidden="true">+</span> Add Goal
+            </button>
+        </div>
+
+        <!-- Goals render here via JS -->
+        <div class="goals-list" id="goalsList"></div>
+
+        <!-- ADD GOAL MODAL -->
+        <div class="goal-modal" id="addGoalPanel" aria-hidden="true">
+            <div class="goal-modal-content" role="dialog" aria-modal="true" aria-labelledby="addGoalTitle">
+                <button type="button" id="closeGoalPanel" class="modal-close" aria-label="Close Add Goal dialog">×</button>
+                <span class="card-label">CUSTOM GOAL</span>
+                <h2 id="addGoalTitle">Add a New Goal</h2>
+                <p>Create a custom goal and track it with your daily routine.</p>
+
+                <label for="newGoalName">Goal Name</label>
+                <input type="text" id="newGoalName" placeholder="Example: Meditation" maxlength="60" autocomplete="off">
+
+                <label for="newGoalDescription">Description</label>
+                <input type="text" id="newGoalDescription" placeholder="Example: Meditate for 15 minutes" maxlength="150" autocomplete="off">
+
+                <button type="button" id="saveGoalButton" class="green-button full-button">
+                    <span aria-hidden="true">+</span> Add Goal
+                </button>
+                <button type="button" id="cancelGoalButton" class="secondary-button full-button">Cancel</button>
+
+                <div id="goalMessage" role="alert" aria-live="polite"></div>
+            </div>
+        </div>
+
+        <div class="selected-date-summary daily-completion-box">
+            <strong>DAILY COMPLETION</strong>
+            <span id="dailyProgressPercentage">0%</span>
+            <div class="progress-track">
+                <div class="progress-fill" id="dailyProgressFill"></div>
+            </div>
+        </div>
+    </section>
+
+
+
+    <!-- DAILY JOURNAL -->
+    <section class="dashboard-card daily-journal-card" id="dailyJournal">
+        <div class="card-header">
+            <div>
+                <span class="card-label">DAILY CHECK-IN</span>
+                <h2 id="journalTitle">Log your day</h2>
+                <p class="card-subtitle">Save one private note and your daily wellness metrics for the selected date.</p>
+            </div>
+            <span class="journal-date-badge" id="journalDateBadge">Today</span>
+        </div>
+
+        <div class="journal-grid">
+            <label class="journal-field">
+                <span>Workout completed</span>
+                <select id="logWorkout">
+                    <option value="false">Not yet</option>
+                    <option value="true">Completed</option>
+                </select>
+            </label>
+
+            <label class="journal-field">
+                <span>Calories</span>
+                <input id="logCalories" type="number" min="0" max="10000" placeholder="e.g. 2100">
+            </label>
+
+            <label class="journal-field">
+                <span>Water (L)</span>
+                <input id="logWater" type="number" min="0" max="15" step="0.1" placeholder="e.g. 2.5">
+            </label>
+
+            <label class="journal-field">
+                <span>Sleep (hours)</span>
+                <input id="logSleep" type="number" min="0" max="24" step="0.1" placeholder="e.g. 7.5">
+            </label>
+
+            <label class="journal-field">
+                <span>Mood</span>
+                <select id="logMood">
+                    <option value="">Select mood</option>
+                    <option value="5">5 — Excellent</option>
+                    <option value="4">4 — Good</option>
+                    <option value="3">3 — Okay</option>
+                    <option value="2">2 — Low</option>
+                    <option value="1">1 — Very low</option>
+                </select>
+            </label>
+
+            <label class="journal-field journal-notes">
+                <span>Daily note</span>
+                <textarea id="logNotes" maxlength="2000" rows="3"
+                    placeholder="Write what you did, how you felt, meals, workout notes, or anything you want to remember..."></textarea>
+            </label>
+        </div>
+
+        <div class="journal-actions">
+            <span id="journalStatus" class="journal-status" aria-live="polite"></span>
+            <button type="button" id="saveDailyLogButton" class="green-button">
+                <span>✓</span> Save Daily Check-in
+            </button>
+        </div>
+    </section>
+
+    <!-- INSIGHTS -->
+    <section class="insights-grid">
+        <div class="dashboard-card">
+            <div class="card-header">
+                <div>
+                    <span class="card-label">DAILY PERFORMANCE</span>
+                    <h2>Progress Insights</h2>
+                    <p class="card-subtitle">Your daily completion pattern this week.</p>
+                </div>
+            </div>
+            <div class="daily-insight-list" id="dailyInsightList"></div>
+        </div>
+
+        <div class="dashboard-card">
+            <div class="card-header">
+                <div>
+                    <span class="card-label">ACHIEVEMENTS</span>
+                    <h2>Your Milestones</h2>
+                </div>
+                <div class="achievement-icon">🏆</div>
+            </div>
+
+            <div class="achievement-number">
+                <strong id="totalGoalsCompleted">0</strong>
+                <span>goals completed</span>
+            </div>
+
+            <div class="achievement-list">
+                <div class="achievement-row">
+                    <span>Current streak</span>
+                    <strong id="achievementStreak">0 days</strong>
+                </div>
+                <div class="achievement-row">
+                    <span>Active days</span>
+                    <strong id="achievementActiveDays">0</strong>
+                </div>
+                <div class="achievement-row">
+                    <span>Best streak</span>
+                    <strong id="achievementBestStreak">0 days</strong>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CHARTS -->
+    <section class="charts-grid">
+        <div class="dashboard-card chart-card">
+            <div class="card-header">
+                <div>
+                    <span class="card-label">PERFORMANCE ANALYTICS</span>
+                    <h2>This Week's Completion</h2>
+                    <p class="card-subtitle">Daily completion for the last 7 days.</p>
+                </div>
+            </div>
+            <div class="chart-container" id="weeklyChart"></div>
+        </div>
+
+        <div class="dashboard-card chart-card">
+            <div class="card-header">
+                <div>
+                    <span class="card-label">JOURNEY ANALYTICS</span>
+                    <h2>Weekly Trend &amp; Forecast</h2>
+                    <p class="card-subtitle">Past weekly averages with the ML-predicted week ahead.</p>
+                </div>
+            </div>
+            <div class="chart-container" id="overallChart"></div>
+        </div>
+    </section>
+
+    <!-- AI PREDICTION -->
+    <section class="dashboard-card prediction-card">
+        <div class="prediction-content">
+            <div class="prediction-left">
+                <span class="card-label">AI FORECAST</span>
+                <h2>Goal Achievement Prediction</h2>
+                <p>FitLyfe analyzes your recent goal completion pattern and consistency to estimate your future performance.</p>
+
+                <div class="prediction-status"><span aria-hidden="true">●</span> AI prediction active</div>
+
+                <div class="prediction-confidence">
+                    <div class="prediction-confidence-label">
+                        <span>Prediction confidence</span>
+                        <strong id="predictionConfidence">0%</strong>
+                    </div>
+                    <div class="prediction-confidence-track">
+                        <div class="prediction-confidence-fill" id="predictionConfidenceFill"></div>
+                    </div>
+                </div>
+
+                <div class="prediction-details">
+                    <div><span>Tomorrow</span><strong id="tomorrowPredictionDetail">0%</strong></div>
+                    <div><span>Next Week</span><strong id="nextWeekPredictionDetail">0%</strong></div>
+                    <div><span>Current Trend</span><strong id="predictionTrendDetail">Building</strong></div>
+                </div>
+            </div>
+
+            <div class="prediction-ring">
+                <svg viewBox="0 0 140 140" aria-hidden="true">
+                    <circle class="prediction-ring-bg" cx="70" cy="70" r="58"></circle>
+                    <circle class="prediction-ring-fill" id="predictionCircle" cx="70" cy="70" r="58"></circle>
+                </svg>
+                <div class="prediction-value">
+                    <strong id="tomorrowPrediction">0%</strong>
+                    <span>predicted</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- TOOLS -->
+    <section class="tools-section">
+        <div class="section-heading">
+            <span class="card-label">FITLYFE TOOLS</span>
+            <h2>Continue Your Journey</h2>
+        </div>
+        <div class="tools-grid">
+            <a href="{{ url_for('goal_tracker') }}" class="tool-card">
+                <span>🎯</span>
+                <div><strong>Goal Tracker</strong><small>Manage your fitness goals</small></div>
+                <b>→</b>
+            </a>
+            <a href="{{ url_for('bmi_calculator') }}" class="tool-card">
+                <span>⚖️</span>
+                <div><strong>BMI Calculator</strong><small>Check your body metrics</small></div>
+                <b>→</b>
+            </a>
+            <a href="{{ url_for('ai_diet_chart') }}" class="tool-card">
+                <span>🥗</span>
+                <div><strong>AI Diet Chart</strong><small>Generate your personalized plan</small></div>
+                <b>→</b>
+            </a>
+        </div>
+    </section>
+
+    <section class="detail-return-section">
+        <a href="{{ url_for('detail') }}" class="return-detail-button"><span>←</span> Return to Detail</a>
+    </section>
+
+    <!-- TOAST -->
+    <div class="dashboard-toast" id="dashboardToast" role="status" aria-live="polite">
+        <span id="toastIcon" aria-hidden="true">✓</span>
+        <span id="toastMessage">Goal updated</span>
+    </div>
+
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+<script src="{{ url_for('static', filename='js/dashboard.js') }}?v=40"></script>
+{% endblock %}

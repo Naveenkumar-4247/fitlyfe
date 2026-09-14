@@ -1,0 +1,198 @@
+{% extends "base.html" %}
+{% block title %}FitLyfe — Goal Tracker{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">{% endblock %}
+{% block content %}
+<main class="fit-dashboard dashboard-page" style="min-height:80vh">
+  <header class="dashboard-header">
+    <div class="dashboard-header-content">
+      <span class="dashboard-kicker">FITLYFE DAILY SYSTEM</span>
+      <h1>Your <span>Goal Tracker.</span></h1>
+      <p>Create a goal for any date, check it off when complete, and keep your personal progress separate from every other account.</p>
+    </div>
+    <a href="{{ url_for('dashboard') }}" class="dashboard-profile dashboard-detail-button"><div class="profile-circle">↗</div><div><strong>Open Dashboard</strong><small>See your analytics</small></div></a>
+  </header>
+  <section class="dashboard-top-grid">
+    <div class="dashboard-card calendar-card" style="grid-column:1/-1">
+      <div class="card-header"><div><span class="card-label">DAILY NOTES</span><h2>Plan one day at a time</h2><p class="card-subtitle">Choose a date and add as many personal goals as you need.</p></div></div>
+      <div style="display:grid;grid-template-columns:minmax(220px,280px) 1fr;gap:24px;align-items:start">
+        <input id="goalDate" type="date" class="form-control" value="{{ request.args.get('date','') }}">
+        <div>
+          <div style="display:flex;gap:10px;margin-bottom:15px"><input id="goalTitle" class="form-control" placeholder="e.g. 30 min cardio, drink 2.5L water"><button id="addGoal" class="btn btn-success">Add goal</button></div>
+          <div id="goalList" class="d-grid gap-2"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+<script>
+(() => {
+    "use strict";
+
+    const date = document.getElementById("goalDate");
+    const title = document.getElementById("goalTitle");
+    const list = document.getElementById("goalList");
+    const addButton = document.getElementById("addGoal");
+
+    if (!date || !title || !list || !addButton) return;
+
+    if (!date.value) {
+        const now = new Date();
+        date.value = [
+            now.getFullYear(),
+            String(now.getMonth() + 1).padStart(2, "0"),
+            String(now.getDate()).padStart(2, "0")
+        ].join("-");
+    }
+
+    async function request(url, options = {}) {
+        const response = await fetch(url, {
+            credentials: "same-origin",
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json",
+                ...(options.headers || {})
+            },
+            ...options
+        });
+
+        const data = await response.json().catch(() => ({}));
+
+        if (!response.ok) {
+            throw new Error(data.error || "Request failed.");
+        }
+
+        return data;
+    }
+
+    async function load() {
+        list.innerHTML = '<p class="card-subtitle">Loading your goals...</p>';
+
+        try {
+            const data = await request(
+                "/api/daily-goals?date=" +
+                encodeURIComponent(date.value)
+            );
+
+            if (!data.goals?.length) {
+                list.innerHTML =
+                    '<p class="card-subtitle">No goals for this date yet.</p>';
+                return;
+            }
+
+            list.innerHTML = "";
+
+            data.goals.forEach((goal) => {
+                const card = document.createElement("div");
+                card.className = "dashboard-card";
+                card.style.cssText =
+                    "padding:14px;display:flex;align-items:center;gap:14px;justify-content:space-between;";
+
+                card.innerHTML = `
+                    <label style="display:flex;gap:12px;align-items:center;margin:0;flex:1;cursor:pointer">
+                        <input type="checkbox" ${goal.completed ? "checked" : ""}>
+                        <span>
+                            <strong>${escapeHtml(goal.title)}</strong>
+                            <small style="display:block;opacity:.6;margin-top:3px">
+                                ${escapeHtml(goal.description || "Daily goal")}
+                            </small>
+                        </span>
+                    </label>
+                    <button type="button" class="btn btn-sm btn-outline-danger">
+                        Delete
+                    </button>
+                `;
+
+                card.querySelector("input").addEventListener(
+                    "change",
+                    () => toggleGoal(goal.id)
+                );
+
+                card.querySelector("button").addEventListener(
+                    "click",
+                    () => deleteGoal(goal.id, goal.title)
+                );
+
+                list.appendChild(card);
+            });
+        } catch (error) {
+            list.innerHTML =
+                `<p class="card-subtitle" style="color:#ff7474">${escapeHtml(error.message)}</p>`;
+        }
+    }
+
+    async function toggleGoal(id) {
+        try {
+            await request(
+                `/api/daily-goals/${id}/toggle`,
+                { method: "POST" }
+            );
+            await load();
+        } catch (error) {
+            alert(error.message);
+            await load();
+        }
+    }
+
+    async function deleteGoal(id, goalTitle) {
+        if (!confirm(`Delete "${goalTitle}"?`)) return;
+
+        try {
+            await request(
+                `/api/daily-goals/${id}`,
+                { method: "DELETE" }
+            );
+            await load();
+        } catch (error) {
+            alert(error.message);
+        }
+    }
+
+    addButton.addEventListener("click", async () => {
+        const value = title.value.trim();
+
+        if (value.length < 2) {
+            title.focus();
+            return;
+        }
+
+        addButton.disabled = true;
+        addButton.textContent = "Adding...";
+
+        try {
+            await request("/api/daily-goals", {
+                method: "POST",
+                body: JSON.stringify({
+                    title: value,
+                    description: "",
+                    goal_date: date.value
+                })
+            });
+
+            title.value = "";
+            await load();
+        } catch (error) {
+            alert(error.message);
+        } finally {
+            addButton.disabled = false;
+            addButton.textContent = "Add goal";
+        }
+    });
+
+    title.addEventListener("keydown", (event) => {
+        if (event.key === "Enter") {
+            event.preventDefault();
+            addButton.click();
+        }
+    });
+
+    date.addEventListener("change", load);
+    load();
+
+    function escapeHtml(value) {
+        const div = document.createElement("div");
+        div.textContent = String(value ?? "");
+        return div.innerHTML;
+    }
+})();
+</script>
+{% endblock %}

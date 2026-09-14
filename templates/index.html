@@ -1,0 +1,451 @@
+{% extends "base.html" %}
+
+{% block title %}
+FitLyfe - Goal Tracking Analytics
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/landing.css') }}">
+{% endblock %}
+
+{% block content %}
+
+<div class="landing-page">
+
+    <!-- =====================================================
+         HERO SLIDER
+    ====================================================== -->
+
+    <section class="landing-slider">
+
+        <!-- SLIDE 1 -->
+        <article class="landing-slide landing-slide-active">
+
+            <img
+                src="{{ url_for('static', filename='images/slider-2.png') }}"
+                alt="FitLyfe fitness tracking"
+                class="landing-slide-image"
+            >
+
+            <div class="landing-slide-overlay"></div>
+
+            <div class="landing-slide-content">
+
+                <span class="landing-eyebrow">
+                    FITLYFE • GOAL TRACKING
+                </span>
+
+                <h1>
+                    Understand Your
+                    <span>Progress.</span>
+                </h1>
+
+                <p>
+                    Transform your goals into daily success.
+                    Track your habits, build consistency,
+                    and become your best self.
+                </p>
+
+                <div class="landing-actions">
+
+                    <a
+                        href="{{ url_for('register') }}"
+                        class="landing-primary-btn"
+                    >
+                        Start Your Journey
+                        <span>→</span>
+                    </a>
+
+                    <a
+                        href="#landing-features"
+                        class="landing-secondary-btn"
+                    >
+                        Explore FitLyfe
+                    </a>
+
+                </div>
+
+            </div>
+
+        </article>
+
+
+        <!-- SLIDE 2 -->
+        <article class="landing-slide">
+
+            <img
+                src="{{ url_for('static', filename='images/slider-3.png') }}"
+                alt="Fitness running"
+                class="landing-slide-image"
+            >
+
+            <div class="landing-slide-overlay"></div>
+
+            <div class="landing-slide-content">
+
+                <span class="landing-eyebrow">
+                    BUILD • TRACK • IMPROVE
+                </span>
+
+                <h1>
+                    Small Steps.
+                    <span>Big Results.</span>
+                </h1>
+
+                <p>
+                    Set meaningful goals and turn your
+                    everyday activities into measurable progress.
+                </p>
+
+                <div class="landing-actions">
+
+                    <a
+                        href="{{ url_for('register') }}"
+                        class="landing-primary-btn"
+                    >
+                        Start Tracking
+                        <span>→</span>
+                    </a>
+
+                    <a
+                        href="#landing-features"
+                        class="landing-secondary-btn"
+                    >
+                        Discover More
+                    </a>
+
+                </div>
+
+            </div>
+
+        </article>
+
+
+        <!-- SLIDE 3 -->
+        <article class="landing-slide">
+
+            <img
+                src="{{ url_for('static', filename='images/slider-1.png') }}"
+                alt="Workout analytics"
+                class="landing-slide-image"
+            >
+
+            <div class="landing-slide-overlay"></div>
+
+            <div class="landing-slide-content">
+
+                <span class="landing-eyebrow">
+                    ANALYZE • IMPROVE • ACHIEVE
+                </span>
+
+                <h1>
+                    Your Consistency
+                    <span>Creates Success.</span>
+                </h1>
+
+                <p>
+                    Discover insights from your daily routine
+                    and understand how your habits shape your goals.
+                </p>
+
+                <div class="landing-actions">
+
+                    <a
+                        href="{{ url_for('register') }}"
+                        class="landing-primary-btn"
+                    >
+                        Get Started
+                        <span>→</span>
+                    </a>
+
+                    <a
+                        href="#landing-features"
+                        class="landing-secondary-btn"
+                    >
+                        Explore Features
+                    </a>
+
+                </div>
+
+            </div>
+
+        </article>
+
+
+        <!-- SLIDER CONTROLS -->
+
+        <button
+            type="button"
+            class="landing-slider-btn landing-prev"
+            aria-label="Previous slide"
+        >
+            ‹
+        </button>
+
+        <button
+            type="button"
+            class="landing-slider-btn landing-next"
+            aria-label="Next slide"
+        >
+            ›
+        </button>
+
+
+        <!-- SLIDER INDICATORS -->
+
+        <div class="landing-slider-indicators">
+
+            <span class="landing-indicator active"></span>
+            <span class="landing-indicator"></span>
+            <span class="landing-indicator"></span>
+
+        </div>
+
+
+        <!-- SCROLL INDICATOR -->
+
+        <div class="landing-scroll-indicator">
+            <span></span>
+            <small>SCROLL TO EXPLORE</small>
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         INTRO SECTION
+    ====================================================== -->
+
+    <section class="landing-intro">
+
+        <div class="landing-intro-inner landing-reveal">
+
+            <span class="landing-section-label">
+                ONE PLATFORM
+            </span>
+
+            <h2>
+                Fitness is not just about
+                <span>working harder.</span>
+            </h2>
+
+            <p>
+                It's about understanding yourself,
+                tracking your progress and building
+                habits that last.
+            </p>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         FEATURES
+    ====================================================== -->
+
+    <section
+        class="landing-features"
+        id="landing-features"
+    >
+
+        <div class="landing-section-heading landing-reveal">
+
+            <span class="landing-section-label">
+                WHAT YOU CAN DO
+            </span>
+
+            <h2>
+                Everything you need to
+                <span>move forward.</span>
+            </h2>
+
+            <p>
+                Simple tracking. Powerful analytics.
+                Smarter fitness decisions.
+            </p>
+
+        </div>
+
+
+        <!-- FEATURE 1 -->
+
+        <div class="landing-feature-row landing-reveal">
+
+            <div class="landing-feature-image">
+
+                <img
+                    src="{{ url_for('static', filename='images/hero-1.png') }}"
+                    alt="Goal tracking"
+                >
+
+                <div class="landing-image-number">
+                    01
+                </div>
+
+            </div>
+
+            <div class="landing-feature-content">
+
+                <span class="landing-feature-number">
+                    01 / GOALS
+                </span>
+
+                <h3>
+                    Set Goals That
+                    <span>Matter.</span>
+                </h3>
+
+                <p>
+                    Create daily fitness goals and keep
+                    your progress visible. Stay focused,
+                    consistent and motivated every day.
+                </p>
+
+                <div class="landing-feature-line"></div>
+
+            </div>
+
+        </div>
+
+
+        <!-- FEATURE 2 -->
+
+        <div class="landing-feature-row landing-feature-reverse landing-reveal">
+
+            <div class="landing-feature-image">
+
+                <img
+                    src="{{ url_for('static', filename='images/hero-2.png') }}"
+                    alt="Progress analytics"
+                >
+
+                <div class="landing-image-number">
+                    02
+                </div>
+
+            </div>
+
+            <div class="landing-feature-content">
+
+                <span class="landing-feature-number">
+                    02 / ANALYTICS
+                </span>
+
+                <h3>
+                    Turn Activity Into
+                    <span>Insights.</span>
+                </h3>
+
+                <p>
+                    Visualize your daily activities through
+                    meaningful charts and analytics so you
+                    can understand your improvement.
+                </p>
+
+                <div class="landing-feature-line"></div>
+
+            </div>
+
+        </div>
+
+
+        <!-- FEATURE 3 -->
+
+        <div class="landing-feature-row landing-reveal">
+
+            <div class="landing-feature-image">
+
+                <img
+                    src="{{ url_for('static', filename='images/hero-3.png') }}"
+                    alt="Smart diet planning"
+                >
+
+                <div class="landing-image-number">
+                    03
+                </div>
+
+            </div>
+
+            <div class="landing-feature-content">
+
+                <span class="landing-feature-number">
+                    03 / NUTRITION
+                </span>
+
+                <h3>
+                    Fuel Your Goals With
+                    <span>Better Choices.</span>
+                </h3>
+
+                <p>
+                    Plan your meals, understand your nutrition
+                    and make healthier choices that support
+                    your fitness journey.
+                </p>
+
+                <div class="landing-feature-line"></div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         FINAL CTA
+    ====================================================== -->
+
+    <section class="landing-final">
+
+        <div class="landing-final-glow"></div>
+
+        <div class="landing-final-content landing-reveal">
+
+            <span class="landing-section-label">
+                YOUR JOURNEY STARTS HERE
+            </span>
+
+            <h2>
+                Dream It.
+                <span>Track It.</span>
+                Achieve It.
+            </h2>
+
+            <p>
+                One goal. One step. Every day.
+            </p>
+
+            <a
+                href="{{ url_for('register') }}"
+                class="landing-final-btn"
+            >
+                START YOUR FITLYFE
+                <span>→</span>
+            </a>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         FOOTER
+    ====================================================== -->
+
+    <footer class="landing-footer">
+
+        <div>
+            <span class="landing-footer-fit">FIT</span><span>LYFE</span>
+        </div>
+
+        <p>
+            Goal Tracking Analytics
+        </p>
+
+    </footer>
+
+</div>
+
+{% endblock %}

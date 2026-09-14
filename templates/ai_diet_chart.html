@@ -1,0 +1,1063 @@
+{% extends "base.html" %}
+
+{% block title %}FitLyfe - AI Diet Plan{% endblock %}
+
+{% block extra_css %}
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@500;600;700;800&display=swap"
+    rel="stylesheet"
+>
+
+<link
+    rel="stylesheet"
+    href="{{ url_for('static', filename='css/ai_diet_chart.css') }}"
+>
+
+{% endblock %}
+
+
+{% block content %}
+
+<main class="diet-page">
+
+    <div class="diet-page-actions">
+        <a href="{{ url_for('detail') }}" class="diet-action-link">← Details</a>
+        <a href="{{ url_for('profile', next=url_for('ai_diet_chart')) }}" class="diet-action-link accent">Edit Profile ↗</a>
+    </div>
+
+    <!-- =====================================================
+         HERO
+    ====================================================== -->
+
+    <section class="diet-hero">
+
+        <div class="diet-hero-glow"></div>
+
+        <div class="diet-hero-content">
+
+            <span class="diet-eyebrow">
+                FITLYFE AI • NUTRITION
+            </span>
+
+            <h1>
+                Nutrition designed
+                <span>around you.</span>
+            </h1>
+
+            <p>
+                Generate a personalized daily diet plan using your
+                FitLyfe profile, fitness goal and food preferences.
+            </p>
+
+            <div class="diet-hero-meta">
+                <span>AI Personalized</span>
+                <span>•</span>
+                <span>Goal Based</span>
+                <span>•</span>
+                <span>Preference Aware</span>
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         WORKSPACE
+    ====================================================== -->
+
+    <section class="diet-workspace">
+
+
+        <!-- =================================================
+             FORM CARD
+        ================================================== -->
+
+        <div class="diet-form-card">
+
+            <div class="card-heading">
+
+                <div>
+
+                    <span class="section-label">
+                        01 • YOUR INPUTS
+                    </span>
+
+                    <h2>
+                        Personalize your plan
+                    </h2>
+
+                    <p>
+                        These details are used to make the plan
+                        different for each user.
+                    </p>
+
+                </div>
+
+                <div class="ai-badge">
+                    AI
+                </div>
+
+            </div>
+
+
+            <!-- FORM -->
+
+            <form id="dietForm" method="POST" novalidate>
+
+
+                <!-- PROFILE -->
+
+                <div class="subheading">
+                    PROFILE
+                </div>
+
+
+                <div class="profile-grid">
+
+                    <!-- NAME -->
+
+                    <div class="profile-stat">
+
+                        <span>Name</span>
+
+                        <strong>
+                            {% if user and user.name %}
+                                {{ user.name }}
+                            {% else %}
+                                User
+                            {% endif %}
+                        </strong>
+
+                    </div>
+
+
+                    <!-- AGE -->
+
+                    <div class="profile-stat">
+
+                        <span>Age</span>
+
+                        <strong>
+                            {% if user and user.age %}
+                                {{ user.age }}
+                            {% else %}
+                                Not set
+                            {% endif %}
+                        </strong>
+
+                    </div>
+
+
+                    <!-- HEIGHT -->
+
+                    <div class="profile-stat">
+
+                        <span>Height</span>
+
+                        <strong>
+                            {% if user and user.height %}
+                                {{ user.height }} cm
+                            {% else %}
+                                Not set
+                            {% endif %}
+                        </strong>
+
+                    </div>
+
+
+                    <!-- WEIGHT -->
+
+                    <div class="profile-stat">
+
+                        <span>Weight</span>
+
+                        <strong>
+                            {% if user and user.weight %}
+                                {{ user.weight }} kg
+                            {% else %}
+                                Not set
+                            {% endif %}
+                        </strong>
+
+                    </div>
+
+
+                    <!-- ACTIVITY -->
+
+                    <div class="profile-stat">
+
+                        <span>Activity</span>
+
+                        <strong>
+                            {% if user and user.activity_level %}
+                                {{ user.activity_level|replace("_", " ")|title }}
+                            {% else %}
+                                Not set
+                            {% endif %}
+                        </strong>
+
+                    </div>
+
+
+                    <!-- GOAL -->
+
+                    <div class="profile-stat">
+
+                        <span>Goal</span>
+
+                        <strong>
+                            {% if user and user.goal %}
+                                {{ user.goal|replace("_", " ")|title }}
+                            {% else %}
+                                Not set
+                            {% endif %}
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <div class="form-divider"></div>
+
+
+                <!-- =================================================
+                     DIET PREFERENCES
+                ================================================== -->
+
+                <div class="subheading">
+                    DIET PREFERENCES
+                </div>
+
+
+                <div class="field-grid">
+
+
+                    <!-- DIET TYPE -->
+
+                    <label class="field">
+
+                        <span>
+                            Diet Type
+                        </span>
+
+                        <select
+                            name="diet_type"
+                            id="dietType"
+                            required
+                        >
+
+                            <option value="non_vegetarian" selected>
+                                Non-Vegetarian
+                            </option>
+
+                            <option value="vegetarian">
+                                Vegetarian
+                            </option>
+
+                            <option value="vegan">
+                                Vegan
+                            </option>
+
+                            <option value="eggetarian">
+                                Eggetarian
+                            </option>
+
+                        </select>
+
+                    </label>
+
+
+                    <!-- MEALS PER DAY -->
+
+                    <label class="field">
+
+                        <span>
+                            Meals Per Day
+                        </span>
+
+                        <select
+                            name="meals_per_day"
+                            id="mealsPerDay"
+                            required
+                        >
+
+                            <option value="3">
+                                3 Meals
+                            </option>
+
+                            <option value="4" selected>
+                                4 Meals
+                            </option>
+
+                            <option value="5">
+                                5 Meals
+                            </option>
+
+                            <option value="6">
+                                6 Meals
+                            </option>
+
+                        </select>
+
+                    </label>
+
+
+                    <!-- SEX -->
+
+                    <label class="field">
+
+                        <span>
+                            Sex <small>(optional)</small>
+                        </span>
+
+                        <select
+                            name="sex"
+                            id="sex"
+                        >
+
+                            <option value="prefer_not_to_say" selected>
+                                Prefer not to say
+                            </option>
+
+                            <option value="male">
+                                Male
+                            </option>
+
+                            <option value="female">
+                                Female
+                            </option>
+
+                        </select>
+
+                    </label>
+
+
+                    <!-- BUDGET -->
+
+                    <label class="field">
+
+                        <span>
+                            Budget
+                        </span>
+
+                        <select
+                            name="budget"
+                            id="budget"
+                        >
+
+                            <option value="budget">
+                                Budget Friendly
+                            </option>
+
+                            <option value="moderate" selected>
+                                Moderate
+                            </option>
+
+                            <option value="premium">
+                                Premium
+                            </option>
+
+                        </select>
+
+                    </label>
+
+
+                    <!-- CUISINE -->
+
+                    <label class="field field-full">
+
+                        <span>
+                            Cuisine Preference
+                            <small>(optional)</small>
+                        </span>
+
+                        <input
+                            type="text"
+                            name="cuisine"
+                            id="cuisine"
+                            placeholder="e.g. Indian, South Indian, Mediterranean"
+                            maxlength="100"
+                        >
+
+                    </label>
+
+
+                    <!-- ALLERGIES -->
+
+                    <label class="field field-full">
+
+                        <span>
+                            Food Allergies
+                        </span>
+
+                        <input
+                            type="text"
+                            name="allergies"
+                            id="allergies"
+                            placeholder="e.g. peanuts, shellfish, milk. Write None if none."
+                            maxlength="300"
+                        >
+
+                    </label>
+
+
+                    <!-- DISLIKES -->
+
+                    <label class="field field-full">
+
+                        <span>
+                            Foods You Avoid / Dislike
+                        </span>
+
+                        <textarea
+                            name="dislikes"
+                            id="dislikes"
+                            rows="3"
+                            maxlength="500"
+                            placeholder="e.g. oats, broccoli, fish"
+                        ></textarea>
+
+                    </label>
+
+                </div>
+
+
+                <!-- =================================================
+                     WARNING
+                ================================================== -->
+
+                <div class="form-warning">
+
+                    <span>
+                        i
+                    </span>
+
+                    <p>
+                        This is a general wellness planner, not a medical
+                        diet prescription. If you have a medical condition,
+                        pregnancy, severe allergy or other special
+                        nutritional needs, consult a qualified professional.
+                    </p>
+
+                </div>
+
+
+                <!-- =================================================
+                     GENERATE BUTTON
+                ================================================== -->
+
+                <button
+                    type="submit"
+                    class="generate-btn"
+                    id="generateBtn"
+                >
+
+                    <span class="btn-text">
+                        Generate My AI Diet Plan
+                    </span>
+
+                    <span
+                        class="btn-loader"
+                        aria-hidden="true"
+                    ></span>
+
+                    <span class="btn-arrow">
+                        →
+                    </span>
+
+                </button>
+
+
+                <!-- ERROR -->
+
+                <div
+                    class="form-error"
+                    id="formError"
+                    role="alert"
+                    aria-live="polite"
+                ></div>
+
+            </form>
+
+        </div>
+
+
+        <!-- =================================================
+             HOW IT WORKS
+        ================================================== -->
+
+        <aside class="diet-side-card">
+
+            <span class="section-label">
+                HOW IT WORKS
+            </span>
+
+            <h3>
+                Your plan adapts to your data.
+            </h3>
+
+
+            <!-- STEP 01 -->
+
+            <div class="process-step">
+
+                <span>
+                    01
+                </span>
+
+                <div>
+
+                    <strong>
+                        Profile analysis
+                    </strong>
+
+                    <p>
+                        Age, height, weight, activity and goal
+                        are analyzed.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- STEP 02 -->
+
+            <div class="process-step">
+
+                <span>
+                    02
+                </span>
+
+                <div>
+
+                    <strong>
+                        Nutrition calculation
+                    </strong>
+
+                    <p>
+                        FitLyfe estimates calories, protein,
+                        carbs, fat and hydration.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- STEP 03 -->
+
+            <div class="process-step">
+
+                <span>
+                    03
+                </span>
+
+                <div>
+
+                    <strong>
+                        AI personalization
+                    </strong>
+
+                    <p>
+                        Food preferences, allergies and meal
+                        count shape the plan.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- STEP 04 -->
+
+            <div class="process-step">
+
+                <span>
+                    04
+                </span>
+
+                <div>
+
+                    <strong>
+                        Personal result
+                    </strong>
+
+                    <p>
+                        Your generated plan is saved to your
+                        FitLyfe account.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </aside>
+
+    </section>
+
+
+    <!-- =====================================================
+         RESULT SECTION
+    ====================================================== -->
+
+    <section
+        class="diet-result-section{% if latest_plan %} has-plan{% endif %}"
+        id="dietResultSection"
+    >
+
+
+        <!-- =================================================
+             RESULT HEADER
+        ================================================== -->
+
+        <div class="result-topbar">
+
+            <div>
+
+                <span class="section-label">
+                    02 • YOUR PLAN
+                </span>
+
+                <h2 id="planTitle">
+
+                    {% if latest_plan %}
+                        {{ latest_plan.get("title", "Your Personalized Diet Plan") }}
+                    {% else %}
+                        Your personalized plan will appear here.
+                    {% endif %}
+
+                </h2>
+
+            </div>
+
+
+            <div class="result-actions">
+
+                <button
+                    type="button"
+                    class="ghost-btn"
+                    id="printPlanBtn"
+                >
+                    Print
+                </button>
+
+                <button
+                    type="button"
+                    class="ghost-btn"
+                    id="newPlanBtn"
+                >
+                    Regenerate
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             EMPTY STATE
+        ================================================== -->
+
+        <div
+            id="emptyState"
+            class="{% if latest_plan %}hidden{% endif %}"
+        >
+
+            <div class="empty-icon">
+                ✦
+            </div>
+
+            <h3>
+                Ready when you are.
+            </h3>
+
+            <p>
+                Complete your preferences above and FitLyfe AI
+                will create a plan tailored to your details.
+            </p>
+
+        </div>
+
+
+        <!-- =================================================
+             PLAN OUTPUT
+        ================================================== -->
+
+        <div
+            id="planOutput"
+            class="{% if not latest_plan %}hidden{% endif %}"
+        >
+
+
+            <!-- =================================================
+                 SUMMARY
+            ================================================== -->
+
+            <div class="plan-summary-card">
+
+                <div class="summary-copy">
+
+                    <span class="summary-label">
+
+                        PERSONALIZED FOR
+                        {% if user and user.name %}
+                            {{ user.name|upper }}
+                        {% else %}
+                            USER
+                        {% endif %}
+
+                    </span>
+
+                    <p id="planSummary">
+
+                        {% if latest_plan %}
+                            {{ latest_plan.get("summary", "") }}
+                        {% endif %}
+
+                    </p>
+
+                </div>
+
+                <div class="summary-mark">
+                    AI
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 NUTRITION
+            ================================================== -->
+
+            <div class="nutrition-grid">
+
+
+                <!-- CALORIES -->
+
+                <div class="nutrition-card">
+
+                    <span>
+                        Calories
+                    </span>
+
+                    <strong id="caloriesValue">
+
+                        {% if latest_plan %}
+                            {{ latest_plan.get("nutrition", {}).get("calories", "--") }}
+                        {% else %}
+                            --
+                        {% endif %}
+
+                    </strong>
+
+                    <small>
+                        kcal / day
+                    </small>
+
+                </div>
+
+
+                <!-- PROTEIN -->
+
+                <div class="nutrition-card">
+
+                    <span>
+                        Protein
+                    </span>
+
+                    <strong id="proteinValue">
+
+                        {% if latest_plan %}
+                            {{ latest_plan.get("nutrition", {}).get("protein_g", "--") }}
+                        {% else %}
+                            --
+                        {% endif %}
+
+                    </strong>
+
+                    <small>
+                        grams / day
+                    </small>
+
+                </div>
+
+
+                <!-- CARBS -->
+
+                <div class="nutrition-card">
+
+                    <span>
+                        Carbs
+                    </span>
+
+                    <strong id="carbsValue">
+
+                        {% if latest_plan %}
+                            {{ latest_plan.get("nutrition", {}).get("carbs_g", "--") }}
+                        {% else %}
+                            --
+                        {% endif %}
+
+                    </strong>
+
+                    <small>
+                        grams / day
+                    </small>
+
+                </div>
+
+
+                <!-- FAT -->
+
+                <div class="nutrition-card">
+
+                    <span>
+                        Fat
+                    </span>
+
+                    <strong id="fatValue">
+
+                        {% if latest_plan %}
+                            {{ latest_plan.get("nutrition", {}).get("fat_g", "--") }}
+                        {% else %}
+                            --
+                        {% endif %}
+
+                    </strong>
+
+                    <small>
+                        grams / day
+                    </small>
+
+                </div>
+
+
+                <!-- WATER -->
+
+                <div class="nutrition-card">
+
+                    <span>
+                        Water
+                    </span>
+
+                    <strong id="waterValue">
+
+                        {% if latest_plan %}
+                            {{ latest_plan.get("nutrition", {}).get("water_l", "--") }}
+                        {% else %}
+                            --
+                        {% endif %}
+
+                    </strong>
+
+                    <small>
+                        litres / day
+                    </small>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 MEALS
+            ================================================== -->
+
+            <div class="meal-heading">
+
+                <div>
+
+                    <span class="section-label">
+                        DAILY MEALS
+                    </span>
+
+                    <h3>
+                        Eat with intention.
+                    </h3>
+
+                </div>
+
+            </div>
+
+
+            <div
+                class="meal-grid"
+                id="mealGrid"
+            >
+
+                {% if latest_plan %}
+
+                    {% for meal in latest_plan.get("meals", []) %}
+
+                        <article class="meal-card">
+
+                            <div class="meal-number">
+                                {{ "%02d"|format(loop.index) }}
+                            </div>
+
+
+                            <div class="meal-main">
+
+                                <div class="meal-top">
+
+                                    <div>
+
+                                        <span class="meal-time">
+                                            {{ meal.get("time", "") }}
+                                        </span>
+
+                                        <h4>
+                                            {{ meal.get("name", "Meal") }}
+                                        </h4>
+
+                                    </div>
+
+                                    <span class="meal-calories">
+                                        {{ meal.get("calories", 0) }} kcal
+                                    </span>
+
+                                </div>
+
+
+                                <ul>
+
+                                    {% for food in meal.get("foods", []) %}
+
+                                        <li>
+                                            {{ food }}
+                                        </li>
+
+                                    {% endfor %}
+
+                                </ul>
+
+
+                                <span class="meal-protein">
+
+                                    {{ meal.get("protein_g", 0) }}
+                                    g protein
+
+                                </span>
+
+                            </div>
+
+                        </article>
+
+                    {% endfor %}
+
+                {% endif %}
+
+            </div>
+
+
+            <!-- =================================================
+                 BOTTOM INFORMATION
+            ================================================== -->
+
+            <div class="bottom-grid">
+
+
+                <!-- HYDRATION -->
+
+                <div class="info-card">
+
+                    <span class="section-label">
+                        HYDRATION
+                    </span>
+
+                    <h3>
+                        Stay hydrated.
+                    </h3>
+
+                    <p id="hydrationText">
+
+                        {% if latest_plan %}
+                            {{ latest_plan.get("hydration", "") }}
+                        {% endif %}
+
+                    </p>
+
+                </div>
+
+
+                <!-- AI TIPS -->
+
+                <div class="info-card">
+
+                    <span class="section-label">
+                        AI TIPS
+                    </span>
+
+                    <h3>
+                        Small choices matter.
+                    </h3>
+
+                    <ul id="tipsList">
+
+                        {% if latest_plan %}
+
+                            {% for tip in latest_plan.get("tips", []) %}
+
+                                <li>
+                                    {{ tip }}
+                                </li>
+
+                            {% endfor %}
+
+                        {% endif %}
+
+                    </ul>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 SAFETY
+            ================================================== -->
+
+            <div
+                class="safety-note"
+                id="safetyNote"
+            >
+
+                {% if latest_plan %}
+                    {{ latest_plan.get("safety_note", "") }}
+                {% endif %}
+
+            </div>
+
+        </div>
+
+    </section>
+
+</main>
+
+
+<!-- =========================================================
+     JAVASCRIPT DATA
+========================================================== -->
+
+<script type="application/json" id="fitlyfeDietPlan">
+    {{ latest_plan|tojson }}
+</script>
+
+<script>
+    window.FITLYFE_DIET_PLAN = JSON.parse(
+        document.getElementById("fitlyfeDietPlan").textContent
+    );
+</script>
+
+<script
+    src="{{ url_for('static', filename='js/ai_diet_chart.js') }}"
+></script>
+
+{% endblock %}
