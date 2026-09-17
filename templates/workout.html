@@ -1,0 +1,838 @@
+{% extends "base.html" %}
+
+{% block title %}Workout Studio | FitLyfe{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/workout.css') }}">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+{% endblock %}
+
+{% block content %}
+
+<div class="workout-studio">
+
+    <!-- =====================================================
+         BACKGROUND EFFECTS
+         ===================================================== -->
+    <div class="background" aria-hidden="true">
+        <div class="glow glow-one"></div>
+        <div class="glow glow-two"></div>
+        <div class="glow glow-three"></div>
+
+        <div class="grid-overlay"></div>
+
+        <span class="floating-dot dot-one"></span>
+        <span class="floating-dot dot-two"></span>
+        <span class="floating-dot dot-three"></span>
+        <span class="floating-dot dot-four"></span>
+        <span class="floating-dot dot-five"></span>
+        <span class="floating-dot dot-six"></span>
+
+        <span class="floating-line line-one"></span>
+        <span class="floating-line line-two"></span>
+    </div>
+
+
+    <!-- =====================================================
+         MAIN WORKOUT PAGE
+         ===================================================== -->
+    <main class="workout-page">
+
+        <!-- =================================================
+             BACK BUTTON
+             ================================================= -->
+        <div class="workout-back-wrapper">
+            <a href="{{ url_for('detail') }}"
+               class="back-button"
+               aria-label="Back to FitLyfe detail page">
+                <span class="back-icon">
+                    <i class="fa-solid fa-arrow-left"></i>
+                </span>
+                <span>Back to Detail</span>
+            </a>
+        </div>
+
+
+        <!-- =================================================
+             HERO SECTION
+             ================================================= -->
+        <section class="hero-section">
+
+            <div class="hero-badge">
+                <span class="pulse-dot"></span>
+                <span>FITLYFE WORKOUT STUDIO</span>
+            </div>
+
+            <div class="hero-title-wrap">
+                <span class="hero-eyebrow">YOUR TRAINING. YOUR WAY.</span>
+
+                <h1>
+                    Train
+                    <span>Smarter.</span>
+                    <br>
+                    Get Stronger.
+                </h1>
+            </div>
+
+            <p class="hero-description">
+                Build your training session around the way you want to train.
+                Choose a complete split, target a specific muscle, or generate
+                a workout instantly.
+            </p>
+
+            <div class="hero-stats">
+                <div class="hero-stat">
+                    <span class="stat-icon">
+                        <i class="fa-solid fa-dumbbell"></i>
+                    </span>
+                    <div>
+                        <strong>Smart</strong>
+                        <small>Workouts</small>
+                    </div>
+                </div>
+
+                <div class="hero-stat-divider"></div>
+
+                <div class="hero-stat">
+                    <span class="stat-icon">
+                        <i class="fa-solid fa-bullseye"></i>
+                    </span>
+                    <div>
+                        <strong>Focused</strong>
+                        <small>Training</small>
+                    </div>
+                </div>
+
+                <div class="hero-stat-divider"></div>
+
+                <div class="hero-stat">
+                    <span class="stat-icon">
+                        <i class="fa-solid fa-bolt"></i>
+                    </span>
+                    <div>
+                        <strong>Instant</strong>
+                        <small>Generation</small>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             TRAINING MODE SECTION
+             IMPORTANT: ABOVE SEARCH
+             ================================================= -->
+        <section class="mode-section">
+
+            <div class="section-heading">
+                <div class="heading-kicker">
+                    <span class="heading-line"></span>
+                    <span class="section-label">CHOOSE YOUR STYLE</span>
+                    <span class="heading-line"></span>
+                </div>
+
+                <h2>
+                    How do you want to
+                    <span>train?</span>
+                </h2>
+
+                <p>
+                    Start with a structured training split or focus directly
+                    on the muscle group you want to develop.
+                </p>
+            </div>
+
+
+            <div class="mode-grid">
+
+                <!-- TRAINING SPLIT -->
+                <div class="mode-card split-card"
+                     id="splitCard"
+                     role="button"
+                     tabindex="0"
+                     aria-label="Choose Training Split">
+
+                    <div class="card-glow"></div>
+
+                    <div class="card-number">01</div>
+
+                    <div class="mode-card-top">
+                        <div class="mode-icon split-icon">
+                            <i class="fa-solid fa-fire-flame-curved"></i>
+                        </div>
+
+                        <div class="mode-arrow">
+                            <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                        </div>
+                    </div>
+
+                    <div class="mode-content">
+                        <span class="mode-label">
+                            <i class="fa-solid fa-layer-group"></i>
+                            STRUCTURED TRAINING
+                        </span>
+
+                        <h3>Training Split</h3>
+
+                        <p>
+                            Follow a structured
+                            <strong>Push • Pull • Legs</strong>
+                            approach and build your workout around a
+                            dedicated training day.
+                        </p>
+                    </div>
+
+                    <div class="mode-card-footer">
+                        <span>Explore training days</span>
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </div>
+
+                </div>
+
+
+                <!-- TARGET TRAINING -->
+                <div class="mode-card target-card"
+                     id="targetCard"
+                     role="button"
+                     tabindex="0"
+                     aria-label="Choose Target Training">
+
+                    <div class="card-glow"></div>
+
+                    <div class="card-number">02</div>
+
+                    <div class="mode-card-top">
+                        <div class="mode-icon target-icon">
+                            <i class="fa-solid fa-bullseye"></i>
+                        </div>
+
+                        <div class="mode-arrow">
+                            <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                        </div>
+                    </div>
+
+                    <div class="mode-content">
+                        <span class="mode-label">
+                            <i class="fa-solid fa-crosshairs"></i>
+                            MUSCLE FOCUSED
+                        </span>
+
+                        <h3>Target Training</h3>
+
+                        <p>
+                            Choose a specific muscle and generate a focused
+                            workout designed around your selected training area.
+                        </p>
+                    </div>
+
+                    <div class="mode-card-footer">
+                        <span>Select muscle focus</span>
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             TRAINING SPLIT SELECTION
+             ================================================= -->
+        <section class="selection-section hidden" id="splitSection">
+
+            <div class="selection-header">
+
+                <div class="selection-title-wrap">
+                    <span class="section-label">TRAINING SPLIT</span>
+
+                    <h2>
+                        Select your
+                        <span>training day</span>
+                    </h2>
+
+                    <p>
+                        Choose the training style you want to perform today.
+                    </p>
+                </div>
+
+                <button type="button"
+                        class="close-selection"
+                        id="closeSplit"
+                        aria-label="Close training split">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+
+            </div>
+
+
+            <div class="split-options">
+
+                <!-- PUSH -->
+                <button type="button"
+                        class="split-option push-option"
+                        data-workout="Push">
+
+                    <div class="option-number">01</div>
+
+                    <div class="option-icon">
+                        <i class="fa-solid fa-arrow-up"></i>
+                    </div>
+
+                    <div class="option-content">
+                        <span class="option-kicker">UPPER BODY</span>
+                        <strong>Push Day</strong>
+                        <small>Chest • Shoulders • Triceps</small>
+                    </div>
+
+                    <div class="option-action">
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </div>
+
+                </button>
+
+
+                <!-- PULL -->
+                <button type="button"
+                        class="split-option pull-option"
+                        data-workout="Pull">
+
+                    <div class="option-number">02</div>
+
+                    <div class="option-icon">
+                        <i class="fa-solid fa-arrow-down"></i>
+                    </div>
+
+                    <div class="option-content">
+                        <span class="option-kicker">UPPER BODY</span>
+                        <strong>Pull Day</strong>
+                        <small>Back • Lats • Biceps</small>
+                    </div>
+
+                    <div class="option-action">
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </div>
+
+                </button>
+
+
+                <!-- LEGS -->
+                <button type="button"
+                        class="split-option leg-option"
+                        data-workout="Legs">
+
+                    <div class="option-number">03</div>
+
+                    <div class="option-icon">
+                        <i class="fa-solid fa-person-walking"></i>
+                    </div>
+
+                    <div class="option-content">
+                        <span class="option-kicker">LOWER BODY</span>
+                        <strong>Leg Day</strong>
+                        <small>Quads • Hamstrings • Glutes • Calves</small>
+                    </div>
+
+                    <div class="option-action">
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </div>
+
+                </button>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             TARGET MUSCLE SELECTION
+             ================================================= -->
+        <section class="selection-section hidden" id="targetSection">
+
+            <div class="selection-header">
+
+                <div class="selection-title-wrap">
+                    <span class="section-label">TARGET TRAINING</span>
+
+                    <h2>
+                        Choose your
+                        <span>muscle focus</span>
+                    </h2>
+
+                    <p>
+                        Select a muscle group and FitLyfe will build your workout.
+                    </p>
+                </div>
+
+                <button type="button"
+                        class="close-selection"
+                        id="closeTarget"
+                        aria-label="Close target training">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+
+            </div>
+
+
+            <div class="muscle-grid">
+
+                <button type="button"
+                        class="muscle-button"
+                        data-workout="Chest">
+                    <span class="muscle-emoji">🔥</span>
+                    <span class="muscle-name">Chest</span>
+                    <span class="muscle-arrow">
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </span>
+                </button>
+
+
+                <button type="button"
+                        class="muscle-button"
+                        data-workout="Back">
+                    <span class="muscle-emoji">🦍</span>
+                    <span class="muscle-name">Back</span>
+                    <span class="muscle-arrow">
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </span>
+                </button>
+
+
+                <button type="button"
+                        class="muscle-button"
+                        data-workout="Lats">
+                    <span class="muscle-emoji">💪</span>
+                    <span class="muscle-name">Lats</span>
+                    <span class="muscle-arrow">
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </span>
+                </button>
+
+
+                <button type="button"
+                        class="muscle-button"
+                        data-workout="Shoulders">
+                    <span class="muscle-emoji">⚡</span>
+                    <span class="muscle-name">Shoulders</span>
+                    <span class="muscle-arrow">
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </span>
+                </button>
+
+
+                <button type="button"
+                        class="muscle-button"
+                        data-workout="Biceps">
+                    <span class="muscle-emoji">💪</span>
+                    <span class="muscle-name">Biceps</span>
+                    <span class="muscle-arrow">
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </span>
+                </button>
+
+
+                <button type="button"
+                        class="muscle-button"
+                        data-workout="Triceps">
+                    <span class="muscle-emoji">🔥</span>
+                    <span class="muscle-name">Triceps</span>
+                    <span class="muscle-arrow">
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </span>
+                </button>
+
+
+                <button type="button"
+                        class="muscle-button"
+                        data-workout="Legs">
+                    <span class="muscle-emoji">🦵</span>
+                    <span class="muscle-name">Legs</span>
+                    <span class="muscle-arrow">
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </span>
+                </button>
+
+
+                <button type="button"
+                        class="muscle-button"
+                        data-workout="Core">
+                    <span class="muscle-emoji">🎯</span>
+                    <span class="muscle-name">Core</span>
+                    <span class="muscle-arrow">
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </span>
+                </button>
+
+
+                <button type="button"
+                        class="muscle-button"
+                        data-workout="Glutes">
+                    <span class="muscle-emoji">🏋️</span>
+                    <span class="muscle-name">Glutes</span>
+                    <span class="muscle-arrow">
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </span>
+                </button>
+
+
+                <button type="button"
+                        class="muscle-button"
+                        data-workout="Forearms">
+                    <span class="muscle-emoji">✊</span>
+                    <span class="muscle-name">Forearms</span>
+                    <span class="muscle-arrow">
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </span>
+                </button>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             QUICK GENERATOR
+             NOW BELOW TRAINING CHOICES
+             ================================================= -->
+        <section class="generator-card">
+
+            <div class="generator-orb generator-orb-one"></div>
+            <div class="generator-orb generator-orb-two"></div>
+
+            <div class="generator-header">
+
+                <div class="generator-title-area">
+
+                    <div class="generator-icon">
+                        <i class="fa-solid fa-wand-magic-sparkles"></i>
+                    </div>
+
+                    <div>
+                        <span class="section-label">QUICK GENERATOR</span>
+
+                        <h2>
+                            Have something
+                            <span>specific in mind?</span>
+                        </h2>
+
+                        <p>
+                            Type your workout goal and generate a session instantly.
+                        </p>
+                    </div>
+
+                </div>
+
+                <div class="generator-badge">
+                    <span class="live-dot"></span>
+                    READY
+                </div>
+
+            </div>
+
+
+            <div class="search-wrapper">
+
+                <div class="search-field">
+
+                    <i class="fa-solid fa-magnifying-glass search-icon"></i>
+
+                    <input type="text"
+                           id="workoutInput"
+                           autocomplete="off"
+                           placeholder="e.g. Give me a chest workout..."
+                           aria-label="Describe the workout you want">
+
+                    <span class="search-shortcut">ENTER</span>
+
+                </div>
+
+                <button type="button"
+                        id="generateButton"
+                        class="generate-button">
+
+                    <span>Generate Workout</span>
+
+                    <i class="fa-solid fa-wand-magic-sparkles"></i>
+
+                </button>
+
+            </div>
+
+
+            <div class="quick-tags-header">
+                <span>QUICK START</span>
+                <span class="quick-tags-line"></span>
+                <small>Popular choices</small>
+            </div>
+
+
+            <div class="quick-tags">
+
+                <button type="button"
+                        class="quick-tag"
+                        data-workout="Chest">
+                    <i class="fa-solid fa-heart-pulse"></i>
+                    <span>Chest</span>
+                </button>
+
+                <button type="button"
+                        class="quick-tag"
+                        data-workout="Lats">
+                    <i class="fa-solid fa-person-running"></i>
+                    <span>Lats</span>
+                </button>
+
+                <button type="button"
+                        class="quick-tag"
+                        data-workout="Push">
+                    <i class="fa-solid fa-arrow-up"></i>
+                    <span>Push</span>
+                </button>
+
+                <button type="button"
+                        class="quick-tag"
+                        data-workout="Pull">
+                    <i class="fa-solid fa-arrow-down"></i>
+                    <span>Pull</span>
+                </button>
+
+                <button type="button"
+                        class="quick-tag"
+                        data-workout="Legs">
+                    <i class="fa-solid fa-person-walking"></i>
+                    <span>Legs</span>
+                </button>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             LOADING
+             ================================================= -->
+        <section class="loading-section hidden" id="loadingSection">
+
+            <div class="loading-visual">
+
+                <div class="loader-ring"></div>
+
+                <div class="loader-core">
+                    <i class="fa-solid fa-dumbbell"></i>
+                </div>
+
+                <span class="loader-particle loader-particle-one"></span>
+                <span class="loader-particle loader-particle-two"></span>
+                <span class="loader-particle loader-particle-three"></span>
+
+            </div>
+
+            <div class="loading-content">
+                <span class="section-label">FITLYFE ENGINE</span>
+
+                <h3>Building your workout...</h3>
+
+                <p>
+                    Selecting the right exercises for your training.
+                </p>
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             RESULT SECTION
+             ================================================= -->
+        <section class="result-section hidden" id="resultSection">
+
+            <div class="result-glow"></div>
+
+            <!-- RESULT HEADER -->
+            <div class="result-top">
+
+                <div class="result-title-area">
+
+                    <div class="result-kicker">
+                        <span class="live-dot"></span>
+                        YOUR TRAINING PLAN
+                    </div>
+
+                    <h2 id="resultTitle">Your Workout</h2>
+
+                    <p id="resultDescription">
+                        A personalized workout designed for your selected
+                        training focus.
+                    </p>
+
+                </div>
+
+                <div class="result-badge">
+                    <div class="result-badge-icon">
+                        <i class="fa-solid fa-dumbbell"></i>
+                    </div>
+
+                    <div>
+                        <span>WORKOUT</span>
+                        <strong id="exerciseCount">0 Exercises</strong>
+                    </div>
+                </div>
+
+            </div>
+
+
+            <!-- RESULT METADATA -->
+            <div class="result-meta">
+
+                <div class="meta-item">
+
+                    <div class="meta-icon">
+                        <i class="fa-solid fa-list-check"></i>
+                    </div>
+
+                    <div class="meta-content">
+                        <span>VOLUME</span>
+                        <strong id="setCount">0 Sets</strong>
+                    </div>
+
+                </div>
+
+
+                <div class="meta-item">
+
+                    <div class="meta-icon">
+                        <i class="fa-solid fa-bolt"></i>
+                    </div>
+
+                    <div class="meta-content">
+                        <span>INTENSITY</span>
+                        <strong id="workoutIntensity">Personalized</strong>
+                    </div>
+
+                </div>
+
+
+                <div class="meta-item">
+
+                    <div class="meta-icon">
+                        <i class="fa-regular fa-clock"></i>
+                    </div>
+
+                    <div class="meta-content">
+                        <span>DURATION</span>
+                        <strong id="workoutDuration">-- min</strong>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- EXERCISE LIST -->
+            <div class="exercise-section-heading">
+
+                <div>
+                    <span class="section-label">EXERCISE PLAN</span>
+                    <h3>Your session</h3>
+                </div>
+
+                <div class="exercise-heading-line"></div>
+
+            </div>
+
+            <div class="exercise-list" id="exerciseList"></div>
+
+
+            <!-- RESULT FOOTER -->
+            <div class="result-footer">
+
+                <button type="button"
+                        id="regenerateButton"
+                        class="regenerate-button">
+
+                    <i class="fa-solid fa-rotate"></i>
+
+                    <span>Try Another Plan</span>
+
+                </button>
+
+
+                <button type="button"
+                        id="newWorkoutButton"
+                        class="new-workout-button">
+
+                    <i class="fa-solid fa-plus"></i>
+
+                    <span>New Workout</span>
+
+                </button>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             WELCOME / EMPTY STATE
+             ================================================= -->
+        <section class="welcome-section" id="welcomeSection">
+
+            <div class="welcome-background-icon">
+                <i class="fa-solid fa-dumbbell"></i>
+            </div>
+
+            <div class="welcome-icon">
+                <i class="fa-solid fa-dumbbell"></i>
+            </div>
+
+            <span class="section-label">READY WHEN YOU ARE</span>
+
+            <h3>
+                Your next workout
+                <span>starts here.</span>
+            </h3>
+
+            <p>
+                Choose a training style above or tell FitLyfe exactly
+                what you want to train.
+            </p>
+
+            <div class="welcome-hint">
+                <i class="fa-solid fa-arrow-up"></i>
+                <span>Choose your training path to get started</span>
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- =====================================================
+         FOOTER
+         ===================================================== -->
+    <footer class="workout-footer">
+
+        <div class="footer-line"></div>
+
+        <p>
+            <span>FIT</span>LYFE
+            <i class="fa-solid fa-circle"></i>
+            Train Smart
+            <i class="fa-solid fa-circle"></i>
+            Live Strong
+        </p>
+
+    </footer>
+
+</div>
+
+{% endblock %}
+
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/workout.js') }}"></script>
+{% endblock %}

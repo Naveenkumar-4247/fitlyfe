@@ -2,7 +2,6 @@ import re
 import json
 from datetime import date, timedelta, datetime
 from zoneinfo import ZoneInfo
-
 from flask import (
     Flask,
     render_template,
@@ -13,36 +12,33 @@ from flask import (
     session,
     jsonify,
 )
-
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import func
 from sqlalchemy.exc import IntegrityError
 from werkzeug.security import generate_password_hash, check_password_hash
-
 import config
-
 from ml_utils import (
     predict_next_day,
     predict_next_week,
     predict_weekly_trend,
     calculate_consistency_score,
 )
-
 from diet_ai import generate_diet_plan
 
+# ============================================================
+# WORKOUT AI
+# ============================================================
+from workout_ai import generate_workout_plan
 
 # ============================================================
 # APP CONFIGURATION
 # ============================================================
-
 app = Flask(__name__)
 app.config.from_object(config)
-
 db = SQLAlchemy(
     app,
     engine_options=config.SQLALCHEMY_ENGINE_OPTIONS
 )
-
 
 # ============================================================
 # DATABASE MODELS
@@ -55,43 +51,34 @@ class User(db.Model):
         db.Integer,
         primary_key=True
     )
-
     name = db.Column(
         db.String(120),
         nullable=False
     )
-
     email = db.Column(
         db.String(120),
         unique=True,
         nullable=False
     )
-
     password = db.Column(
         db.String(200),
         nullable=False
     )
-
     age = db.Column(
         db.Integer
     )
-
     height = db.Column(
         db.Float
     )
-
     weight = db.Column(
         db.Float
     )
-
     gender = db.Column(
         db.String(20)
     )
-
     activity_level = db.Column(
         db.String(50)
     )
-
     goal = db.Column(
         db.String(50)
     )
@@ -104,33 +91,27 @@ class WeeklyGoal(db.Model):
         db.Integer,
         primary_key=True
     )
-
     user_id = db.Column(
         db.Integer,
         db.ForeignKey("users.id"),
         nullable=False
     )
-
     week_start = db.Column(
         db.Date,
         nullable=False
     )
-
     workouts_target = db.Column(
         db.Integer,
         default=5
     )
-
     calories_target = db.Column(
         db.Integer,
         default=2000
     )
-
     water_target_l = db.Column(
         db.Float,
         default=2.5
     )
-
     created_at = db.Column(
         db.DateTime,
         server_default=db.func.now()
@@ -152,44 +133,35 @@ class DailyLog(db.Model):
         db.Integer,
         primary_key=True
     )
-
     user_id = db.Column(
         db.Integer,
         db.ForeignKey("users.id"),
         nullable=False
     )
-
     log_date = db.Column(
         db.Date,
         nullable=False
     )
-
     workout_done = db.Column(
         db.Boolean,
         default=False
     )
-
     calories_intake = db.Column(
         db.Integer
     )
-
     water_intake_l = db.Column(
         db.Float
     )
-
     sleep_hours = db.Column(
         db.Float
     )
-
     mood = db.Column(
         db.Integer
     )
-
     notes = db.Column(
         db.Text,
         default=""
     )
-
     created_at = db.Column(
         db.DateTime,
         server_default=db.func.now()
@@ -211,37 +183,44 @@ class DailyGoal(db.Model):
         db.Integer,
         primary_key=True
     )
-
     user_id = db.Column(
         db.Integer,
         db.ForeignKey("users.id"),
         nullable=False
     )
-
     goal_date = db.Column(
         db.Date,
         nullable=False
     )
-
     title = db.Column(
         db.String(255),
         nullable=False
     )
-
     completed = db.Column(
         db.Boolean,
         default=False
     )
-
     description = db.Column(
         db.String(255),
         default=""
     )
-
     created_at = db.Column(
         db.DateTime,
         server_default=db.func.now()
     )
+
+
+# ============================================================
+# PERSISTENT USER GOALS
+# ============================================================
+class UserGoal(db.Model):
+    __tablename__ = "user_goals"
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
+    title = db.Column(db.String(255), nullable=False)
+    description = db.Column(db.String(255), default="")
+    active = db.Column(db.Boolean, default=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
 
 class DietPlan(db.Model):
@@ -251,23 +230,19 @@ class DietPlan(db.Model):
         db.Integer,
         primary_key=True
     )
-
     user_id = db.Column(
         db.Integer,
         db.ForeignKey("users.id"),
         nullable=False
     )
-
     plan_json = db.Column(
         db.Text,
         nullable=False
     )
-
     inputs_json = db.Column(
         db.Text,
         nullable=False
     )
-
     created_at = db.Column(
         db.DateTime,
         server_default=db.func.now()
@@ -275,22 +250,58 @@ class DietPlan(db.Model):
 
 
 # ============================================================
-# DATABASE INITIALIZATION + SAFE GENDER MIGRATION
+# WORKOUT PLAN MODEL
+# ============================================================
+
+class WorkoutPlan(db.Model):
+    __tablename__ = "workout_plans"
+
+    id = db.Column(
+        db.Integer,
+        primary_key=True
+    )
+    user_id = db.Column(
+        db.Integer,
+        db.ForeignKey("users.id"),
+        nullable=False
+    )
+    workout_date = db.Column(
+        db.Date,
+        nullable=False
+    )
+    generation_number = db.Column(
+        db.Integer,
+        nullable=False,
+        default=1
+    )
+    plan_json = db.Column(
+        db.Text,
+        nullable=False
+    )
+    inputs_json = db.Column(
+        db.Text,
+        nullable=False
+    )
+    created_at = db.Column(
+        db.DateTime,
+        server_default=db.func.now()
+    )
+
+
+# ============================================================
+# DATABASE INITIALIZATION + SAFE MIGRATIONS
 # ============================================================
 
 with app.app_context():
 
     db.create_all()
 
-    # Lightweight migrations keep existing local/PostgreSQL
-    # databases compatible when FitLyfe gains new fields.
     def _add_column_if_missing(
         table_name,
         column_name,
         column_sql
     ):
         try:
-
             inspector = db.inspect(
                 db.engine
             )
@@ -312,6 +323,11 @@ with app.app_context():
                 )
 
                 db.session.commit()
+
+                print(
+                    f"MIGRATION: Added "
+                    f"{table_name}.{column_name}"
+                )
 
         except Exception as exc:
 
@@ -341,24 +357,20 @@ with app.app_context():
         "TEXT"
     )
 
+    print(
+        "DATABASE INITIALIZATION COMPLETE"
+    )
+
 
 # ============================================================
 # HELPER FUNCTIONS
 # ============================================================
 
 def india_today():
-    """
-    Return today's date according to India Standard Time (IST).
-
-    Render servers normally use UTC, so date.today() can return
-    yesterday during the early morning hours in India.
-    """
     return datetime.now(
         ZoneInfo("Asia/Kolkata")
     ).date()
 
-
-# ------------------------------------------------------------
 
 def get_current_user():
 
@@ -375,16 +387,12 @@ def get_current_user():
     )
 
 
-# ------------------------------------------------------------
-
 def week_start_for(d):
 
     return d - timedelta(
         days=d.weekday()
     )
 
-
-# ------------------------------------------------------------
 
 def parse_date(value):
 
@@ -405,24 +413,7 @@ def parse_date(value):
         return None
 
 
-# ------------------------------------------------------------
-# SAFE NEXT PAGE
-# ------------------------------------------------------------
-
 def get_safe_next_page(value):
-
-    """
-    Only allow internal application paths.
-
-    Valid:
-        /detail
-        /bmi-calculator
-        /dashboard
-
-    Invalid:
-        https://example.com
-        //example.com
-    """
 
     if not value:
         return None
@@ -441,8 +432,6 @@ def get_safe_next_page(value):
     return None
 
 
-# ------------------------------------------------------------
-
 def login_required_json():
 
     user = get_current_user()
@@ -460,8 +449,6 @@ def login_required_json():
     return user, None
 
 
-# ------------------------------------------------------------
-
 def profile_is_complete(user):
 
     if not user:
@@ -476,7 +463,9 @@ def profile_is_complete(user):
     ])
 
 
-# ------------------------------------------------------------
+# ============================================================
+# GOAL NORMALIZATION
+# ============================================================
 
 GOAL_ALIASES = {
 
@@ -545,8 +534,6 @@ ACTIVITY_ALIASES = {
 
 def normalize_goal(value):
 
-    """Return one canonical fitness-goal key for any common spelling."""
-
     if value is None:
         return None
 
@@ -596,7 +583,6 @@ def normalize_goal(value):
     if raw in canonical:
         return canonical[raw]
 
-    # Also support human-readable aliases and legacy database values.
     spaced = raw.replace(
         "_",
         " "
@@ -610,7 +596,6 @@ def normalize_goal(value):
     if alias:
         return alias
 
-    # Last-resort semantic repair for old/custom labels.
     if any(
         token in raw
         for token in (
@@ -619,6 +604,7 @@ def normalize_goal(value):
             "fat"
         )
     ):
+
         return "weight_loss"
 
     if any(
@@ -628,6 +614,7 @@ def normalize_goal(value):
             "build"
         )
     ):
+
         return "muscle_gain"
 
     if any(
@@ -638,6 +625,7 @@ def normalize_goal(value):
             "stamina"
         )
     ):
+
         return "endurance"
 
     if any(
@@ -647,6 +635,7 @@ def normalize_goal(value):
             "bulk"
         )
     ):
+
         return "weight_gain"
 
     if any(
@@ -656,6 +645,7 @@ def normalize_goal(value):
             "maintenance"
         )
     ):
+
         return "maintenance"
 
     if "fitness" in raw:
@@ -679,8 +669,6 @@ def normalize_activity(value):
         raw
     )
 
-
-# ------------------------------------------------------------
 
 def get_profile_redirect():
 
@@ -850,13 +838,190 @@ def get_historical_weekly_progress(
             percentage = 0
 
         weekly_progress.append({
-            "week_start": week_start.isoformat(),
-            "completed": completed,
-            "target": workouts_target,
-            "percentage": percentage,
+
+            "week_start":
+                week_start.isoformat(),
+
+            "completed":
+                completed,
+
+            "target":
+                workouts_target,
+
+            "percentage":
+                percentage,
         })
 
     return weekly_progress
+
+
+# ============================================================
+# WORKOUT HELPERS
+# ============================================================
+
+def _safe_json_load(value):
+
+    if not value:
+        return None
+
+    if isinstance(
+        value,
+        (dict, list)
+    ):
+
+        return value
+
+    try:
+
+        return json.loads(
+            value
+        )
+
+    except Exception:
+
+        return {
+            "raw": str(value)
+        }
+
+
+def _extract_exercise_names(plan):
+
+    names = []
+
+    def walk(value):
+
+        if isinstance(
+            value,
+            dict
+        ):
+
+            for key, item in value.items():
+
+                key_lower = str(
+                    key
+                ).lower()
+
+                if key_lower in {
+                    "exercise",
+                    "exercise_name",
+                    "name",
+                    "movement",
+                }:
+
+                    if isinstance(
+                        item,
+                        str
+                    ):
+
+                        cleaned = item.strip()
+
+                        if cleaned:
+                            names.append(
+                                cleaned
+                            )
+
+                walk(item)
+
+        elif isinstance(
+            value,
+            list
+        ):
+
+            for item in value:
+                walk(item)
+
+    walk(plan)
+
+    unique = []
+    seen = set()
+
+    for name in names:
+
+        normalized = name.lower()
+
+        if normalized not in seen:
+
+            seen.add(
+                normalized
+            )
+
+            unique.append(
+                name
+            )
+
+    return unique
+
+
+def _serialize_recent_workouts(
+    user_id,
+    limit=5
+):
+
+    plans = (
+        WorkoutPlan.query
+        .filter_by(
+            user_id=user_id
+        )
+        .order_by(
+            WorkoutPlan.created_at.desc()
+        )
+        .limit(limit)
+        .all()
+    )
+
+    result = []
+
+    for item in plans:
+
+        plan = _safe_json_load(
+            item.plan_json
+        )
+
+        result.append({
+
+            "id":
+                item.id,
+
+            "date":
+                item.workout_date.isoformat(),
+
+            "generation_number":
+                item.generation_number,
+
+            "exercise_names":
+                _extract_exercise_names(plan),
+
+            "plan":
+                plan,
+        })
+
+    return result
+
+
+def _next_workout_generation_number(
+    user_id,
+    workout_date
+):
+
+    latest = (
+        WorkoutPlan.query
+        .filter_by(
+            user_id=user_id,
+            workout_date=workout_date
+        )
+        .order_by(
+            WorkoutPlan.generation_number.desc()
+        )
+        .first()
+    )
+
+    if not latest:
+        return 1
+
+    return (
+        latest.generation_number
+        + 1
+    )
 
 
 # ============================================================
@@ -924,8 +1089,6 @@ def login():
 
         session["user_id"] = user.id
 
-        # First successful login -> profile setup.
-        # Later logins -> detail.
         if not profile_is_complete(user):
 
             flash(
@@ -986,10 +1149,6 @@ def register():
             ""
         )
 
-        # ----------------------------------------------------
-        # BASIC VALIDATION
-        # ----------------------------------------------------
-
         if not name or not email or not password:
 
             flash(
@@ -1045,10 +1204,6 @@ def register():
                 email=email
             )
 
-        # ----------------------------------------------------
-        # CASE-INSENSITIVE DUPLICATE EMAIL CHECK
-        # ----------------------------------------------------
-
         existing = (
             User.query
             .filter(
@@ -1075,10 +1230,6 @@ def register():
                 email_exists=True
             )
 
-        # ----------------------------------------------------
-        # CREATE USER
-        # ----------------------------------------------------
-
         user = User(
             name=name,
             email=email,
@@ -1087,11 +1238,9 @@ def register():
             )
         )
 
-        db.session.add(user)
-
-        # ====================================================
-        # DATABASE DIAGNOSTIC
-        # ====================================================
+        db.session.add(
+            user
+        )
 
         print(
             "DATABASE:",
@@ -1099,10 +1248,6 @@ def register():
                 hide_password=True
             )
         )
-
-        # ----------------------------------------------------
-        # SAVE USER
-        # ----------------------------------------------------
 
         try:
 
@@ -1134,10 +1279,6 @@ def register():
                 email=email,
                 email_exists=True
             )
-
-        # ----------------------------------------------------
-        # SUCCESS
-        # ----------------------------------------------------
 
         flash(
             "🎉 Account created! Please login to start your FitLyfe journey.",
@@ -1179,9 +1320,13 @@ def check_email():
     if not valid:
 
         return jsonify({
+
             "success": True,
+
             "available": False,
+
             "exists": False,
+
             "valid": False
         })
 
@@ -1199,10 +1344,17 @@ def check_email():
     )
 
     return jsonify({
+
         "success": True,
-        "available": not exists,
-        "exists": exists,
-        "valid": True,
+
+        "available":
+            not exists,
+
+        "exists":
+            exists,
+
+        "valid":
+            True,
     })
 
 
@@ -1223,10 +1375,6 @@ def profile():
         return redirect(
             url_for("login")
         )
-
-    # ========================================================
-    # GET PROFILE PAGE
-    # ========================================================
 
     if request.method == "GET":
 
@@ -1256,10 +1404,6 @@ def profile():
             next_page=next_page or ""
         )
 
-    # ========================================================
-    # POST - SAVE PROFILE
-    # ========================================================
-
     next_page = (
         request.form.get("next")
         or request.args.get("next")
@@ -1275,19 +1419,11 @@ def profile():
         user
     )
 
-    # ========================================================
-    # NAME
-    # ========================================================
-
     user.name = (
         request.form
         .get("name", "")
         .strip()
     )
-
-    # ========================================================
-    # EMAIL
-    # ========================================================
 
     new_email = (
         request.form
@@ -1328,10 +1464,6 @@ def profile():
 
     user.email = new_email
 
-    # ========================================================
-    # AGE
-    # ========================================================
-
     age_value = (
         request.form
         .get("age", "")
@@ -1353,10 +1485,6 @@ def profile():
     else:
 
         user.age = None
-
-    # ========================================================
-    # HEIGHT
-    # ========================================================
 
     height_value = (
         request.form
@@ -1380,10 +1508,6 @@ def profile():
 
         user.height = None
 
-    # ========================================================
-    # WEIGHT
-    # ========================================================
-
     weight_value = (
         request.form
         .get("weight", "")
@@ -1406,10 +1530,6 @@ def profile():
 
         user.weight = None
 
-    # ========================================================
-    # GENDER
-    # ========================================================
-
     gender_value = (
         request.form
         .get("gender", "")
@@ -1430,10 +1550,6 @@ def profile():
 
         user.gender = None
 
-    # ========================================================
-    # ACTIVITY LEVEL
-    # ========================================================
-
     user.activity_level = normalize_activity(
         request.form.get(
             "activity_level",
@@ -1441,20 +1557,12 @@ def profile():
         )
     ) or ""
 
-    # ========================================================
-    # GOAL
-    # ========================================================
-
     user.goal = normalize_goal(
         request.form.get(
             "goal",
             ""
         )
     ) or ""
-
-    # ========================================================
-    # SAVE DATABASE
-    # ========================================================
 
     try:
 
@@ -1491,10 +1599,6 @@ def profile():
         "✅ Profile updated successfully!",
         "success"
     )
-
-    # ========================================================
-    # REDIRECT AFTER SUCCESSFUL SAVE
-    # ========================================================
 
     if next_page:
 
@@ -1627,10 +1731,6 @@ def bmi_calculator():
     category = None
     category_description = None
 
-    # --------------------------------------------------------
-    # BMI CALCULATION
-    # --------------------------------------------------------
-
     if (
         user.height
         and user.weight
@@ -1652,10 +1752,6 @@ def bmi_calculator():
             / (height_m * height_m),
             1
         )
-
-        # ----------------------------------------------------
-        # STANDARD ADULT BMI CATEGORIES
-        # ----------------------------------------------------
 
         if bmi < 18.5:
 
@@ -1772,10 +1868,6 @@ def generate_diet_plan_api():
         silent=True
     ) or {}
 
-    # --------------------------------------------------------
-    # VALIDATE PROFILE
-    # --------------------------------------------------------
-
     if (
         user.age is None
         or user.height is None
@@ -1785,16 +1877,14 @@ def generate_diet_plan_api():
     ):
 
         return jsonify({
+
             "success": False,
+
             "error": (
                 "Please complete your profile before "
                 "generating a diet plan."
             )
         }), 400
-
-    # --------------------------------------------------------
-    # AGE
-    # --------------------------------------------------------
 
     try:
 
@@ -1808,13 +1898,12 @@ def generate_diet_plan_api():
     ):
 
         return jsonify({
-            "success": False,
-            "error": "Invalid age in profile."
-        }), 400
 
-    # --------------------------------------------------------
-    # HEIGHT
-    # --------------------------------------------------------
+            "success": False,
+
+            "error":
+                "Invalid age in profile."
+        }), 400
 
     try:
 
@@ -1828,13 +1917,12 @@ def generate_diet_plan_api():
     ):
 
         return jsonify({
-            "success": False,
-            "error": "Invalid height in profile."
-        }), 400
 
-    # --------------------------------------------------------
-    # WEIGHT
-    # --------------------------------------------------------
+            "success": False,
+
+            "error":
+                "Invalid height in profile."
+        }), 400
 
     try:
 
@@ -1848,13 +1936,12 @@ def generate_diet_plan_api():
     ):
 
         return jsonify({
-            "success": False,
-            "error": "Invalid weight in profile."
-        }), 400
 
-    # --------------------------------------------------------
-    # ACTIVITY LEVEL
-    # --------------------------------------------------------
+            "success": False,
+
+            "error":
+                "Invalid weight in profile."
+        }), 400
 
     activity_level = (
         str(user.activity_level)
@@ -1864,19 +1951,32 @@ def generate_diet_plan_api():
 
     activity_aliases = {
 
-        "sedentary": "sedentary",
-        "low": "sedentary",
+        "sedentary":
+            "sedentary",
 
-        "light": "light",
-        "lightly active": "light",
+        "low":
+            "sedentary",
 
-        "moderate": "moderate",
-        "moderately active": "moderate",
+        "light":
+            "light",
 
-        "active": "active",
+        "lightly active":
+            "light",
 
-        "very active": "very_active",
-        "very_active": "very_active",
+        "moderate":
+            "moderate",
+
+        "moderately active":
+            "moderate",
+
+        "active":
+            "active",
+
+        "very active":
+            "very_active",
+
+        "very_active":
+            "very_active",
     }
 
     activity_level = activity_aliases.get(
@@ -1885,6 +1985,7 @@ def generate_diet_plan_api():
     )
 
     allowed_activity = {
+
         "sedentary",
         "light",
         "moderate",
@@ -1895,19 +1996,17 @@ def generate_diet_plan_api():
     if activity_level not in allowed_activity:
 
         return jsonify({
-            "success": False,
-            "error": "Invalid activity level in profile."
-        }), 400
 
-    # --------------------------------------------------------
-    # GOAL
-    # --------------------------------------------------------
+            "success": False,
+
+            "error":
+                "Invalid activity level in profile."
+        }), 400
 
     goal = normalize_goal(
         user.goal
     )
 
-    # Repair legacy goal values automatically.
     if (
         goal in ALLOWED_GOALS
         and user.goal != goal
@@ -1926,19 +2025,18 @@ def generate_diet_plan_api():
     if goal not in ALLOWED_GOALS:
 
         return jsonify({
+
             "success": False,
+
             "error": (
                 "Your saved fitness goal is not recognized. "
                 "Open Profile, select your goal again, and save it."
             ),
+
             "profile_goal": str(
                 user.goal or ""
             ),
         }), 400
-
-    # --------------------------------------------------------
-    # GENDER / SEX
-    # --------------------------------------------------------
 
     sex_value = str(
         data.get("sex")
@@ -1947,6 +2045,7 @@ def generate_diet_plan_api():
     ).strip().lower()
 
     allowed_sex = {
+
         "male",
         "female",
         "prefer_not_to_say",
@@ -1956,30 +2055,29 @@ def generate_diet_plan_api():
 
         sex_value = "prefer_not_to_say"
 
-    # --------------------------------------------------------
-    # PROFILE DATA
-    # --------------------------------------------------------
-
     profile = {
 
-        "name": user.name,
+        "name":
+            user.name,
 
-        "age": age,
+        "age":
+            age,
 
-        "height": height,
+        "height":
+            height,
 
-        "weight": weight,
+        "weight":
+            weight,
 
-        "gender": user.gender,
+        "gender":
+            user.gender,
 
-        "activity_level": activity_level,
+        "activity_level":
+            activity_level,
 
-        "goal": goal,
+        "goal":
+            goal,
     }
-
-    # --------------------------------------------------------
-    # OPTIONAL DIET PREFERENCES
-    # --------------------------------------------------------
 
     diet_type = str(
         data.get(
@@ -2042,24 +2140,27 @@ def generate_diet_plan_api():
 
     preferences = {
 
-        "diet_type": diet_type,
+        "diet_type":
+            diet_type,
 
-        "meals_per_day": meals_per_day,
+        "meals_per_day":
+            meals_per_day,
 
-        "sex": sex_value,
+        "sex":
+            sex_value,
 
-        "allergies": allergies,
+        "allergies":
+            allergies,
 
-        "dislikes": dislikes,
+        "dislikes":
+            dislikes,
 
-        "cuisine": cuisine,
+        "cuisine":
+            cuisine,
 
-        "budget": budget,
+        "budget":
+            budget,
     }
-
-    # --------------------------------------------------------
-    # GENERATE AI PLAN
-    # --------------------------------------------------------
 
     try:
 
@@ -2076,16 +2177,14 @@ def generate_diet_plan_api():
         )
 
         return jsonify({
+
             "success": False,
+
             "error": (
                 "Unable to generate the diet plan "
                 "right now. Please try again."
             )
         }), 500
-
-    # --------------------------------------------------------
-    # CONVERT PLAN TO JSON
-    # --------------------------------------------------------
 
     try:
 
@@ -2103,7 +2202,9 @@ def generate_diet_plan_api():
             except json.JSONDecodeError:
 
                 plan_json_data = {
-                    "plan": generated_plan
+
+                    "plan":
+                        generated_plan
                 }
 
         else:
@@ -2123,29 +2224,34 @@ def generate_diet_plan_api():
         )
 
         return jsonify({
-            "success": False,
-            "error": "Invalid diet plan response."
-        }), 500
 
-    # --------------------------------------------------------
-    # SAVE PLAN
-    # --------------------------------------------------------
+            "success": False,
+
+            "error":
+                "Invalid diet plan response."
+        }), 500
 
     try:
 
         saved_plan = DietPlan(
 
-            user_id=user.id,
+            user_id=
+                user.id,
 
-            plan_json=plan_json,
+            plan_json=
+                plan_json,
 
-            inputs_json=json.dumps(
-                {
-                    "profile": profile,
-                    "preferences": preferences,
-                },
-                ensure_ascii=False
-            ),
+            inputs_json=
+                json.dumps(
+                    {
+                        "profile":
+                            profile,
+
+                        "preferences":
+                            preferences,
+                    },
+                    ensure_ascii=False
+                ),
         )
 
         db.session.add(
@@ -2164,7 +2270,9 @@ def generate_diet_plan_api():
         )
 
         return jsonify({
+
             "success": False,
+
             "error": (
                 "Diet plan was generated but could "
                 "not be saved."
@@ -2175,11 +2283,886 @@ def generate_diet_plan_api():
 
         "success": True,
 
-        "plan": plan_json_data,
+        "plan":
+            plan_json_data,
 
         "message": (
             "AI diet plan generated successfully."
         )
+    })
+# ============================================================
+# WORKOUT PAGE
+# ============================================================
+
+@app.route("/workout")
+def workout():
+
+    redirect_response = get_profile_redirect()
+
+    if redirect_response:
+        return redirect_response
+
+    user = get_current_user()
+
+    latest_workout = (
+        WorkoutPlan.query
+        .filter_by(
+            user_id=user.id
+        )
+        .order_by(
+            WorkoutPlan.created_at.desc()
+        )
+        .first()
+    )
+
+    workout_data = None
+
+    if latest_workout:
+
+        workout_data = _safe_json_load(
+            latest_workout.plan_json
+        )
+
+    return render_template(
+        "workout.html",
+        user=user,
+        latest_workout=workout_data
+    )
+
+
+# ============================================================
+# WORKOUT GENERATOR ALIAS
+# ============================================================
+
+@app.route("/workout-generator")
+def workout_generator():
+
+    return redirect(
+        url_for("workout")
+    )
+
+
+# ============================================================
+# API - GENERATE NEW AI WORKOUT
+# ============================================================
+
+@app.route(
+    "/api/workout/generate",
+    methods=["POST"]
+)
+def generate_workout_api():
+
+    user, error_response = login_required_json()
+
+    if error_response:
+        return error_response
+
+    if generate_workout_plan is None:
+
+        return jsonify({
+
+            "success": False,
+
+            "error": (
+                "Workout AI is not configured. "
+                "Please make sure workout_ai.py exists "
+                "and contains generate_workout_plan()."
+            )
+        }), 500
+
+    data = request.get_json(
+        silent=True
+    ) or {}
+
+    # ========================================================
+    # VALIDATE PROFILE
+    # ========================================================
+
+    if not profile_is_complete(user):
+
+        return jsonify({
+
+            "success": False,
+
+            "error": (
+                "Please complete your profile before "
+                "generating a workout."
+            )
+        }), 400
+
+    # ========================================================
+    # AGE
+    # ========================================================
+
+    try:
+
+        age = int(
+            user.age
+        )
+
+    except (
+        ValueError,
+        TypeError
+    ):
+
+        return jsonify({
+
+            "success": False,
+
+            "error": "Invalid age in profile."
+        }), 400
+
+    # ========================================================
+    # HEIGHT
+    # ========================================================
+
+    try:
+
+        height = float(
+            user.height
+        )
+
+    except (
+        ValueError,
+        TypeError
+    ):
+
+        return jsonify({
+
+            "success": False,
+
+            "error": "Invalid height in profile."
+        }), 400
+
+    # ========================================================
+    # WEIGHT
+    # ========================================================
+
+    try:
+
+        weight = float(
+            user.weight
+        )
+
+    except (
+        ValueError,
+        TypeError
+    ):
+
+        return jsonify({
+
+            "success": False,
+
+            "error": "Invalid weight in profile."
+        }), 400
+
+    # ========================================================
+    # ACTIVITY
+    # ========================================================
+
+    activity_level = normalize_activity(
+        user.activity_level
+    )
+
+    if activity_level not in {
+        "sedentary",
+        "light",
+        "moderate",
+        "active",
+        "very_active",
+    }:
+
+        return jsonify({
+
+            "success": False,
+
+            "error": (
+                "Invalid activity level in profile. "
+                "Please update your profile."
+            )
+        }), 400
+
+    # ========================================================
+    # GOAL
+    # ========================================================
+
+    goal = normalize_goal(
+        user.goal
+    )
+
+    if goal not in ALLOWED_GOALS:
+
+        return jsonify({
+
+            "success": False,
+
+            "error": (
+                "Your saved fitness goal is not recognized. "
+                "Open Profile, select your goal again, "
+                "and save it."
+            ),
+
+            "profile_goal": str(
+                user.goal or ""
+            ),
+        }), 400
+
+    # ========================================================
+    # DATE
+    # ========================================================
+
+    workout_date = parse_date(
+        data.get("workout_date")
+    )
+
+    if not workout_date:
+
+        workout_date = india_today()
+
+    # ========================================================
+    # USER PROFILE FOR AI
+    # ========================================================
+
+    profile = {
+
+        "name":
+            user.name,
+
+        "age":
+            age,
+
+        "height":
+            height,
+
+        "weight":
+            weight,
+
+        "gender":
+            user.gender or "prefer_not_to_say",
+
+        "activity_level":
+            activity_level,
+
+        "goal":
+            goal,
+    }
+
+    # ========================================================
+    # WORKOUT PREFERENCES
+    # ========================================================
+
+    workout_type = str(
+        data.get(
+            "workout_type",
+            "gym"
+        )
+    ).strip().lower()
+
+    equipment = str(
+        data.get(
+            "equipment",
+            "gym"
+        )
+    ).strip()
+
+    duration = data.get(
+        "duration",
+        60
+    )
+
+    try:
+
+        duration = int(
+            duration
+        )
+
+    except (
+        ValueError,
+        TypeError
+    ):
+
+        duration = 60
+
+    duration = max(
+        15,
+        min(
+            duration,
+            180
+        )
+    )
+
+    fitness_level = str(
+        data.get(
+            "fitness_level",
+            activity_level
+        )
+    ).strip().lower()
+
+    focus = str(
+        data.get(
+            "focus",
+            ""
+        )
+    ).strip()
+
+    preferences = {
+
+        "workout_type":
+            workout_type,
+
+        "equipment":
+            equipment,
+
+        "duration_minutes":
+            duration,
+
+        "fitness_level":
+            fitness_level,
+
+        "focus":
+            focus,
+    }
+
+    # ========================================================
+    # GENERATION NUMBER
+    # ========================================================
+
+    generation_number = (
+        _next_workout_generation_number(
+            user.id,
+            workout_date
+        )
+    )
+
+    # ========================================================
+    # PREVIOUS WORKOUT HISTORY
+    # ========================================================
+
+    recent_workouts = (
+        _serialize_recent_workouts(
+            user.id,
+            limit=7
+        )
+    )
+
+    previous_exercises = []
+
+    for previous in recent_workouts:
+
+        previous_exercises.extend(
+            previous.get(
+                "exercise_names",
+                []
+            )
+        )
+
+    # Remove duplicate exercise names.
+    previous_exercises = list(
+        dict.fromkeys(
+            previous_exercises
+        )
+    )
+
+    # ========================================================
+    # VARIATION INSTRUCTION
+    # ========================================================
+
+    variation_instruction = {
+
+        "generation_number":
+            generation_number,
+
+        "must_be_different":
+            True,
+
+        "previous_workout_count":
+            len(recent_workouts),
+
+        "previous_exercises":
+            previous_exercises,
+
+        "rules": [
+
+            "Generate a genuinely different workout.",
+
+            "Do not simply return the previous workout.",
+
+            "Avoid repeating the exact same exercise sequence.",
+
+            "Change exercise selection where practical.",
+
+            "Change exercise ordering.",
+
+            "Change sets, repetitions, tempo, or rest when appropriate.",
+
+            "Keep the workout appropriate for the user's goal.",
+
+            "Keep the workout safe and realistic.",
+
+            "Maintain variety across repeated generations.",
+        ]
+    }
+
+    # ========================================================
+    # COMPLETE AI INPUT
+    # ========================================================
+
+    ai_preferences = {
+
+        **preferences,
+
+        "variation":
+            variation_instruction,
+    }
+
+    # ========================================================
+    # GENERATE
+    # ========================================================
+
+    try:
+
+        try:
+
+            generated_workout = generate_workout_plan(
+                profile,
+                ai_preferences,
+                recent_workouts
+            )
+
+        except TypeError:
+
+            # Compatibility with an older
+            # two-argument workout_ai.py.
+
+            generated_workout = generate_workout_plan(
+                profile,
+                ai_preferences
+            )
+
+    except Exception as e:
+
+        print(
+            "WORKOUT GENERATION ERROR:",
+            repr(e)
+        )
+
+        return jsonify({
+
+            "success": False,
+
+            "error": (
+                "Unable to generate the workout "
+                "right now. Please try again."
+            )
+        }), 500
+
+    # ========================================================
+    # CONVERT AI RESULT TO JSON
+    # ========================================================
+
+    try:
+
+        if isinstance(
+            generated_workout,
+            str
+        ):
+
+            cleaned = (
+                generated_workout
+                .strip()
+            )
+
+            # Remove markdown JSON fences if AI
+            # returned ```json ... ```
+
+            if cleaned.startswith(
+                "```"
+            ):
+
+                cleaned = re.sub(
+                    r"^```(?:json)?\s*",
+                    "",
+                    cleaned,
+                    flags=re.IGNORECASE
+                )
+
+                cleaned = re.sub(
+                    r"\s*```$",
+                    "",
+                    cleaned
+                )
+
+            try:
+
+                workout_json_data = json.loads(
+                    cleaned
+                )
+
+            except json.JSONDecodeError:
+
+                workout_json_data = {
+
+                    "title":
+                        "AI Generated Workout",
+
+                    "description":
+                        cleaned,
+
+                    "generation_number":
+                        generation_number,
+                }
+
+        else:
+
+            workout_json_data = generated_workout
+
+        if not isinstance(
+            workout_json_data,
+            (dict, list)
+        ):
+
+            workout_json_data = {
+
+                "title":
+                    "AI Generated Workout",
+
+                "workout":
+                    workout_json_data,
+
+                "generation_number":
+                    generation_number,
+            }
+
+        # If dictionary, add metadata.
+
+        if isinstance(
+            workout_json_data,
+            dict
+        ):
+
+            workout_json_data.setdefault(
+                "generation_number",
+                generation_number
+            )
+
+            workout_json_data.setdefault(
+                "workout_date",
+                workout_date.isoformat()
+            )
+
+        plan_json = json.dumps(
+            workout_json_data,
+            ensure_ascii=False
+        )
+
+    except Exception as e:
+
+        print(
+            "WORKOUT JSON ERROR:",
+            repr(e)
+        )
+
+        return jsonify({
+
+            "success": False,
+
+            "error":
+                "The AI returned an invalid workout."
+        }), 500
+
+    # ========================================================
+    # SAVE WORKOUT
+    # ========================================================
+
+    try:
+
+        saved_workout = WorkoutPlan(
+
+            user_id=
+                user.id,
+
+            workout_date=
+                workout_date,
+
+            generation_number=
+                generation_number,
+
+            plan_json=
+                plan_json,
+
+            inputs_json=
+                json.dumps(
+                    {
+                        "profile":
+                            profile,
+
+                        "preferences":
+                            ai_preferences,
+
+                        "previous_exercises":
+                            previous_exercises,
+                    },
+                    ensure_ascii=False
+                ),
+        )
+
+        db.session.add(
+            saved_workout
+        )
+
+        db.session.commit()
+
+    except Exception as e:
+
+        db.session.rollback()
+
+        print(
+            "WORKOUT DATABASE ERROR:",
+            repr(e)
+        )
+
+        return jsonify({
+
+            "success": False,
+
+            "error": (
+                "Workout was generated but "
+                "could not be saved."
+            )
+        }), 500
+
+    # ========================================================
+    # RESPONSE
+    # ========================================================
+
+    return jsonify({
+
+        "success": True,
+
+        "workout":
+            workout_json_data,
+
+        "workout_id":
+            saved_workout.id,
+
+        "generation_number":
+            generation_number,
+
+        "workout_date":
+            workout_date.isoformat(),
+
+        "message":
+            "New AI workout generated successfully."
+    })
+
+
+# ============================================================
+# API - LATEST WORKOUT
+# ============================================================
+
+@app.route(
+    "/api/workout/latest",
+    methods=["GET"]
+)
+def latest_workout():
+
+    user, error_response = login_required_json()
+
+    if error_response:
+        return error_response
+
+    latest = (
+        WorkoutPlan.query
+        .filter_by(
+            user_id=user.id
+        )
+        .order_by(
+            WorkoutPlan.created_at.desc()
+        )
+        .first()
+    )
+
+    if not latest:
+
+        return jsonify({
+
+            "success": True,
+
+            "workout": None,
+
+            "message":
+                "No workout has been generated yet."
+        })
+
+    return jsonify({
+
+        "success": True,
+
+        "workout":
+            _safe_json_load(
+                latest.plan_json
+            ),
+
+        "workout_id":
+            latest.id,
+
+        "generation_number":
+            latest.generation_number,
+
+        "workout_date":
+            latest.workout_date.isoformat(),
+
+        "created_at":
+            (
+                latest.created_at.isoformat()
+                if latest.created_at
+                else None
+            ),
+    })
+
+
+# ============================================================
+# API - WORKOUT HISTORY
+# ============================================================
+
+@app.route(
+    "/api/workout/history",
+    methods=["GET"]
+)
+def workout_history():
+
+    user, error_response = login_required_json()
+
+    if error_response:
+        return error_response
+
+    try:
+
+        limit = int(
+            request.args.get(
+                "limit",
+                20
+            )
+        )
+
+    except (
+        ValueError,
+        TypeError
+    ):
+
+        limit = 20
+
+    limit = max(
+        1,
+        min(
+            limit,
+            100
+        )
+    )
+
+    workouts = (
+        WorkoutPlan.query
+        .filter_by(
+            user_id=user.id
+        )
+        .order_by(
+            WorkoutPlan.created_at.desc()
+        )
+        .limit(limit)
+        .all()
+    )
+
+    return jsonify({
+
+        "success": True,
+
+        "count":
+            len(workouts),
+
+        "workouts": [
+
+            {
+
+                "id":
+                    workout.id,
+
+                "workout_date":
+                    workout.workout_date.isoformat(),
+
+                "generation_number":
+                    workout.generation_number,
+
+                "created_at":
+                    (
+                        workout.created_at.isoformat()
+                        if workout.created_at
+                        else None
+                    ),
+
+                "workout":
+                    _safe_json_load(
+                        workout.plan_json
+                    ),
+
+                "exercise_names":
+                    _extract_exercise_names(
+                        _safe_json_load(
+                            workout.plan_json
+                        )
+                    ),
+            }
+
+            for workout in workouts
+        ]
+    })
+
+
+# ============================================================
+# API - DELETE WORKOUT HISTORY ITEM
+# ============================================================
+
+@app.route(
+    "/api/workout/history/<int:workout_id>",
+    methods=["DELETE"]
+)
+def delete_workout_history(workout_id):
+
+    user, error_response = login_required_json()
+
+    if error_response:
+        return error_response
+
+    workout = (
+        WorkoutPlan.query
+        .filter_by(
+            id=workout_id,
+            user_id=user.id
+        )
+        .first()
+    )
+
+    if not workout:
+
+        return jsonify({
+
+            "success": False,
+
+            "error":
+                "Workout not found."
+        }), 404
+
+    db.session.delete(
+        workout
+    )
+
+    db.session.commit()
+
+    return jsonify({
+
+        "success": True,
+
+        "message":
+            "Workout deleted successfully."
     })
 
 
@@ -2318,25 +3301,22 @@ def save_goal():
 
         "success": True,
 
-        "message": "Weekly goal saved successfully.",
+        "message":
+            "Weekly goal saved successfully.",
 
         "goal": {
 
-            "week_start": (
-                week_start.isoformat()
-            ),
+            "week_start":
+                week_start.isoformat(),
 
-            "workouts_target": (
-                goal.workouts_target
-            ),
+            "workouts_target":
+                goal.workouts_target,
 
-            "calories_target": (
-                goal.calories_target
-            ),
+            "calories_target":
+                goal.calories_target,
 
-            "water_target_l": (
-                goal.water_target_l
-            ),
+            "water_target_l":
+                goal.water_target_l,
         }
     })
 
@@ -2375,7 +3355,9 @@ def get_daily_log():
     if not log:
 
         return jsonify({
+
             "success": True,
+
             "log": None
         })
 
@@ -2385,27 +3367,26 @@ def get_daily_log():
 
         "log": {
 
-            "date": log.log_date.isoformat(),
+            "date":
+                log.log_date.isoformat(),
 
-            "workout_done": bool(
-                log.workout_done
-            ),
+            "workout_done":
+                bool(log.workout_done),
 
-            "calories_intake": (
-                log.calories_intake
-            ),
+            "calories_intake":
+                log.calories_intake,
 
-            "water_intake_l": (
-                log.water_intake_l
-            ),
+            "water_intake_l":
+                log.water_intake_l,
 
-            "sleep_hours": (
-                log.sleep_hours
-            ),
+            "sleep_hours":
+                log.sleep_hours,
 
-            "mood": log.mood,
+            "mood":
+                log.mood,
 
-            "notes": log.notes or "",
+            "notes":
+                log.notes or "",
         }
     })
 
@@ -2616,93 +3597,179 @@ def save_daily_log():
 
         "success": True,
 
-        "message": "Daily log saved successfully.",
+        "message":
+            "Daily log saved successfully.",
 
         "log": {
 
-            "date": log.log_date.isoformat(),
+            "date":
+                log.log_date.isoformat(),
 
-            "workout_done": bool(
-                log.workout_done
-            ),
+            "workout_done":
+                bool(log.workout_done),
 
-            "calories_intake": (
-                log.calories_intake
-            ),
+            "calories_intake":
+                log.calories_intake,
 
-            "water_intake_l": (
-                log.water_intake_l
-            ),
+            "water_intake_l":
+                log.water_intake_l,
 
-            "sleep_hours": (
-                log.sleep_hours
-            ),
+            "sleep_hours":
+                log.sleep_hours,
 
-            "mood": log.mood,
+            "mood":
+                log.mood,
 
-            "notes": log.notes or "",
+            "notes":
+                log.notes or "",
         }
     })
+# ============================================================
+# PERSISTENT USER GOALS
+# ============================================================
+
+DEFAULT_USER_GOALS = [
+    {"title":"Workout","description":"Complete today's workout or physical activity."},
+    {"title":"Water Intake","description":"Drink enough water throughout the day."},
+    {"title":"Study","description":"Spend at least 2 hours learning or studying."},
+    {"title":"Sleep","description":"Aim for 7–8 hours of quality sleep."},
+    {"title":"Steps","description":"Aim for around 8,000 steps today."},
+    {"title":"Meditation","description":"Spend at least 10 minutes on mindfulness or meditation."},
+]
+
+
+# ============================================================
+# ENSURE USER GOALS
+# ============================================================
+
+def ensure_user_goals(user_id):
+    existing_goals = UserGoal.query.filter_by(user_id=user_id).count()
+    if existing_goals > 0:
+        return
+    for item in DEFAULT_USER_GOALS:
+        user_goal = UserGoal(
+            user_id=user_id,
+            title=item["title"],
+            description=item["description"],
+            active=True
+        )
+        db.session.add(user_goal)
+    db.session.commit()
+
+
+# ============================================================
+# MATERIALIZE DAILY GOALS
+# ============================================================
+
+def materialize_daily_goals(user_id, goal_date):
+    ensure_user_goals(user_id)
+
+    active_goals = (
+        UserGoal.query
+        .filter_by(user_id=user_id, active=True)
+        .order_by(UserGoal.id.asc())
+        .all()
+    )
+
+    if not active_goals:
+        return []
+
+    existing_daily_goals = (
+        DailyGoal.query
+        .filter_by(user_id=user_id, goal_date=goal_date)
+        .all()
+    )
+
+    existing_titles = {
+        goal.title.strip().lower()
+        for goal in existing_daily_goals
+    }
+
+    created = False
+
+    for user_goal in active_goals:
+        normalized_title = user_goal.title.strip().lower()
+
+        if normalized_title in existing_titles:
+            continue
+
+        daily_goal = DailyGoal(
+            user_id=user_id,
+            goal_date=goal_date,
+            title=user_goal.title,
+            completed=False,
+            description=user_goal.description or ""
+        )
+
+        db.session.add(daily_goal)
+        existing_titles.add(normalized_title)
+        created = True
+
+    if created:
+        db.session.commit()
+
+    return (
+        DailyGoal.query
+        .filter_by(user_id=user_id, goal_date=goal_date)
+        .order_by(DailyGoal.id.asc())
+        .all()
+    )
+
+
+# ============================================================
+# DAILY GOAL RESPONSE HELPER
+# ============================================================
+
+def daily_goal_to_dict(goal):
+    return {
+        "id": goal.id,
+        "title": goal.title,
+        "completed": bool(goal.completed),
+        "description": goal.description or "",
+        "goal_date": goal.goal_date.isoformat()
+    }
 
 
 # ============================================================
 # API - DAILY GOALS GET
 # ============================================================
 
-@app.route(
-    "/api/daily-goals",
-    methods=["GET"]
-)
+@app.route("/api/daily-goals", methods=["GET"])
 def get_daily_goals():
-
     user, error_response = login_required_json()
 
     if error_response:
         return error_response
 
-    selected_date = parse_date(
-        request.args.get("date")
-    )
+    selected_date = parse_date(request.args.get("date"))
 
     if not selected_date:
-
         selected_date = india_today()
 
-    goals = (
-        DailyGoal.query
-        .filter_by(
-            user_id=user.id,
-            goal_date=selected_date
+    today = india_today()
+
+    if selected_date >= today:
+        goals = materialize_daily_goals(
+            user.id,
+            selected_date
         )
-        .order_by(
-            DailyGoal.id.asc()
+    else:
+        goals = (
+            DailyGoal.query
+            .filter_by(
+                user_id=user.id,
+                goal_date=selected_date
+            )
+            .order_by(
+                DailyGoal.id.asc()
+            )
+            .all()
         )
-        .all()
-    )
 
     return jsonify({
-
         "success": True,
-
         "goals": [
-
-            {
-
-                "id": goal.id,
-
-                "title": goal.title,
-
-                "completed": goal.completed,
-
-                "description": (
-                    goal.description or ""
-                ),
-
-                "goal_date": (
-                    goal.goal_date.isoformat()
-                ),
-            }
-
+            daily_goal_to_dict(goal)
             for goal in goals
         ]
     })
@@ -2712,38 +3779,29 @@ def get_daily_goals():
 # API - DAILY GOAL CREATE
 # ============================================================
 
-@app.route(
-    "/api/daily-goals",
-    methods=["POST"]
-)
+@app.route("/api/daily-goals", methods=["POST"])
 def create_daily_goal():
-
     user, error_response = login_required_json()
 
     if error_response:
         return error_response
 
-    data = request.get_json(
-        silent=True
-    ) or {}
+    data = request.get_json(silent=True) or {}
 
-    title = (
-        str(
-            data.get(
-                "title",
-                ""
-            )
-        )
-        .strip()
-    )
+    title = str(
+        data.get("title", "")
+    ).strip()
 
     if not title:
-
         return jsonify({
-
             "success": False,
-
             "error": "Goal title is required."
+        }), 400
+
+    if len(title) > 255:
+        return jsonify({
+            "success": False,
+            "error": "Goal title is too long."
         }), 400
 
     goal_date = parse_date(
@@ -2751,55 +3809,130 @@ def create_daily_goal():
     )
 
     if not goal_date:
-
         goal_date = india_today()
 
+    today = india_today()
+
+    if goal_date < today:
+        return jsonify({
+            "success": False,
+            "error": "Goals cannot be added to historical dates."
+        }), 400
+
     description = str(
-        data.get(
-            "description",
-            ""
-        )
+        data.get("description", "")
     ).strip()[:255]
 
-    goal = DailyGoal(
+    # Create the default persistent goals only for a
+    # completely new user.
+    ensure_user_goals(user.id)
 
+    normalized_title = title.lower()
+
+    # --------------------------------------------------------
+    # CHECK PERSISTENT ACTIVE GOALS
+    # --------------------------------------------------------
+
+    existing_user_goals = (
+        UserGoal.query
+        .filter_by(
+            user_id=user.id,
+            active=True
+        )
+        .all()
+    )
+
+    for existing in existing_user_goals:
+        if (
+            existing.title
+            and existing.title.strip().lower()
+            == normalized_title
+        ):
+            return jsonify({
+                "success": False,
+                "error": "This goal already exists."
+            }), 409
+
+    # --------------------------------------------------------
+    # CHECK DAILY GOALS FOR THE SELECTED DATE
+    # --------------------------------------------------------
+
+    existing_daily_goals = (
+        DailyGoal.query
+        .filter_by(
+            user_id=user.id,
+            goal_date=goal_date
+        )
+        .all()
+    )
+
+    for existing in existing_daily_goals:
+        if (
+            existing.title
+            and existing.title.strip().lower()
+            == normalized_title
+        ):
+            return jsonify({
+                "success": False,
+                "error": "This goal already exists for this date."
+            }), 409
+
+    # --------------------------------------------------------
+    # CREATE PERSISTENT GOAL DEFINITION
+    # --------------------------------------------------------
+
+    user_goal = UserGoal(
         user_id=user.id,
-
-        goal_date=goal_date,
-
         title=title,
-
-        completed=False,
-
         description=description,
+        active=True
     )
 
-    db.session.add(
-        goal
+    db.session.add(user_goal)
+
+    # --------------------------------------------------------
+    # CREATE TODAY / SELECTED-DATE INSTANCE
+    # --------------------------------------------------------
+
+    daily_goal = DailyGoal(
+        user_id=user.id,
+        goal_date=goal_date,
+        title=title,
+        completed=False,
+        description=description
     )
 
-    db.session.commit()
+    db.session.add(daily_goal)
+
+    try:
+        db.session.commit()
+
+    except IntegrityError:
+        db.session.rollback()
+
+        return jsonify({
+            "success": False,
+            "error": "Unable to create this goal."
+        }), 500
+
+    except Exception as exc:
+        db.session.rollback()
+
+        print(
+            "CREATE GOAL ERROR:",
+            exc
+        )
+
+        return jsonify({
+            "success": False,
+            "error": "Unable to create this goal."
+        }), 500
 
     return jsonify({
-
         "success": True,
-
-        "goal": {
-
-            "id": goal.id,
-
-            "title": goal.title,
-
-            "completed": goal.completed,
-
-            "description": (
-                goal.description or ""
-            ),
-
-            "goal_date": (
-                goal.goal_date.isoformat()
-            ),
-        }
+        "goal": daily_goal_to_dict(
+            daily_goal
+        )
     })
 
 
@@ -2812,7 +3945,6 @@ def create_daily_goal():
     methods=["POST"]
 )
 def toggle_daily_goal(goal_id):
-
     user, error_response = login_required_json()
 
     if error_response:
@@ -2828,23 +3960,45 @@ def toggle_daily_goal(goal_id):
     )
 
     if not goal:
-
         return jsonify({
-
             "success": False,
-
             "error": "Goal not found."
         }), 404
 
-    goal.completed = not goal.completed
+    today = india_today()
 
-    db.session.commit()
+    # Historical completion must never be modified.
+    if goal.goal_date < today:
+        return jsonify({
+            "success": False,
+            "error": "Historical goals cannot be changed."
+        }), 400
+
+    goal.completed = not bool(
+        goal.completed
+    )
+
+    try:
+        db.session.commit()
+
+    except Exception as exc:
+        db.session.rollback()
+
+        print(
+            "TOGGLE GOAL ERROR:",
+            exc
+        )
+
+        return jsonify({
+            "success": False,
+            "error": "Unable to update goal."
+        }), 500
 
     return jsonify({
-
         "success": True,
-
-        "completed": goal.completed
+        "completed": bool(
+            goal.completed
+        )
     })
 
 
@@ -2857,7 +4011,6 @@ def toggle_daily_goal(goal_id):
     methods=["DELETE"]
 )
 def delete_daily_goal(goal_id):
-
     user, error_response = login_required_json()
 
     if error_response:
@@ -2873,24 +4026,109 @@ def delete_daily_goal(goal_id):
     )
 
     if not goal:
-
         return jsonify({
-
             "success": False,
-
             "error": "Goal not found."
         }), 404
 
-    db.session.delete(
-        goal
+    today = india_today()
+
+    # Historical records must remain untouched.
+    if goal.goal_date < today:
+        return jsonify({
+            "success": False,
+            "error": "Historical goals cannot be deleted."
+        }), 400
+
+    normalized_title = (
+        goal.title or ""
+    ).strip().lower()
+
+    # --------------------------------------------------------
+    # DISABLE ONLY THE ACTIVE PERSISTENT GOAL
+    #
+    # This fixes the re-add problem:
+    #
+    # Old inactive goal:
+    #     Meditation -> inactive
+    #
+    # New active goal:
+    #     Meditation -> active
+    #
+    # We must disable the ACTIVE one when deleting again.
+    # --------------------------------------------------------
+
+    active_user_goals = (
+        UserGoal.query
+        .filter_by(
+            user_id=user.id,
+            active=True
+        )
+        .order_by(
+            UserGoal.id.desc()
+        )
+        .all()
     )
 
-    db.session.commit()
+    matching_user_goal = next(
+        (
+            item
+            for item in active_user_goals
+            if (
+                item.title
+                and item.title.strip().lower()
+                == normalized_title
+            )
+        ),
+        None
+    )
+
+    if matching_user_goal:
+        matching_user_goal.active = False
+
+    # --------------------------------------------------------
+    # DELETE FUTURE DAILY INSTANCES
+    #
+    # Keep all historical records before the deletion date.
+    # --------------------------------------------------------
+
+    future_goals = (
+        DailyGoal.query
+        .filter(
+            DailyGoal.user_id == user.id,
+            DailyGoal.goal_date >= goal.goal_date,
+            func.lower(
+                func.trim(
+                    DailyGoal.title
+                )
+            ) == normalized_title
+        )
+        .all()
+    )
+
+    for future_goal in future_goals:
+        db.session.delete(
+            future_goal
+        )
+
+    try:
+        db.session.commit()
+
+    except Exception as exc:
+        db.session.rollback()
+
+        print(
+            "DELETE GOAL ERROR:",
+            exc
+        )
+
+        return jsonify({
+            "success": False,
+            "error": "Unable to delete goal."
+        }), 500
 
     return jsonify({
-
         "success": True,
-
         "message": "Goal deleted successfully."
     })
 
@@ -2899,18 +4137,12 @@ def delete_daily_goal(goal_id):
 # BACKWARD-COMPATIBILITY GOAL ENDPOINTS
 # ============================================================
 
-# Older cached dashboard.js versions used /api/goals.
-# Keep these aliases so an old browser tab cannot break
-# goal creation/toggling/deletion.
-
 @app.route(
     "/api/goals",
     methods=["GET", "POST"]
 )
 def legacy_goals():
-
     if request.method == "GET":
-
         return get_daily_goals()
 
     return create_daily_goal()
@@ -2921,7 +4153,6 @@ def legacy_goals():
     methods=["POST"]
 )
 def legacy_toggle_goal(goal_id):
-
     return toggle_daily_goal(
         goal_id
     )
@@ -2932,7 +4163,6 @@ def legacy_toggle_goal(goal_id):
     methods=["DELETE"]
 )
 def legacy_delete_goal(goal_id):
-
     return delete_daily_goal(
         goal_id
     )
@@ -2942,18 +4172,14 @@ def legacy_delete_goal(goal_id):
 # API - CALENDAR DATA
 # ============================================================
 
-@app.route(
-    "/api/calendar-data"
-)
+@app.route("/api/calendar-data")
 def calendar_data():
-
     user, error_response = login_required_json()
 
     if error_response:
         return error_response
 
     try:
-
         year = int(
             request.args.get(
                 "year",
@@ -2971,11 +4197,7 @@ def calendar_data():
         if not 1 <= month <= 12:
             raise ValueError
 
-    except (
-        ValueError,
-        TypeError
-    ):
-
+    except (ValueError, TypeError):
         year = india_today().year
         month = india_today().month
 
@@ -2998,22 +4220,30 @@ def calendar_data():
         days_in_month
     )
 
+    # --------------------------------------------------------
+    # DAILY LOGS
+    # --------------------------------------------------------
+
     logs = (
         DailyLog.query
         .filter(
             DailyLog.user_id == user.id,
             DailyLog.log_date >= start_date,
-            DailyLog.log_date <= end_date,
+            DailyLog.log_date <= end_date
         )
         .all()
     )
+
+    # --------------------------------------------------------
+    # DAILY GOALS
+    # --------------------------------------------------------
 
     goals = (
         DailyGoal.query
         .filter(
             DailyGoal.user_id == user.id,
             DailyGoal.goal_date >= start_date,
-            DailyGoal.goal_date <= end_date,
+            DailyGoal.goal_date <= end_date
         )
         .all()
     )
@@ -3026,13 +4256,10 @@ def calendar_data():
     goals_by_date = {}
 
     for goal in goals:
-
         goals_by_date.setdefault(
             goal.goal_date,
             []
-        ).append(
-            goal
-        )
+        ).append(goal)
 
     today = india_today()
 
@@ -3042,7 +4269,6 @@ def calendar_data():
         1,
         days_in_month + 1
     ):
-
         current = date(
             year,
             month,
@@ -3058,20 +4284,24 @@ def calendar_data():
             []
         )
 
-        if day_goals:
+        # ----------------------------------------------------
+        # CALCULATE DAILY COMPLETION
+        # ----------------------------------------------------
 
+        if day_goals:
             percentage = round(
-                sum(
-                    1
-                    for goal in day_goals
-                    if goal.completed
+                (
+                    sum(
+                        1
+                        for goal in day_goals
+                        if goal.completed
+                    )
+                    / len(day_goals)
                 )
-                / len(day_goals)
                 * 100
             )
 
         elif log:
-
             percentage = (
                 100
                 if log.workout_done
@@ -3079,67 +4309,53 @@ def calendar_data():
             )
 
         else:
-
             percentage = 0
 
-        if current > today:
+        # ----------------------------------------------------
+        # DAY STATE
+        # ----------------------------------------------------
 
+        if current > today:
             state = "future"
 
         elif (
             percentage >= 100
             and (day_goals or log)
         ):
-
             state = "completed"
 
         elif (
             percentage > 0
             or log
         ):
-
             state = "partial"
 
         else:
-
             state = "missed"
 
         days.append({
-
             "day": day_number,
-
             "date": current.isoformat(),
-
             "state": state,
-
             "percentage": percentage,
-
             "has_log": bool(log),
-
             "has_goals": bool(day_goals),
-
             "goal_count": len(day_goals),
-
             "completed_goals": sum(
                 1
                 for goal in day_goals
                 if goal.completed
             ),
-
             "is_today": (
                 current == today
-            ),
+            )
         })
 
     return jsonify({
-
         "success": True,
-
         "year": year,
-
         "month": month,
-
-        "days": days,
+        "days": days
     })
 
 
@@ -3147,15 +4363,16 @@ def calendar_data():
 # API - DASHBOARD DATA
 # ============================================================
 
-@app.route(
-    "/api/dashboard-data"
-)
+@app.route("/api/dashboard-data")
 def dashboard_data():
-
     user, error_response = login_required_json()
 
     if error_response:
         return error_response
+
+    # --------------------------------------------------------
+    # SELECTED DATE
+    # --------------------------------------------------------
 
     selected_date = (
         parse_date(
@@ -3166,26 +4383,45 @@ def dashboard_data():
 
     today = india_today()
 
-    selected_goals = (
-        DailyGoal.query
-        .filter_by(
-            user_id=user.id,
-            goal_date=selected_date,
+    # --------------------------------------------------------
+    # LOAD SELECTED DAY GOALS
+    # --------------------------------------------------------
+
+    if selected_date >= today:
+        selected_goals = materialize_daily_goals(
+            user.id,
+            selected_date
         )
-        .order_by(
-            DailyGoal.id.asc()
+
+    else:
+        selected_goals = (
+            DailyGoal.query
+            .filter_by(
+                user_id=user.id,
+                goal_date=selected_date
+            )
+            .order_by(
+                DailyGoal.id.asc()
+            )
+            .all()
         )
-        .all()
-    )
+
+    # --------------------------------------------------------
+    # SELECTED DAY LOG
+    # --------------------------------------------------------
 
     selected_log = (
         DailyLog.query
         .filter_by(
             user_id=user.id,
-            log_date=selected_date,
+            log_date=selected_date
         )
         .first()
     )
+
+    # --------------------------------------------------------
+    # SELECTED DAY COMPLETION
+    # --------------------------------------------------------
 
     goal_total = len(
         selected_goals
@@ -3198,15 +4434,15 @@ def dashboard_data():
     )
 
     if goal_total:
-
         selected_percentage = round(
-            goal_completed
-            / goal_total
+            (
+                goal_completed
+                / goal_total
+            )
             * 100
         )
 
     elif selected_log:
-
         selected_percentage = (
             100
             if selected_log.workout_done
@@ -3214,7 +4450,6 @@ def dashboard_data():
         )
 
     else:
-
         selected_percentage = 0
 
     # ========================================================
@@ -3235,7 +4470,7 @@ def dashboard_data():
         .filter(
             DailyLog.user_id == user.id,
             DailyLog.log_date >= week_start,
-            DailyLog.log_date <= week_end,
+            DailyLog.log_date <= week_end
         )
         .all()
     )
@@ -3245,7 +4480,7 @@ def dashboard_data():
         .filter(
             DailyGoal.user_id == user.id,
             DailyGoal.goal_date >= week_start,
-            DailyGoal.goal_date <= week_end,
+            DailyGoal.goal_date <= week_end
         )
         .all()
     )
@@ -3258,19 +4493,15 @@ def dashboard_data():
     goals_by_date = {}
 
     for goal in week_goals:
-
         goals_by_date.setdefault(
             goal.goal_date,
             []
-        ).append(
-            goal
-        )
+        ).append(goal)
 
     weekly_labels = []
     weekly_series = []
 
     for offset in range(7):
-
         current = (
             week_start
             + timedelta(days=offset)
@@ -3286,19 +4517,19 @@ def dashboard_data():
         )
 
         if day_goals:
-
             rate = round(
-                sum(
-                    1
-                    for goal in day_goals
-                    if goal.completed
+                (
+                    sum(
+                        1
+                        for goal in day_goals
+                        if goal.completed
+                    )
+                    / len(day_goals)
                 )
-                / len(day_goals)
                 * 100
             )
 
         elif log:
-
             rate = (
                 100
                 if log.workout_done
@@ -3306,7 +4537,6 @@ def dashboard_data():
             )
 
         else:
-
             rate = 0
 
         weekly_labels.append(
@@ -3329,7 +4559,7 @@ def dashboard_data():
     )
 
     # ========================================================
-    # ALL HISTORICAL ACTIVITY
+    # ALL HISTORICAL DATA
     # ========================================================
 
     all_logs = (
@@ -3356,50 +4586,57 @@ def dashboard_data():
 
     history_by_date = {}
 
-    for goal in all_goals:
+    # --------------------------------------------------------
+    # GOAL HISTORY
+    # --------------------------------------------------------
 
+    for goal in all_goals:
         bucket = history_by_date.setdefault(
             goal.goal_date,
             {
                 "completed": 0,
                 "total": 0,
                 "workout": False
-            },
+            }
         )
 
         bucket["total"] += 1
 
         if goal.completed:
-
             bucket["completed"] += 1
 
-    for log in all_logs:
+    # --------------------------------------------------------
+    # LOG HISTORY
+    # --------------------------------------------------------
 
+    for log in all_logs:
         bucket = history_by_date.setdefault(
             log.log_date,
             {
                 "completed": 0,
                 "total": 0,
                 "workout": False
-            },
+            }
         )
 
         bucket["workout"] = bool(
             log.workout_done
         )
 
+    # ========================================================
+    # HISTORICAL DAILY PERCENTAGES
+    # ========================================================
+
     historical_daily_percentages = []
 
     for day_key in sorted(
         history_by_date
     ):
-
         bucket = history_by_date[
             day_key
         ]
 
         if bucket["total"]:
-
             value = (
                 bucket["completed"]
                 / bucket["total"]
@@ -3407,7 +4644,6 @@ def dashboard_data():
             )
 
         else:
-
             value = (
                 100
                 if bucket["workout"]
@@ -3419,7 +4655,7 @@ def dashboard_data():
         )
 
     # ========================================================
-    # WEEKLY HISTORY
+    # FOUR-WEEK HISTORY
     # ========================================================
 
     weekly_history = []
@@ -3429,7 +4665,6 @@ def dashboard_data():
         -1,
         -1
     ):
-
         ws = (
             week_start
             - timedelta(
@@ -3444,15 +4679,12 @@ def dashboard_data():
 
         values = []
 
-        for (
-            day_key,
-            bucket
-        ) in history_by_date.items():
-
+        for day_key, bucket in (
+            history_by_date.items()
+        ):
             if ws <= day_key <= we:
 
                 if bucket["total"]:
-
                     value = (
                         bucket["completed"]
                         / bucket["total"]
@@ -3460,7 +4692,6 @@ def dashboard_data():
                     )
 
                 else:
-
                     value = (
                         100
                         if bucket["workout"]
@@ -3472,77 +4703,71 @@ def dashboard_data():
                 )
 
         weekly_history.append(
-
             round(
                 sum(values)
                 / len(values),
                 1
             )
-
             if values
             else 0
         )
 
     # ========================================================
-    # STREAKS
+    # COMPLETION DATES
     # ========================================================
 
     completion_dates = set()
 
-    for (
-        day_key,
-        bucket
-    ) in history_by_date.items():
+    for day_key, bucket in (
+        history_by_date.items()
+    ):
+        if bucket["total"]:
+            complete = (
+                bucket["completed"]
+                == bucket["total"]
+            )
 
-        complete = (
-
-            bucket["completed"]
-            == bucket["total"]
-
-            if bucket["total"]
-
-            else bucket["workout"]
-        )
+        else:
+            complete = bool(
+                bucket["workout"]
+            )
 
         if complete:
-
             completion_dates.add(
                 day_key
             )
+
+    # ========================================================
+    # CURRENT STREAK
+    # ========================================================
 
     current_streak = 0
 
     cursor = today
 
     while cursor in completion_dates:
-
         current_streak += 1
+        cursor -= timedelta(days=1)
 
-        cursor -= timedelta(
-            days=1
-        )
+    # ========================================================
+    # BEST STREAK
+    # ========================================================
 
     best_streak = 0
-
     running = 0
-
     previous = None
 
     for item in sorted(
         completion_dates
     ):
-
         if (
             previous
             and item
-            == previous
-            + timedelta(days=1)
+            == previous + timedelta(days=1)
         ):
-
             running += 1
 
         else:
-
             running = 1
 
         best_streak = max(
@@ -3552,6 +4777,10 @@ def dashboard_data():
 
         previous = item
 
+    # ========================================================
+    # TOTAL COMPLETED GOALS
+    # ========================================================
+
     total_completed_goals = sum(
         1
         for goal in all_goals
@@ -3559,45 +4788,33 @@ def dashboard_data():
     )
 
     # ========================================================
-    # DAILY STATISTICS
+    # HISTORICAL METRICS
     # ========================================================
 
     calorie_values = [
-
         log.calories_intake
-
         for log in all_logs
-
         if log.calories_intake
         is not None
     ]
 
     water_values = [
-
         log.water_intake_l
-
         for log in all_logs
-
         if log.water_intake_l
         is not None
     ]
 
     sleep_values = [
-
         log.sleep_hours
-
         for log in all_logs
-
         if log.sleep_hours
         is not None
     ]
 
     mood_values = [
-
         log.mood
-
         for log in all_logs
-
         if log.mood
         is not None
     ]
@@ -3607,34 +4824,24 @@ def dashboard_data():
     # ========================================================
 
     try:
-
         tomorrow = predict_next_day(
-
             goal_completed,
-
             goal_total,
-
-            historical_daily_percentages[
-                -7:
-            ],
-
-            current_streak,
+            historical_daily_percentages[-7:],
+            current_streak
         )
 
     except Exception as exc:
-
         print(
             "NEXT DAY PREDICTION ERROR:",
             exc
         )
 
         tomorrow = {
-
             "percentage":
                 selected_percentage,
-
             "message":
-                "Add more daily data to improve the prediction.",
+                "Add more daily data to improve the prediction."
         }
 
     # ========================================================
@@ -3642,7 +4849,6 @@ def dashboard_data():
     # ========================================================
 
     try:
-
         completed_week_goals = sum(
             1
             for goal in week_goals
@@ -3655,40 +4861,32 @@ def dashboard_data():
         )
 
         next_week = predict_next_week(
-
             completed_week_goals,
-
             target_week_goals,
-
             [
                 value / 100
                 for value in weekly_history
             ],
-
-            current_streak,
+            current_streak
         )
 
     except Exception as exc:
-
         print(
             "NEXT WEEK PREDICTION ERROR:",
             exc
         )
 
         next_week = {
-
             "percentage":
                 weekly_average
         }
 
     # ========================================================
-    # TREND PREDICTION
+    # WEEKLY TREND
     # ========================================================
 
     try:
-
         trend = predict_weekly_trend(
-
             [
                 value / 100
                 for value in weekly_history
@@ -3696,22 +4894,18 @@ def dashboard_data():
         )
 
     except Exception as exc:
-
         print(
             "TREND PREDICTION ERROR:",
             exc
         )
 
         trend = {
-
             "history":
                 weekly_history,
-
             "next_week":
                 weekly_average,
-
             "trend":
-                "Building",
+                "Building"
         }
 
     # ========================================================
@@ -3719,98 +4913,67 @@ def dashboard_data():
     # ========================================================
 
     try:
-
-        consistency = calculate_consistency_score(
-
-            selected_percentage,
-
-            weekly_average,
-
-            current_streak,
-
-            [
-                value / 100
-                for value in weekly_history
-            ],
+        consistency = (
+            calculate_consistency_score(
+                selected_percentage,
+                weekly_average,
+                current_streak,
+                [
+                    value / 100
+                    for value in weekly_history
+                ]
+            )
         )
 
     except Exception as exc:
-
         print(
             "CONSISTENCY ERROR:",
             exc
         )
 
         consistency = round(
-
-            selected_percentage
-            * 0.5
-
-            +
-
-            weekly_average
-            * 0.5
+            selected_percentage * 0.5
+            + weekly_average * 0.5
         )
 
     # ========================================================
-    # CONFIDENCE
+    # PREDICTION CONFIDENCE
     # ========================================================
 
     confidence = min(
-
         95,
-
         45
         + len(
             historical_daily_percentages
-        )
-        * 5
+        ) * 5
     )
 
     # ========================================================
-    # RETURN DASHBOARD DATA
+    # DASHBOARD RESPONSE
     # ========================================================
 
     return jsonify({
-
         "success": True,
 
         "selected_date":
             selected_date.isoformat(),
 
-        # ----------------------------------------------------
-        # SELECTED DAY GOALS
-        # ----------------------------------------------------
-
         "goals": [
-
             {
-
                 "id": goal.id,
-
                 "title": goal.title,
-
                 "description":
                     goal.description or "",
-
                 "completed":
                     bool(goal.completed),
-
                 "goal_date":
-                    goal.goal_date.isoformat(),
+                    goal.goal_date.isoformat()
             }
-
             for goal in selected_goals
         ],
 
-        # ----------------------------------------------------
-        # SELECTED DAY LOG
-        # ----------------------------------------------------
-
         "log": (
-
             {
-
                 "date":
                     selected_log.log_date.isoformat(),
 
@@ -3832,49 +4995,29 @@ def dashboard_data():
                     selected_log.mood,
 
                 "notes":
-                    selected_log.notes or "",
+                    selected_log.notes or ""
             }
-
             if selected_log
-
             else None
         ),
 
-        # ----------------------------------------------------
-        # TODAY
-        # ----------------------------------------------------
-
         "today": {
-
             "completed":
                 goal_completed,
-
             "total":
                 goal_total,
-
             "percentage":
-                selected_percentage,
+                selected_percentage
         },
-
-        # ----------------------------------------------------
-        # WEEKLY
-        # ----------------------------------------------------
 
         "weekly": {
-
             "labels":
                 weekly_labels,
-
             "series":
                 weekly_series,
-
             "average":
-                weekly_average,
+                weekly_average
         },
-
-        # ----------------------------------------------------
-        # STREAKS
-        # ----------------------------------------------------
 
         "streak":
             current_streak,
@@ -3888,85 +5031,81 @@ def dashboard_data():
         "total_completed":
             total_completed_goals,
 
-        # ----------------------------------------------------
-        # OVERALL
-        # ----------------------------------------------------
-
         "overall": {
-
-            "total_workouts": sum(
-
-                1
-
-                for log in all_logs
-
-                if log.workout_done
-            ),
+            "total_workouts":
+                sum(
+                    1
+                    for log in all_logs
+                    if log.workout_done
+                ),
 
             "total_days":
                 len(history_by_date),
 
-            "average_calories": (
+            "average_calories":
+                (
+                    round(
+                        sum(
+                            calorie_values
+                        )
+                        / len(
+                            calorie_values
+                        )
+                    )
+                    if calorie_values
+                    else 0
+                ),
 
-                round(
-                    sum(calorie_values)
-                    / len(calorie_values)
-                )
+            "average_water":
+                (
+                    round(
+                        sum(
+                            water_values
+                        )
+                        / len(
+                            water_values
+                        ),
+                        2
+                    )
+                    if water_values
+                    else 0
+                ),
 
-                if calorie_values
+            "average_sleep":
+                (
+                    round(
+                        sum(
+                            sleep_values
+                        )
+                        / len(
+                            sleep_values
+                        ),
+                        1
+                    )
+                    if sleep_values
+                    else 0
+                ),
 
-                else 0
-            ),
-
-            "average_water": (
-
-                round(
-                    sum(water_values)
-                    / len(water_values),
-                    2
-                )
-
-                if water_values
-
-                else 0
-            ),
-
-            "average_sleep": (
-
-                round(
-                    sum(sleep_values)
-                    / len(sleep_values),
-                    1
-                )
-
-                if sleep_values
-
-                else 0
-            ),
-
-            "average_mood": (
-
-                round(
-                    sum(mood_values)
-                    / len(mood_values),
-                    1
-                )
-
-                if mood_values
-
-                else 0
-            ),
+            "average_mood":
+                (
+                    round(
+                        sum(
+                            mood_values
+                        )
+                        / len(
+                            mood_values
+                        ),
+                        1
+                    )
+                    if mood_values
+                    else 0
+                ),
 
             "consistency_score":
-                consistency,
+                consistency
         },
 
-        # ----------------------------------------------------
-        # PREDICTION
-        # ----------------------------------------------------
-
         "prediction": {
-
             "tomorrow_percentage":
                 tomorrow.get(
                     "percentage",
@@ -4001,21 +5140,16 @@ def dashboard_data():
                 tomorrow.get(
                     "message",
                     ""
-                ),
+                )
         },
 
-        # ----------------------------------------------------
-        # CURRENT WEEK
-        # ----------------------------------------------------
-
         "current_week": {
-
             "week_start":
                 week_start.isoformat(),
 
             "week_end":
-                week_end.isoformat(),
-        },
+                week_end.isoformat()
+        }
     })
 
 
@@ -4024,7 +5158,6 @@ def dashboard_data():
 # ============================================================
 
 if __name__ == "__main__":
-
     app.run(
         debug=True
     )

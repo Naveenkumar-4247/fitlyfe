@@ -1,294 +1,547 @@
-{% extends "base.html" %}
-
-{% block title %}FitLyfe - Personal Fitness Hub{% endblock %}
-
-
-{% block extra_css %}
-
-<link rel="stylesheet"
-      href="{{ url_for('static', filename='css/detail.css') }}">
-
-{% endblock %}
-
-
-{% block content %}
-
-<div class="detail-page">
-
-    <!-- =====================================================
-         BACKGROUND EFFECTS
-    ====================================================== -->
-
-    <div class="detail-bg-grid"></div>
-
-    <div class="detail-glow detail-glow-left"></div>
-    <div class="detail-glow detail-glow-right"></div>
-
-    <div class="floating-particle particle-one"></div>
-    <div class="floating-particle particle-two"></div>
-    <div class="floating-particle particle-three"></div>
-    <div class="floating-particle particle-four"></div>
-    <div class="floating-particle particle-five"></div>
-
-
-    <!-- =====================================================
-         MAIN CONTAINER
-    ====================================================== -->
-
-    <section class="detail-container">
-
-
-        <!-- =================================================
-             TOP HEADER
-        ================================================== -->
-
-        <div class="detail-topbar">
-
-            <!-- BRAND -->
-
-            <div class="detail-brand">
-
-                <span class="brand-dot"></span>
-
-                <div>
-                    <span class="brand-name">
-                        FITLYFE
-                    </span>
-
-                    <span class="brand-subtitle">
-                        PERSONAL FITNESS HUB
-                    </span>
-                </div>
-
-            </div>
-
-
-            <!-- PROFILE CARD -->
-
-            <button
-                type="button"
-                class="profile-mini-card"
-                id="openProfileModal"
-                aria-label="View profile">
-
-                <div class="profile-avatar">
-
-                    {{ user.name[0]|upper if user.name else 'U' }}
-
-                </div>
-
-                <div class="profile-mini-info">
-
-                    <span class="profile-label">
-                        PROFILE
-                    </span>
-
-                    <strong>
-                        {{ user.name }}
-                    </strong>
-
-                    <span class="view-profile-text">
-                        View Profile
-                    </span>
-
-                </div>
-
-                <span class="profile-arrow">
-                    →
-                </span>
-
-            </button>
-
-        </div>
-
-
-        <!-- =================================================
-             WELCOME HERO
-        ================================================== -->
-
-        <section class="welcome-section">
-
-            <div class="welcome-content">
-
-                <div class="welcome-eyebrow">
-
-                    <span></span>
-
-                    YOUR FITNESS JOURNEY
-
-                </div>
-
-
-                <h1 class="welcome-title">
-
-                    Ready To Level Up,
-
-                    <span>
-                        {{ user.name.split(' ')[0] if user.name else 'there' }}?
-                    </span>
-
-                </h1>
-
-
-                <p class="welcome-subtitle">
-
-                    Your goals. Your data. Your progress.
-
-                    <strong>
-                        Keep moving forward.
-                    </strong>
-
-                </p>
-
-
-                <div class="welcome-line">
-
-                    <span></span>
-
-                </div>
-
-            </div>
-
-
-            <!-- HERO ORBIT -->
-
-            <div class="hero-orbit">
-
-                <div class="orbit orbit-one"></div>
-                <div class="orbit orbit-two"></div>
-                <div class="orbit orbit-three"></div>
-
-                <div class="orbit-core">
-
-                    <span>
-                        FIT
-                    </span>
-
-                </div>
-
-            </div>
-
-        </section>
-
-
-        <!-- =================================================
-             MOTIVATION QUOTE
-        ================================================== -->
-
-        <section class="motivation-card">
-
-            <div class="quote-line-decoration"></div>
-
-            <div class="quote-symbol">
-                “
-            </div>
-
-            <div class="motivation-content">
-
-                <span class="motivation-label">
-                    TODAY'S MINDSET
-                </span>
-
-                <h2>
-
-                    Small steps every day.
-
-                    <span>
-                        Big results over time.
-                    </span>
-
-                </h2>
-
-                <p>
-                    Consistency turns effort into progress.
-                </p>
-
-            </div>
-
-            <div class="quote-symbol quote-right">
-                ”
-            </div>
-
-
-            <!-- HEARTBEAT -->
-
-            <div class="heartbeat">
-
-                <svg
-                    viewBox="0 0 200 40"
-                    preserveAspectRatio="none"
-                    aria-hidden="true">
-
-                    <path d="
-                        M0 20
-                        L45 20
-                        L58 20
-                        L70 7
-                        L82 34
-                        L94 20
-                        L130 20
-                        L143 20
-                        L155 12
-                        L168 28
-                        L180 20
-                        L200 20
-                    "></path>
-
-                </svg>
-
-            </div>
-
-        </section>
-
-
-        <!-- =================================================
-             MODULE HEADING
-        ================================================== -->
-
-        <div class="module-heading">
-
-            <div>
-
-                <span class="module-eyebrow">
-                    YOUR FITNESS TOOLS
-                </span>
-
-                <h2>
-
-                    Everything you need.
-
-                    <span>
-                        One place.
-                    </span>
-
-                </h2>
-
-            </div>
-
-            <p>
-                Track. Analyze. Improve.
-            </p>
-
-        </div>
-
-
-        <!-- =================================================
-             THREE MAIN MODULES
-        ================================================== -->
-
-        <section class="module-grid">
+{% extends "base.html" %} 
+ 
+{% block title %}FitLyfe - Personal Fitness Hub{% endblock %} 
+ 
+ 
+{% block extra_css %} 
+ 
+<link rel="stylesheet" 
+      href="{{ url_for('static', filename='css/detail.css') }}"> 
+ 
+{% endblock %} 
+ 
+ 
+{% block content %} 
+ 
+<div class="detail-page"> 
+ 
+    <!-- ===================================================== 
+         BACKGROUND EFFECTS 
+    ====================================================== --> 
+ 
+    <div class="detail-bg-grid"></div> 
+ 
+    <div class="detail-glow detail-glow-left"></div> 
+    <div class="detail-glow detail-glow-right"></div> 
+ 
+    <div class="floating-particle particle-one"></div> 
+    <div class="floating-particle particle-two"></div> 
+    <div class="floating-particle particle-three"></div> 
+    <div class="floating-particle particle-four"></div> 
+    <div class="floating-particle particle-five"></div> 
+ 
+ 
+    <!-- ===================================================== 
+         MAIN CONTAINER 
+    ====================================================== --> 
+ 
+    <section class="detail-container"> 
+ 
+ 
+        <!-- ================================================= 
+             TOP HEADER 
+        ================================================== --> 
+ 
+        <div class="detail-topbar"> 
+ 
+            <!-- BRAND --> 
+ 
+            <div class="detail-brand"> 
+ 
+                <span class="brand-dot"></span> 
+ 
+                <div> 
+                    <span class="brand-name"> 
+                        FITLYFE 
+                    </span> 
+ 
+                    <span class="brand-subtitle"> 
+                        PERSONAL FITNESS HUB 
+                    </span> 
+ 
+                </div> 
+ 
+            </div> 
+ 
+ 
+            <!-- PROFILE CARD --> 
+ 
+            <button 
+                type="button" 
+                class="profile-mini-card" 
+                id="openProfileModal" 
+                aria-label="View profile"> 
+ 
+                <div class="profile-avatar"> 
+ 
+                    {{ user.name[0]|upper if user.name else 'U' }} 
+ 
+                </div> 
+ 
+                <div class="profile-mini-info"> 
+ 
+                    <span class="profile-label"> 
+                        PROFILE 
+                    </span> 
+ 
+                    <strong> 
+                        {{ user.name }} 
+                    </strong> 
+ 
+                    <span class="view-profile-text"> 
+                        View Profile 
+                    </span> 
+ 
+                </div> 
+ 
+                <span class="profile-arrow"> 
+                    → 
+                </span> 
+ 
+            </button> 
+ 
+        </div> 
+ 
+ 
+        <!-- ================================================= 
+             WELCOME HERO 
+        ================================================== --> 
+ 
+        <section class="welcome-section"> 
+ 
+            <div class="welcome-content"> 
+ 
+                <div class="welcome-eyebrow"> 
+ 
+                    <span></span> 
+ 
+                    YOUR FITNESS JOURNEY 
+ 
+                </div> 
+ 
+ 
+                <h1 class="welcome-title"> 
+ 
+                    Ready To Level Up, 
+ 
+                    <span> 
+                        {{ user.name.split(' ')[0] if user.name else 'there' }}? 
+                    </span> 
+ 
+                </h1> 
+ 
+ 
+                <p class="welcome-subtitle"> 
+ 
+                    Your goals. Your data. Your progress. 
+ 
+                    <strong> 
+                        Keep moving forward. 
+                    </strong> 
+ 
+                </p> 
+ 
+ 
+                <div class="welcome-line"> 
+ 
+                    <span></span> 
+ 
+                </div> 
+ 
+            </div> 
+ 
+ 
+            <!-- HERO ORBIT --> 
+ 
+            <div class="hero-orbit"> 
+ 
+                <div class="orbit orbit-one"></div> 
+                <div class="orbit orbit-two"></div> 
+                <div class="orbit orbit-three"></div> 
+ 
+                <div class="orbit-core"> 
+ 
+                    <span> 
+                        FIT 
+                    </span> 
+ 
+                </div> 
+ 
+            </div> 
+ 
+        </section> 
+ 
+ 
+        <!-- ================================================= 
+             MOTIVATION QUOTE 
+        ================================================== --> 
+ 
+        <section class="motivation-card"> 
+ 
+            <div class="quote-line-decoration"></div> 
+ 
+            <div class="quote-symbol"> 
+                “ 
+            </div> 
+ 
+            <div class="motivation-content"> 
+ 
+                <span class="motivation-label"> 
+                    TODAY'S MINDSET 
+                </span> 
+ 
+                <h2> 
+ 
+                    Small steps every day. 
+ 
+                    <span> 
+                        Big results over time. 
+                    </span> 
+ 
+                </h2> 
+ 
+                <p> 
+                    Consistency turns effort into progress. 
+                </p> 
+ 
+            </div> 
+ 
+            <div class="quote-symbol quote-right"> 
+                ” 
+            </div> 
+ 
+ 
+            <!-- HEARTBEAT --> 
+ 
+            <div class="heartbeat"> 
+ 
+                <svg 
+                    viewBox="0 0 200 40" 
+                    preserveAspectRatio="none" 
+                    aria-hidden="true"> 
+ 
+                    <path d=" 
+                        M0 20 
+                        L45 20 
+                        L58 20 
+                        L70 7 
+                        L82 34 
+                        L94 20 
+                        L130 20 
+                        L143 20 
+                        L155 12 
+                        L168 28 
+                        L180 20 
+                        L200 20 
+                    "></path> 
+ 
+                </svg> 
+ 
+            </div> 
+ 
+        </section> 
+ 
+ 
+        <!-- ================================================= 
+             MODULE HEADING 
+        ================================================== --> 
+ 
+        <div class="module-heading"> 
+ 
+            <div> 
+ 
+                <span class="module-eyebrow"> 
+                    YOUR FITNESS TOOLS 
+                </span> 
+ 
+                <h2> 
+ 
+                    Everything you need. 
+ 
+                    <span> 
+                        One place. 
+                    </span> 
+ 
+                </h2> 
+ 
+            </div> 
+ 
+            <p> 
+                Track. Analyze. Improve. 
+            </p> 
+ 
+        </div> 
+ 
+ 
+        <!-- ================================================= 
+             FOUR MAIN MODULES 
+        ================================================== --> 
+ 
+        <section class="module-grid"> 
+ 
+ 
+            <!-- ============================================= 
+                 DASHBOARD 
+            ============================================== --> 
+ 
+            <a 
+                href="{{ url_for('dashboard') }}" 
+                class="main-module dashboard-module"> 
+ 
+                <div class="module-number"> 
+                    01 
+                </div> 
+ 
+                <div class="module-glow"></div> 
+ 
+ 
+                <div class="module-icon"> 
+ 
+                    <svg 
+                        viewBox="0 0 24 24" 
+                        fill="none" 
+                        stroke="currentColor" 
+                        stroke-width="1.6" 
+                        stroke-linecap="round" 
+                        stroke-linejoin="round" 
+                        aria-hidden="true"> 
+ 
+                        <rect 
+                            x="3" 
+                            y="3" 
+                            width="7" 
+                            height="7"> 
+                        </rect> 
+ 
+                        <rect 
+                            x="14" 
+                            y="3" 
+                            width="7" 
+                            height="7"> 
+                        </rect> 
+ 
+                        <rect 
+                            x="3" 
+                            y="14" 
+                            width="7" 
+                            height="7"> 
+                        </rect> 
+ 
+                        <rect 
+                            x="14" 
+                            y="14" 
+                            width="7" 
+                            height="7"> 
+                        </rect> 
+ 
+                    </svg> 
+ 
+                </div> 
+ 
+ 
+                <div class="module-content"> 
+ 
+                    <span class="module-small-title"> 
+                        ANALYZE 
+                    </span> 
+ 
+                    <h3> 
+                        Goal Tracker 
+                    </h3> 
+ 
+                    <p> 
+                        Turn your daily fitness activity 
+                        into meaningful insights, charts 
+                        and measurable progress. 
+                    </p> 
+ 
+                </div> 
+ 
+ 
+                <div class="module-footer"> 
+ 
+                    <span> 
+                        Set Goals 
+                    </span> 
+ 
+                    <span class="module-arrow"> 
+                        → 
+                    </span> 
+ 
+                </div> 
+ 
+            </a> 
+ 
+ 
+            <!-- ============================================= 
+                 BMI CALCULATOR 
+            ============================================== --> 
+ 
+            <a 
+                href="{{ url_for('bmi_calculator') }}" 
+                class="main-module bmi-module"> 
+ 
+                <div class="module-number"> 
+                    02 
+                </div> 
+ 
+                <div class="module-glow"></div> 
+ 
+ 
+                <div class="module-icon"> 
+ 
+                    <svg 
+                        viewBox="0 0 24 24" 
+                        fill="none" 
+                        stroke="currentColor" 
+                        stroke-width="1.6" 
+                        stroke-linecap="round" 
+                        stroke-linejoin="round" 
+                        aria-hidden="true"> 
+ 
+                        <path d="M4 19h16"></path> 
+ 
+                        <path d="M5 19a7 7 0 0 1 14 0"></path> 
+ 
+                        <path d="M12 12l3-3"></path> 
+ 
+                        <circle 
+                            cx="12" 
+                            cy="12" 
+                            r="1"> 
+                        </circle> 
+ 
+                    </svg> 
+ 
+                </div> 
+ 
+ 
+                <div class="module-content"> 
+ 
+                    <span class="module-small-title"> 
+                        UNDERSTAND 
+                    </span> 
+ 
+                    <h3> 
+                        BMI Calculator 
+                    </h3> 
+ 
+                    <p> 
+                        Calculate your Body Mass Index 
+                        and understand where your current 
+                        body measurement stands. 
+                    </p> 
+ 
+                </div> 
+ 
+ 
+                <div class="module-footer"> 
+ 
+                    <span> 
+                        Calculate BMI 
+                    </span> 
+ 
+                    <span class="module-arrow"> 
+                        → 
+                    </span> 
+ 
+                </div> 
+ 
+            </a> 
+ 
+ 
+            <!-- ============================================= 
+                 AI DIET PLAN 
+            ============================================== --> 
+ 
+            <a 
+                href="{{ url_for('ai_diet_chart') }}" 
+                class="main-module diet-module"> 
+ 
+                <div class="module-number"> 
+                    03 
+                </div> 
+ 
+                <div class="module-glow"></div> 
+ 
+ 
+                <div class="module-icon"> 
+ 
+                    <svg 
+                        viewBox="0 0 24 24" 
+                        fill="none" 
+                        stroke="currentColor" 
+                        stroke-width="1.6" 
+                        stroke-linecap="round" 
+                        stroke-linejoin="round" 
+                        aria-hidden="true"> 
+ 
+                        <path d="M7 3v8"></path> 
+ 
+                        <path d=" 
+                            M4 3v5 
+                            a3 3 0 0 0 6 0V3 
+                        "></path> 
+ 
+                        <path d="M7 11v10"></path> 
+ 
+                        <path d="M17 3v18"></path> 
+ 
+                        <path d=" 
+                            M17 3 
+                            c2 2 3 4 3 7 
+                            h-3 
+                        "></path> 
+ 
+                    </svg> 
+ 
+                </div> 
+ 
+ 
+                <div class="module-content"> 
+ 
+                    <span class="module-small-title"> 
+                        PERSONALIZE 
+                    </span> 
+ 
+                    <h3> 
+                        AI Diet Plan 
+                    </h3> 
+ 
+                    <p> 
+                        Get intelligent meal recommendations 
+                        designed around your fitness goals, 
+                        lifestyle and nutritional needs. 
+                    </p> 
+ 
+                </div> 
+ 
+ 
+                <div class="module-footer"> 
+ 
+                    <span> 
+                        Create Diet Plan 
+                    </span> 
+ 
+                    <span class="module-arrow"> 
+                        → 
+                    </span> 
+ 
+                </div> 
+ 
+            </a>
 
 
             <!-- =============================================
-                 DASHBOARD
+                 AI WORKOUT — ONLY NEW MODULE
             ============================================== -->
 
             <a
-                href="{{ url_for('dashboard') }}"
-                class="main-module dashboard-module">
+                href="{{ url_for('workout') }}"
+                class="main-module workout-module">
 
                 <div class="module-number">
-                    01
+                    04
                 </div>
 
                 <div class="module-glow"></div>
@@ -304,33 +557,39 @@
                         stroke-linecap="round"
                         stroke-linejoin="round"
                         aria-hidden="true">
+
+                        <rect
+                            x="1.5"
+                            y="10"
+                            width="1.5"
+                            height="4"
+                            rx="0.5">
+                        </rect>
 
                         <rect
                             x="3"
-                            y="3"
-                            width="7"
-                            height="7">
+                            y="9"
+                            width="3"
+                            height="6"
+                            rx="1">
+                        </rect>
+
+                        <path d="M6 12h12"></path>
+
+                        <rect
+                            x="18"
+                            y="9"
+                            width="3"
+                            height="6"
+                            rx="1">
                         </rect>
 
                         <rect
-                            x="14"
-                            y="3"
-                            width="7"
-                            height="7">
-                        </rect>
-
-                        <rect
-                            x="3"
-                            y="14"
-                            width="7"
-                            height="7">
-                        </rect>
-
-                        <rect
-                            x="14"
-                            y="14"
-                            width="7"
-                            height="7">
+                            x="21"
+                            y="10"
+                            width="1.5"
+                            height="4"
+                            rx="0.5">
                         </rect>
 
                     </svg>
@@ -341,17 +600,18 @@
                 <div class="module-content">
 
                     <span class="module-small-title">
-                        ANALYZE
+                        TRAIN
                     </span>
 
                     <h3>
-                        Goal Tracker
+                        AI Workout
                     </h3>
 
                     <p>
-                        Turn your daily fitness activity
-                        into meaningful insights, charts
-                        and measurable progress.
+                        Generate personalized workouts
+                        based on your fitness goal,
+                        activity level, body data and
+                        training preferences.
                     </p>
 
                 </div>
@@ -360,7 +620,7 @@
                 <div class="module-footer">
 
                     <span>
-                        Set Goals
+                        Generate Workout
                     </span>
 
                     <span class="module-arrow">
@@ -372,521 +632,362 @@
             </a>
 
 
-            <!-- =============================================
-                 BMI CALCULATOR
-            ============================================== -->
-
-            <a
-                href="{{ url_for('bmi_calculator') }}"
-                class="main-module bmi-module">
-
-                <div class="module-number">
-                    02
-                </div>
-
-                <div class="module-glow"></div>
-
-
-                <div class="module-icon">
-
-                    <svg
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="1.6"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        aria-hidden="true">
-
-                        <path d="M4 19h16"></path>
-
-                        <path d="M5 19a7 7 0 0 1 14 0"></path>
-
-                        <path d="M12 12l3-3"></path>
-
-                        <circle
-                            cx="12"
-                            cy="12"
-                            r="1">
-                        </circle>
-
-                    </svg>
-
-                </div>
-
-
-                <div class="module-content">
-
-                    <span class="module-small-title">
-                        UNDERSTAND
-                    </span>
-
-                    <h3>
-                        BMI Calculator
-                    </h3>
-
-                    <p>
-                        Calculate your Body Mass Index
-                        and understand where your current
-                        body measurement stands.
-                    </p>
-
-                </div>
-
-
-                <div class="module-footer">
-
-                    <span>
-                        Calculate BMI
-                    </span>
-
-                    <span class="module-arrow">
-                        →
-                    </span>
-
-                </div>
-
-            </a>
-
-
-            <!-- =============================================
-                 AI DIET PLAN
-            ============================================== -->
-
-            <a
-                href="{{ url_for('ai_diet_chart') }}"
-                class="main-module diet-module">
-
-                <div class="module-number">
-                    03
-                </div>
-
-                <div class="module-glow"></div>
-
-
-                <div class="module-icon">
-
-                    <svg
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="1.6"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        aria-hidden="true">
-
-                        <path d="M7 3v8"></path>
-
-                        <path d="
-                            M4 3v5
-                            a3 3 0 0 0 6 0V3
-                        "></path>
-
-                        <path d="M7 11v10"></path>
-
-                        <path d="M17 3v18"></path>
-
-                        <path d="
-                            M17 3
-                            c2 2 3 4 3 7
-                            h-3
-                        "></path>
-
-                    </svg>
-
-                </div>
-
-
-                <div class="module-content">
-
-                    <span class="module-small-title">
-                        PERSONALIZE
-                    </span>
-
-                    <h3>
-                        AI Diet Plan
-                    </h3>
-
-                    <p>
-                        Get intelligent meal recommendations
-                        designed around your fitness goals,
-                        lifestyle and nutritional needs.
-                    </p>
-
-                </div>
-
-
-                <div class="module-footer">
-
-                    <span>
-                        Create Diet Plan
-                    </span>
-
-                    <span class="module-arrow">
-                        →
-                    </span>
-
-                </div>
-
-            </a>
-
-
-        </section>
-
-
-        <!-- =================================================
-             BOTTOM STATEMENT
-        ================================================== -->
-
-        <section class="detail-bottom">
-
-            <div class="bottom-line"></div>
-
-            <p>
-
-                <span>
-                    FITLYFE
-                </span>
-
-                — Track your effort. Understand your data.
-                Build your better self.
-
-            </p>
-
-            <div class="bottom-line"></div>
-
-        </section>
-
-
-    </section>
-
-</div>
-
-
-<!-- =========================================================
-     PROFILE MODAL
-========================================================== -->
-
-<div
-    class="profile-modal"
-    id="profileModal"
-    aria-hidden="true">
-
-
-    <!-- BACKDROP -->
-
-    <div
-        class="profile-modal-backdrop"
-        id="modalBackdrop">
-    </div>
-
-
-    <!-- MODAL -->
-
-    <div
-        class="profile-popup"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="profilePopupTitle">
-
-
-        <!-- TOP DECORATION -->
-
-        <div class="popup-glow"></div>
-
-
-        <!-- CLOSE BUTTON -->
-
-        <button
-            type="button"
-            class="popup-close"
-            id="modalClose"
-            aria-label="Close profile">
-
-            ×
-
-        </button>
-
-
-        <!-- =================================================
-             PROFILE HEADER
-        ================================================== -->
-
-        <div class="popup-profile-header">
-
-            <div class="popup-avatar">
-
-                {{ user.name[0]|upper if user.name else 'U' }}
-
-            </div>
-
-            <div>
-
-                <span class="popup-eyebrow">
-                    FITLYFE PROFILE
-                </span>
-
-                <h2 id="profilePopupTitle">
-                    {{ user.name or 'User' }}
-                </h2>
-
-                <p>
-                    Your personal fitness information
-                </p>
-
-            </div>
-
-        </div>
-
-
-        <!-- =================================================
-             PROFILE DETAILS
-        ================================================== -->
-
-        <div class="popup-details">
-
-
-            <!-- NAME -->
-
-            <div class="popup-detail">
-
-                <div class="popup-detail-icon">
-                    👤
-                </div>
-
-                <div>
-
-                    <span>
-                        FULL NAME
-                    </span>
-
-                    <strong>
-                        {{ user.name or 'Not provided' }}
-                    </strong>
-
-                </div>
-
-            </div>
-
-
-            <!-- EMAIL -->
-
-            <div class="popup-detail">
-
-                <div class="popup-detail-icon">
-                    ✉
-                </div>
-
-                <div>
-
-                    <span>
-                        EMAIL
-                    </span>
-
-                    <strong>
-                        {{ user.email or 'Not provided' }}
-                    </strong>
-
-                </div>
-
-            </div>
-
-
-            <!-- AGE -->
-
-            <div class="popup-detail">
-
-                <div class="popup-detail-icon">
-                    ◷
-                </div>
-
-                <div>
-
-                    <span>
-                        AGE
-                    </span>
-
-                    <strong>
-
-                        {% if user.age %}
-                            {{ user.age }} years
-                        {% else %}
-                            Not provided
-                        {% endif %}
-
-                    </strong>
-
-                </div>
-
-            </div>
-
-
-            <!-- HEIGHT -->
-
-            <div class="popup-detail">
-
-                <div class="popup-detail-icon">
-                    ↕
-                </div>
-
-                <div>
-
-                    <span>
-                        HEIGHT
-                    </span>
-
-                    <strong>
-
-                        {% if user.height %}
-                            {{ user.height }} cm
-                        {% else %}
-                            Not provided
-                        {% endif %}
-
-                    </strong>
-
-                </div>
-
-            </div>
-
-
-            <!-- WEIGHT -->
-
-            <div class="popup-detail">
-
-                <div class="popup-detail-icon">
-                    ⚖
-                </div>
-
-                <div>
-
-                    <span>
-                        WEIGHT
-                    </span>
-
-                    <strong>
-
-                        {% if user.weight %}
-                            {{ user.weight }} kg
-                        {% else %}
-                            Not provided
-                        {% endif %}
-
-                    </strong>
-
-                </div>
-
-            </div>
-
-
-            <!-- ACTIVITY -->
-
-            <div class="popup-detail">
-
-                <div class="popup-detail-icon">
-                    ↗
-                </div>
-
-                <div>
-
-                    <span>
-                        ACTIVITY LEVEL
-                    </span>
-
-                    <strong>
-
-                        {% if user.activity_level %}
-
-                            {{ user.activity_level
-                               |replace('_', ' ')
-                               |title }}
-
-                        {% else %}
-
-                            Not provided
-
-                        {% endif %}
-
-                    </strong>
-
-                </div>
-
-            </div>
-
-
-            <!-- FITNESS GOAL -->
-
-            <div class="popup-detail">
-
-                <div class="popup-detail-icon">
-                    🎯
-                </div>
-
-                <div>
-
-                    <span>
-                        FITNESS GOAL
-                    </span>
-
-                    <strong>
-
-                        {% if user.goal %}
-
-                            {{ user.goal
-                               |replace('_', ' ')
-                               |title }}
-
-                        {% else %}
-
-                            Not provided
-
-                        {% endif %}
-
-                    </strong>
-
-                </div>
-
-            </div>
-
-
-        </div>
-
-
-        <!-- =================================================
-             POPUP FOOTER
-        ================================================== -->
-
-        <div class="popup-footer">
-
-            <!-- CORRECTED FLASK URL -->
-
-            <a
-                href="{{ url_for('profile', next=url_for('detail')) }}"
-                class="edit-profile-btn">
-
-                <span>
-                    ✎
-                </span>
-
-                Edit Profile
-
-            </a>
-
-        </div>
-
-
-    </div>
-
-</div>
-
-
-{% endblock %}
-
-
-{% block extra_js %}
-
-<script
-    src="{{ url_for('static', filename='js/detail.js') }}">
-</script>
-
+        </section> 
+ 
+ 
+        <!-- ================================================= 
+             BOTTOM STATEMENT 
+        ================================================== --> 
+ 
+        <section class="detail-bottom"> 
+ 
+            <div class="bottom-line"></div> 
+ 
+            <p> 
+ 
+                <span> 
+                    FITLYFE 
+                </span> 
+ 
+                — Track your effort. Understand your data. 
+                Build your better self. 
+ 
+            </p> 
+ 
+            <div class="bottom-line"></div> 
+ 
+        </section> 
+ 
+ 
+    </section> 
+ 
+</div> 
+ 
+ 
+<!-- ========================================================= 
+     PROFILE MODAL 
+========================================================== --> 
+ 
+<div 
+    class="profile-modal" 
+    id="profileModal" 
+    aria-hidden="true"> 
+ 
+ 
+    <!-- BACKDROP --> 
+ 
+    <div 
+        class="profile-modal-backdrop" 
+        id="modalBackdrop"> 
+    </div> 
+ 
+ 
+    <!-- MODAL --> 
+ 
+    <div 
+        class="profile-popup" 
+        role="dialog" 
+        aria-modal="true" 
+        aria-labelledby="profilePopupTitle"> 
+ 
+ 
+        <!-- TOP DECORATION --> 
+ 
+        <div class="popup-glow"></div> 
+ 
+ 
+        <!-- CLOSE BUTTON --> 
+ 
+        <button 
+            type="button" 
+            class="popup-close" 
+            id="modalClose" 
+            aria-label="Close profile"> 
+ 
+            × 
+ 
+        </button> 
+ 
+ 
+        <!-- ================================================= 
+             PROFILE HEADER 
+        ================================================== --> 
+ 
+        <div class="popup-profile-header"> 
+ 
+            <div class="popup-avatar"> 
+ 
+                {{ user.name[0]|upper if user.name else 'U' }} 
+ 
+            </div> 
+ 
+            <div> 
+ 
+                <span class="popup-eyebrow"> 
+                    FITLYFE PROFILE 
+                </span> 
+ 
+                <h2 id="profilePopupTitle"> 
+                    {{ user.name or 'User' }} 
+                </h2> 
+ 
+                <p> 
+                    Your personal fitness information 
+                </p> 
+ 
+            </div> 
+ 
+        </div> 
+ 
+ 
+        <!-- ================================================= 
+             PROFILE DETAILS 
+        ================================================== --> 
+ 
+        <div class="popup-details"> 
+ 
+ 
+            <!-- NAME --> 
+ 
+            <div class="popup-detail"> 
+ 
+                <div class="popup-detail-icon"> 
+                    👤 
+                </div> 
+ 
+                <div> 
+ 
+                    <span> 
+                        FULL NAME 
+                    </span> 
+ 
+                    <strong> 
+                        {{ user.name or 'Not provided' }} 
+                    </strong> 
+ 
+                </div> 
+ 
+            </div> 
+ 
+ 
+            <!-- EMAIL --> 
+ 
+            <div class="popup-detail"> 
+ 
+                <div class="popup-detail-icon"> 
+                    ✉ 
+                </div> 
+ 
+                <div> 
+ 
+                    <span> 
+                        EMAIL 
+                    </span> 
+ 
+                    <strong> 
+                        {{ user.email or 'Not provided' }} 
+                    </strong> 
+ 
+                </div> 
+ 
+            </div> 
+ 
+ 
+            <!-- AGE --> 
+ 
+            <div class="popup-detail"> 
+ 
+                <div class="popup-detail-icon"> 
+                    ◷ 
+                </div> 
+ 
+                <div> 
+ 
+                    <span> 
+                        AGE 
+                    </span> 
+ 
+                    <strong> 
+ 
+                        {% if user.age %} 
+                            {{ user.age }} years 
+                        {% else %} 
+                            Not provided 
+                        {% endif %} 
+ 
+                    </strong> 
+ 
+                </div> 
+ 
+            </div> 
+ 
+ 
+            <!-- HEIGHT --> 
+ 
+            <div class="popup-detail"> 
+ 
+                <div class="popup-detail-icon"> 
+                    ↕ 
+                </div> 
+ 
+                <div> 
+ 
+                    <span> 
+                        HEIGHT 
+                    </span> 
+ 
+                    <strong> 
+ 
+                        {% if user.height %} 
+                            {{ user.height }} cm 
+                        {% else %} 
+                            Not provided 
+                        {% endif %} 
+ 
+                    </strong> 
+ 
+                </div> 
+ 
+            </div> 
+ 
+ 
+            <!-- WEIGHT --> 
+ 
+            <div class="popup-detail"> 
+ 
+                <div class="popup-detail-icon"> 
+                    ⚖ 
+                </div> 
+ 
+                <div> 
+ 
+                    <span> 
+                        WEIGHT 
+                    </span> 
+ 
+                    <strong> 
+ 
+                        {% if user.weight %} 
+                            {{ user.weight }} kg 
+                        {% else %} 
+                            Not provided 
+                        {% endif %} 
+ 
+                    </strong> 
+ 
+                </div> 
+ 
+            </div> 
+ 
+ 
+            <!-- ACTIVITY --> 
+ 
+            <div class="popup-detail"> 
+ 
+                <div class="popup-detail-icon"> 
+                    ↗ 
+                </div> 
+ 
+                <div> 
+ 
+                    <span> 
+                        ACTIVITY LEVEL 
+                    </span> 
+ 
+                    <strong> 
+ 
+                        {% if user.activity_level %} 
+ 
+                            {{ user.activity_level 
+                               |replace('_', ' ') 
+                               |title }} 
+ 
+                        {% else %} 
+ 
+                            Not provided 
+ 
+                        {% endif %} 
+ 
+                    </strong> 
+ 
+                </div> 
+ 
+            </div> 
+ 
+ 
+            <!-- FITNESS GOAL --> 
+ 
+            <div class="popup-detail"> 
+ 
+                <div class="popup-detail-icon"> 
+                    🎯 
+                </div> 
+ 
+                <div> 
+ 
+                    <span> 
+                        FITNESS GOAL 
+                    </span> 
+ 
+                    <strong> 
+ 
+                        {% if user.goal %} 
+ 
+                            {{ user.goal 
+                               |replace('_', ' ') 
+                               |title }} 
+ 
+                        {% else %} 
+ 
+                            Not provided 
+ 
+                        {% endif %} 
+ 
+                    </strong> 
+ 
+                </div> 
+ 
+            </div> 
+ 
+ 
+        </div> 
+ 
+ 
+        <!-- ================================================= 
+             POPUP FOOTER 
+        ================================================== --> 
+ 
+        <div class="popup-footer"> 
+ 
+            <!-- CORRECTED FLASK URL --> 
+ 
+            <a 
+                href="{{ url_for('profile', next=url_for('detail')) }}" 
+                class="edit-profile-btn"> 
+ 
+                <span> 
+                    ✎ 
+                </span> 
+ 
+                Edit Profile 
+ 
+            </a> 
+ 
+        </div> 
+ 
+ 
+    </div> 
+ 
+</div> 
+ 
+ 
+{% endblock %} 
+ 
+ 
+{% block extra_js %} 
+ 
+<script 
+    src="{{ url_for('static', filename='js/detail.js') }}"> 
+</script> 
+ 
 {% endblock %}
