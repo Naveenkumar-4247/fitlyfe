@@ -8,7 +8,10 @@
     <meta name="description" content="FitLyfe - Fitness Goal Tracking and Analytics">
 
     <title>{% block title %}FitLyfe{% endblock %}</title>
-
+     <link rel="icon"
+          type="image/png"
+          href="{{ url_for('static', filename='images/FIT_LOGO.png') }}">
+          
     <!-- GOOGLE FONTS -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -41,7 +44,7 @@
         <div class="container-fluid px-3">
             <!-- BRAND -->
             <a class="navbar-brand d-flex align-items-center no-click" href="{{ url_for('home') }}" aria-label="FitLyfe Home">
-                <img src="{{ url_for('static', filename='images/caplogo.jpeg') }}" alt="FitLyfe Logo" class="logo">
+                <img src="{{ url_for('static', filename='images/FIT_LOGO.png') }}" alt="FitLyfe Logo" class="logo">
                 <h1 class="ms-2 mb-0"><span class="fit-text">FIT</span><span class="lyfe-text">LYFE</span></h1>
             </a>
 
