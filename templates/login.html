@@ -2,7 +2,6 @@
 
 {% block title %}Login - FitLyfe{% endblock %}
 
-
 {% block extra_css %}
 
 <link
@@ -12,10 +11,57 @@
 
 {% endblock %}
 
-
 {% block content %}
 
 <section class="login-section">
+
+    <!-- =====================================================
+         LOGIN FLASH POPUP
+    ====================================================== -->
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div id="loginFlashToastContainer">
+
+                {% for category, message in messages %}
+
+                    <div
+                        class="login-flash-toast"
+                        id="loginFlashToast{{ loop.index }}"
+                        role="alert"
+                        aria-live="assertive"
+                        aria-atomic="true"
+                    >
+
+                        <span class="login-flash-toast-icon">
+                            {% if category == "success" %}
+                                ✓
+                            {% else %}
+                                !
+                            {% endif %}
+                        </span>
+
+                        <span class="login-flash-toast-message">
+                            {{ message }}
+                        </span>
+
+                        <button
+                            type="button"
+                            class="login-flash-toast-close"
+                            onclick="closeLoginFlashToast('loginFlashToast{{ loop.index }}')"
+                            aria-label="Close message"
+                        >
+                            &times;
+                        </button>
+
+                    </div>
+
+                {% endfor %}
+
+            </div>
+        {% endif %}
+    {% endwith %}
+
 
     <!-- =====================================================
          BACKGROUND DECORATION
@@ -24,17 +70,24 @@
     <div class="login-grid"></div>
 
     <div class="login-glow login-glow-one"></div>
+
     <div class="login-glow login-glow-two"></div>
+
     <div class="login-glow login-glow-three"></div>
 
 
     <!-- Floating particles -->
 
     <span class="login-particle particle-1"></span>
+
     <span class="login-particle particle-2"></span>
+
     <span class="login-particle particle-3"></span>
+
     <span class="login-particle particle-4"></span>
+
     <span class="login-particle particle-5"></span>
+
     <span class="login-particle particle-6"></span>
 
 
@@ -48,7 +101,9 @@
 
         <div class="side-content">
 
-            <span class="side-number">01</span>
+            <span class="side-number">
+                01
+            </span>
 
             <span class="side-label">
                 TRACK
@@ -76,7 +131,9 @@
 
         <div class="side-content">
 
-            <span class="side-number">02</span>
+            <span class="side-number">
+                02
+            </span>
 
             <span class="side-label">
                 IMPROVE
@@ -105,6 +162,7 @@
         </div>
 
         <div>
+
             <span class="floating-value">
                 +24%
             </span>
@@ -112,6 +170,7 @@
             <span class="floating-text">
                 Progress
             </span>
+
         </div>
 
     </div>
@@ -128,6 +187,7 @@
         </div>
 
         <div>
+
             <span class="floating-value">
                 7
             </span>
@@ -135,6 +195,7 @@
             <span class="floating-text">
                 Day Streak
             </span>
+
         </div>
 
     </div>
@@ -145,7 +206,6 @@
     ====================================================== -->
 
     <div class="login-card">
-
 
         <!-- CARD TOP GLOW -->
 
@@ -158,7 +218,9 @@
 
         <div class="login-icon">
 
-            <span>FIT</span>
+            <span>
+                FIT
+            </span>
 
         </div>
 
@@ -168,7 +230,12 @@
         ================================================== -->
 
         <h1>
-            Welcome <span class="hl">Back</span>
+
+            Welcome
+            <span class="hl">
+                Back
+            </span>
+
         </h1>
 
 
@@ -185,7 +252,6 @@
             method="POST"
             action="{{ url_for('login') }}"
         >
-
 
             <!-- EMAIL -->
 
@@ -317,13 +383,16 @@
     <div class="login-bottom-decoration">
 
         <span></span>
+
         <span></span>
+
         <span></span>
+
         <span></span>
+
         <span></span>
 
     </div>
-
 
 </section>
 
@@ -433,7 +502,58 @@ document.addEventListener("DOMContentLoaded", function () {
     );
 
 
+    /* =====================================================
+       LOGIN FLASH TOAST
+    ===================================================== */
+
+    const toasts =
+        document.querySelectorAll(
+            ".login-flash-toast"
+        );
+
+
+    toasts.forEach(function (toast) {
+
+        setTimeout(function () {
+
+            closeLoginFlashToast(
+                toast.id
+            );
+
+        }, 5000);
+
+    });
+
 });
+
+
+/* =====================================================
+   CLOSE LOGIN FLASH TOAST
+===================================================== */
+
+function closeLoginFlashToast(toastId) {
+
+    const toast =
+        document.getElementById(toastId);
+
+
+    if (!toast) {
+        return;
+    }
+
+
+    toast.classList.add("hide");
+
+
+    setTimeout(function () {
+
+        if (toast.parentElement) {
+            toast.remove();
+        }
+
+    }, 350);
+
+}
 
 </script>
 

@@ -1,8 +1,11 @@
 /* =========================================================
    FITLYFE — AI WORKOUT STUDIO
+
    Gemini-powered workout generation
+
    ---------------------------------------------------------
    Frontend responsibilities:
+
    • Collect user's workout focus
    • Call Flask /api/workout/generate
    • Render AI-generated workout
@@ -11,6 +14,7 @@
    • Never pretend browser history is the source of truth
 
    Backend responsibilities:
+
    • User authentication
    • Profile validation
    • Gemini generation
@@ -21,7 +25,9 @@
    ========================================================= */
 
 document.addEventListener("DOMContentLoaded", () => {
+
     "use strict";
+
 
     /* =====================================================
        ELEMENT HELPERS
@@ -71,17 +77,16 @@ document.addEventListener("DOMContentLoaded", () => {
        This is only UI state.
 
        The backend/database remains authoritative for:
+
        • generation number
        • previous workouts
        • variation
        • persistence
     */
+
     let generationNumber = 0;
-
     let currentWorkout = null;
-
     let isGenerating = false;
-
     let generationTimer = null;
 
 
@@ -90,90 +95,313 @@ document.addEventListener("DOMContentLoaded", () => {
        ===================================================== */
 
     function normalizeText(value) {
+
         return String(value || "")
             .trim()
             .toLowerCase()
             .replace(/[_-]+/g, " ")
-            .replace(/\s+/g, " ");
+            .replace(/\s+/g, " ")
+            .trim();
     }
 
 
     /* =====================================================
        FIND TRAINING FOCUS
+       -----------------------------------------------------
+       Supports:
+
+       Chest
+       Triceps
+       Chest and Triceps
+       Chest + Triceps
+       Chest Triceps
+
+       Back and Biceps
+       Shoulders and Triceps
+       Legs and Abs
+
+       Push
+       Push Day
+       Push Workout
+
+       Pull
+       Pull Day
+       Pull Workout
+
+       Full Body
+       Full Body Workout
+
+       Common aliases are also supported.
        ===================================================== */
 
     function findWorkout(value) {
-        const text = normalizeText(value);
+
+        let text = normalizeText(value);
 
         if (!text) {
             return null;
         }
 
-        /*
-           Check compound workout types first.
-        */
+
+        /* -------------------------------------------------
+           REMOVE COMMON FILLER WORDS
+           ------------------------------------------------- */
+
+        text = text
+            .replace(/\bworkout\b/g, " ")
+            .replace(/\broutine\b/g, " ")
+            .replace(/\btraining\b/g, " ")
+            .replace(/\bday\b/g, " ")
+            .replace(/\bfor\b/g, " ")
+            .replace(/\btrain\b/g, " ")
+            .replace(/\btarget\b/g, " ")
+            .replace(/\bfocus\b/g, " ")
+            .replace(/\bon\b/g, " ")
+            .replace(/\bme\b/g, " ")
+            .replace(/\bplease\b/g, " ")
+            .replace(/\s+/g, " ")
+            .trim();
+
+
+        /* -------------------------------------------------
+           FULL BODY
+           ------------------------------------------------- */
 
         if (
-            text.includes("full body") ||
-            text.includes("fullbody") ||
-            text.includes("whole body")
+            /\bfull\s*body\b/.test(text) ||
+            /\bwhole\s*body\b/.test(text) ||
+            /\bfullbody\b/.test(text)
         ) {
             return "Full Body";
         }
 
-        if (text.includes("push")) {
+
+        /* -------------------------------------------------
+           PUSH
+           -------------------------------------------------
+
+           Push represents:
+
+           Chest + Shoulders + Triceps
+
+           We keep the backend focus as "Push".
+        */
+
+        if (/\bpush\b/.test(text)) {
             return "Push";
         }
 
-        if (text.includes("pull")) {
+
+        /* -------------------------------------------------
+           PULL
+           -------------------------------------------------
+
+           Pull represents:
+
+           Back + Biceps
+
+           We keep the backend focus as "Pull".
+        */
+
+        if (/\bpull\b/.test(text)) {
             return "Pull";
         }
 
-        if (text.includes("chest")) {
-            return "Chest";
+
+        /* -------------------------------------------------
+           MUSCLE ALIASES
+           ------------------------------------------------- */
+
+        const muscleAliases = {
+
+            chest: [
+                "chest",
+                "pec",
+                "pecs",
+                "pectoral",
+                "pectorals"
+            ],
+
+            back: [
+                "back"
+            ],
+
+            lats: [
+                "lat",
+                "lats",
+                "latissimus"
+            ],
+
+            shoulders: [
+                "shoulder",
+                "shoulders",
+                "delt",
+                "delts",
+                "deltoid",
+                "deltoids"
+            ],
+
+            biceps: [
+                "bicep",
+                "biceps",
+                "bi",
+                "bis"
+            ],
+
+            triceps: [
+                "tricep",
+                "triceps",
+                "tri",
+                "tris"
+            ],
+
+            legs: [
+                "leg",
+                "legs",
+                "lower body",
+                "lowerbody",
+                "quad",
+                "quads"
+            ],
+
+            glutes: [
+                "glute",
+                "glutes",
+                "gluteus"
+            ],
+
+            forearms: [
+                "forearm",
+                "forearms"
+            ],
+
+            core: [
+                "core",
+                "abs",
+                "ab",
+                "abdominal",
+                "abdominals"
+            ]
+        };
+
+
+        /* -------------------------------------------------
+           CANONICAL ORDER
+           -------------------------------------------------
+
+           This makes combinations consistent.
+
+           Example:
+
+           "triceps chest"
+
+           becomes:
+
+           "Chest + Triceps"
+        */
+
+        const canonicalOrder = [
+            "Chest",
+            "Back",
+            "Lats",
+            "Shoulders",
+            "Biceps",
+            "Triceps",
+            "Legs",
+            "Glutes",
+            "Forearms",
+            "Core"
+        ];
+
+
+        /* -------------------------------------------------
+           DETECT MUSCLES
+           ------------------------------------------------- */
+
+        const detected = [];
+
+
+        Object.entries(muscleAliases).forEach(
+            ([canonical, aliases]) => {
+
+                const found = aliases.some(
+                    (alias) => {
+
+                        /*
+                           Escape special regex characters
+                           before creating the pattern.
+                        */
+
+                        const escaped = alias.replace(
+                            /[.*+?^${}()|[\]\\]/g,
+                            "\\$&"
+                        );
+
+                        return new RegExp(
+                            `\\b${escaped}\\b`,
+                            "i"
+                        ).test(text);
+                    }
+                );
+
+                if (found) {
+                    detected.push(canonical);
+                }
+            }
+        );
+
+
+        /* -------------------------------------------------
+           REMOVE DUPLICATES
+           ------------------------------------------------- */
+
+        const uniqueMuscles = [
+            ...new Set(detected)
+        ];
+
+
+        /* -------------------------------------------------
+           SORT USING CANONICAL ORDER
+           ------------------------------------------------- */
+
+        uniqueMuscles.sort(
+            (a, b) =>
+                canonicalOrder.indexOf(a) -
+                canonicalOrder.indexOf(b)
+        );
+
+
+        /* -------------------------------------------------
+           NO MUSCLE FOUND
+           ------------------------------------------------- */
+
+        if (!uniqueMuscles.length) {
+            return null;
         }
 
-        if (text.includes("lat")) {
-            return "Lats";
+
+        /* -------------------------------------------------
+           SINGLE MUSCLE
+           ------------------------------------------------- */
+
+        if (uniqueMuscles.length === 1) {
+            return uniqueMuscles[0];
         }
 
-        if (text.includes("back")) {
-            return "Back";
-        }
 
-        if (text.includes("shoulder")) {
-            return "Shoulders";
-        }
+        /* -------------------------------------------------
+           COMBINATION WORKOUT
+           -------------------------------------------------
 
-        if (text.includes("bicep")) {
-            return "Biceps";
-        }
+           Examples:
 
-        if (text.includes("tricep")) {
-            return "Triceps";
-        }
+           Chest + Triceps
+           Back + Biceps
+           Shoulders + Triceps
+           Legs + Core
+        */
 
-        if (text.includes("leg")) {
-            return "Legs";
-        }
-
-        if (text.includes("glute")) {
-            return "Glutes";
-        }
-
-        if (text.includes("forearm")) {
-            return "Forearms";
-        }
-
-        if (
-            text.includes("core") ||
-            text.includes("abs") ||
-            text.includes("abdominal")
-        ) {
-            return "Core";
-        }
-
-        return null;
+        return uniqueMuscles.join(" + ");
     }
 
 
@@ -182,6 +410,7 @@ document.addEventListener("DOMContentLoaded", () => {
        ===================================================== */
 
     function hideElement(element) {
+
         if (!element) {
             return;
         }
@@ -195,6 +424,7 @@ document.addEventListener("DOMContentLoaded", () => {
        ===================================================== */
 
     function showElement(element) {
+
         if (!element) {
             return;
         }
@@ -208,15 +438,18 @@ document.addEventListener("DOMContentLoaded", () => {
        ===================================================== */
 
     function scrollToElement(element) {
+
         if (!element) {
             return;
         }
 
         window.setTimeout(() => {
+
             element.scrollIntoView({
                 behavior: "smooth",
                 block: "start"
             });
+
         }, 80);
     }
 
@@ -226,6 +459,7 @@ document.addEventListener("DOMContentLoaded", () => {
        ===================================================== */
 
     function closeSelections() {
+
         hideElement(splitSection);
         hideElement(targetSection);
     }
@@ -236,8 +470,11 @@ document.addEventListener("DOMContentLoaded", () => {
        ===================================================== */
 
     function clearGenerationTimer() {
+
         if (generationTimer) {
+
             clearTimeout(generationTimer);
+
             generationTimer = null;
         }
     }
@@ -248,10 +485,10 @@ document.addEventListener("DOMContentLoaded", () => {
        ===================================================== */
 
     function resetWorkoutSession() {
+
         clearGenerationTimer();
 
         generationNumber = 0;
-
         currentWorkout = null;
         currentWorkoutKey = null;
         currentFocus = null;
@@ -276,10 +513,12 @@ document.addEventListener("DOMContentLoaded", () => {
        ===================================================== */
 
     function buildRequest(focus) {
+
         /*
            IMPORTANT:
 
            Do NOT send:
+
            • generation_number
            • previous_workouts
 
@@ -291,6 +530,7 @@ document.addEventListener("DOMContentLoaded", () => {
         */
 
         return {
+
             focus: focus,
 
             workout_type: "gym",
@@ -309,9 +549,11 @@ document.addEventListener("DOMContentLoaded", () => {
        ===================================================== */
 
     function setGeneratingState(generating) {
+
         isGenerating = generating;
 
         if (generateButton) {
+
             generateButton.disabled = generating;
 
             generateButton.setAttribute(
@@ -320,15 +562,24 @@ document.addEventListener("DOMContentLoaded", () => {
             );
 
             if (generating) {
-                generateButton.classList.add("is-loading");
+
+                generateButton.classList.add(
+                    "is-loading"
+                );
+
             } else {
-                generateButton.classList.remove("is-loading");
+
+                generateButton.classList.remove(
+                    "is-loading"
+                );
             }
         }
+
 
         if (regenerateButton) {
             regenerateButton.disabled = generating;
         }
+
 
         /*
            Keep selection buttons from firing multiple
@@ -340,6 +591,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 ".quick-tag, .muscle-button, .split-option"
             )
             .forEach((button) => {
+
                 button.disabled = generating;
             });
     }
@@ -349,19 +601,27 @@ document.addEventListener("DOMContentLoaded", () => {
        GENERATE WORKOUT
        ===================================================== */
 
-    async function generateWorkout(workoutKey, options = {}) {
+    async function generateWorkout(
+        workoutKey,
+        options = {}
+    ) {
+
         if (isGenerating) {
             return;
         }
 
+
         const isRegeneration =
             options.regenerate === true;
+
 
         const focus =
             workoutKey || "Full Body";
 
+
         currentWorkoutKey = focus;
         currentFocus = focus;
+
 
         setGeneratingState(true);
 
@@ -372,23 +632,26 @@ document.addEventListener("DOMContentLoaded", () => {
 
         showElement(loadingSection);
 
+
         updateLoadingText(
             isRegeneration
                 ? "Creating a fresh workout..."
                 : "Building your personalized workout..."
         );
 
+
         scrollToElement(loadingSection);
+
 
         const requestData =
             buildRequest(focus);
 
+
         try {
-            /*
-               ------------------------------------------------
+
+            /* ---------------------------------------------
                MAIN AI REQUEST
-               ------------------------------------------------
-            */
+               --------------------------------------------- */
 
             const response = await fetch(
                 "/api/workout/generate",
@@ -403,7 +666,8 @@ document.addEventListener("DOMContentLoaded", () => {
                             "application/json"
                     },
 
-                    credentials: "same-origin",
+                    credentials:
+                        "same-origin",
 
                     body:
                         JSON.stringify(
@@ -412,17 +676,20 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             );
 
-            /*
-               ------------------------------------------------
-               Parse server response safely
-               ------------------------------------------------
-            */
+
+            /* ---------------------------------------------
+               PARSE SERVER RESPONSE SAFELY
+               --------------------------------------------- */
 
             let data = null;
 
             try {
-                data = await response.json();
+
+                data =
+                    await response.json();
+
             } catch (jsonError) {
+
                 console.error(
                     "Workout JSON parse error:",
                     jsonError
@@ -433,17 +700,17 @@ document.addEventListener("DOMContentLoaded", () => {
                 );
             }
 
-            /*
-               ------------------------------------------------
-               Server error
-               ------------------------------------------------
-            */
+
+            /* ---------------------------------------------
+               SERVER ERROR
+               --------------------------------------------- */
 
             if (
                 !response.ok ||
                 !data ||
                 data.success !== true
             ) {
+
                 throw new Error(
                     data?.error ||
                     data?.message ||
@@ -451,71 +718,72 @@ document.addEventListener("DOMContentLoaded", () => {
                 );
             }
 
-            /*
-               ------------------------------------------------
-               Extract workout
-               ------------------------------------------------
-            */
+
+            /* ---------------------------------------------
+               EXTRACT WORKOUT
+               --------------------------------------------- */
 
             const workout =
                 data.workout;
+
 
             if (
                 !workout ||
                 typeof workout !== "object"
             ) {
+
                 throw new Error(
                     "The AI returned an empty workout."
                 );
             }
 
-            /*
-               ------------------------------------------------
-               Save current workout in UI state
-               ------------------------------------------------
-            */
+
+            /* ---------------------------------------------
+               SAVE CURRENT WORKOUT IN UI STATE
+               --------------------------------------------- */
 
             currentWorkout =
                 workout;
 
-            /*
-               ------------------------------------------------
-               IMPORTANT:
 
-               Backend generation number is authoritative.
-               ------------------------------------------------
-            */
+            /* ---------------------------------------------
+               BACKEND GENERATION NUMBER
+               IS AUTHORITATIVE
+               --------------------------------------------- */
 
             if (
                 data.generation_number !== undefined &&
                 data.generation_number !== null
             ) {
+
                 const parsedGeneration =
                     parseInt(
                         data.generation_number,
                         10
                     );
 
+
                 if (
                     Number.isFinite(
                         parsedGeneration
                     )
                 ) {
+
                     generationNumber =
                         parsedGeneration;
                 }
             }
 
-            /*
-               ------------------------------------------------
-               Render AI result
-               ------------------------------------------------
-            */
+
+            /* ---------------------------------------------
+               RENDER AI RESULT
+               --------------------------------------------- */
 
             renderWorkout(
                 workout,
                 data
             );
+
 
             hideElement(
                 loadingSection
@@ -525,6 +793,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 resultSection
             );
 
+
             /*
                Add reveal class so CSS animation can trigger.
             */
@@ -533,27 +802,35 @@ document.addEventListener("DOMContentLoaded", () => {
                 "result-visible"
             );
 
+
             requestAnimationFrame(() => {
+
                 requestAnimationFrame(() => {
+
                     resultSection.classList.add(
                         "result-visible"
                     );
                 });
             });
 
+
             scrollToElement(
                 resultSection
             );
 
+
         } catch (error) {
+
             console.error(
                 "FITLYFE WORKOUT ERROR:",
                 error
             );
 
+
             hideElement(
                 loadingSection
             );
+
 
             /*
                If there was a previous result, keep it hidden
@@ -564,16 +841,20 @@ document.addEventListener("DOMContentLoaded", () => {
                 resultSection
             );
 
+
             showElement(
                 welcomeSection
             );
+
 
             showGenerationError(
                 error?.message ||
                 "Unable to generate your workout."
             );
 
+
         } finally {
+
             setGeneratingState(false);
         }
     }
@@ -584,22 +865,29 @@ document.addEventListener("DOMContentLoaded", () => {
        ===================================================== */
 
     function updateLoadingText(message) {
+
         if (!loadingSection) {
             return;
         }
 
+
         const title =
             loadingSection.querySelector("h3");
+
 
         const description =
             loadingSection.querySelector("p");
 
+
         if (title) {
+
             title.textContent =
                 message;
         }
 
+
         if (description) {
+
             description.textContent =
                 "FitLyfe AI is selecting exercises, sets, reps and rest for you.";
         }
@@ -611,15 +899,18 @@ document.addEventListener("DOMContentLoaded", () => {
        ===================================================== */
 
     function showGenerationError(message) {
+
         const text =
             String(message || "")
                 .replace(/\s+/g, " ")
                 .trim();
 
+
         if (
             typeof window.showToast ===
             "function"
         ) {
+
             window.showToast(
                 text ||
                 "Workout generation failed.",
@@ -628,6 +919,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             return;
         }
+
 
         alert(
             text ||
@@ -641,9 +933,11 @@ document.addEventListener("DOMContentLoaded", () => {
        ===================================================== */
 
     function getExerciseArray(workout) {
+
         if (!workout) {
             return [];
         }
+
 
         /*
            Standard FitLyfe schema
@@ -654,8 +948,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 workout.exercises
             )
         ) {
+
             return workout.exercises;
         }
+
 
         /*
            Some AI responses may use workout_plan.
@@ -666,8 +962,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 workout.workout_plan
             )
         ) {
+
             return workout.workout_plan;
         }
+
 
         /*
            Some responses may use exercises_list.
@@ -678,8 +976,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 workout.exercises_list
             )
         ) {
+
             return workout.exercises_list;
         }
+
 
         /*
            Some responses may return a nested plan.
@@ -689,22 +989,27 @@ document.addEventListener("DOMContentLoaded", () => {
             workout.plan &&
             typeof workout.plan === "object"
         ) {
+
             if (
                 Array.isArray(
                     workout.plan.exercises
                 )
             ) {
+
                 return workout.plan.exercises;
             }
+
 
             if (
                 Array.isArray(
                     workout.plan.workout_plan
                 )
             ) {
+
                 return workout.plan.workout_plan;
             }
         }
+
 
         return [];
     }
@@ -715,35 +1020,45 @@ document.addEventListener("DOMContentLoaded", () => {
        ===================================================== */
 
     function extractExerciseNames(workout) {
+
         const names = [];
+
 
         const exercises =
             getExerciseArray(
                 workout
             );
 
+
         exercises.forEach((exercise) => {
+
             if (
                 typeof exercise ===
                 "string"
             ) {
+
                 const name =
                     exercise.trim();
+
 
                 if (name) {
                     names.push(name);
                 }
 
+
                 return;
             }
+
 
             if (
                 !exercise ||
                 typeof exercise !==
                 "object"
             ) {
+
                 return;
             }
+
 
             const name =
                 exercise.exercise ||
@@ -751,13 +1066,16 @@ document.addEventListener("DOMContentLoaded", () => {
                 exercise.name ||
                 exercise.movement;
 
+
             if (name) {
+
                 names.push(
                     String(name)
                         .trim()
                 );
             }
         });
+
 
         return [
             ...new Set(
@@ -772,6 +1090,7 @@ document.addEventListener("DOMContentLoaded", () => {
        ===================================================== */
 
     function normalizeExercise(exercise) {
+
         /*
            String response
         */
@@ -780,7 +1099,9 @@ document.addEventListener("DOMContentLoaded", () => {
             typeof exercise ===
             "string"
         ) {
+
             return {
+
                 exercise:
                     exercise.trim(),
 
@@ -798,6 +1119,7 @@ document.addEventListener("DOMContentLoaded", () => {
             };
         }
 
+
         /*
            Invalid response
         */
@@ -807,7 +1129,9 @@ document.addEventListener("DOMContentLoaded", () => {
             typeof exercise !==
             "object"
         ) {
+
             return {
+
                 exercise:
                     "Exercise",
 
@@ -825,6 +1149,7 @@ document.addEventListener("DOMContentLoaded", () => {
             };
         }
 
+
         /*
            Support multiple field names.
         */
@@ -837,15 +1162,18 @@ document.addEventListener("DOMContentLoaded", () => {
             exercise.title ||
             "Exercise";
 
+
         const sets =
             exercise.sets ??
             exercise.set ??
             3;
 
+
         const reps =
             exercise.reps ??
             exercise.repetitions ??
             "8-12";
+
 
         const rest =
             exercise.rest ??
@@ -853,13 +1181,16 @@ document.addEventListener("DOMContentLoaded", () => {
             exercise.rest_seconds ??
             "60-90 sec";
 
+
         const notes =
             exercise.notes ||
             exercise.description ||
             exercise.instructions ||
             "Perform with controlled form.";
 
+
         return {
+
             exercise:
                 String(name).trim(),
 
@@ -870,14 +1201,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 reps,
 
             rest:
-                normalizeRestValue(
-                    rest
-                ),
+                normalizeRestValue(rest),
 
             notes:
-                String(
-                    notes
-                ).trim()
+                String(notes).trim()
         };
     }
 
@@ -887,13 +1214,16 @@ document.addEventListener("DOMContentLoaded", () => {
        ===================================================== */
 
     function normalizeRestValue(value) {
+
         if (
             value === null ||
             value === undefined ||
             value === ""
         ) {
+
             return "60-90 sec";
         }
+
 
         /*
            Numeric rest is assumed to be seconds.
@@ -903,8 +1233,10 @@ document.addEventListener("DOMContentLoaded", () => {
             typeof value ===
             "number"
         ) {
+
             return `${value} sec`;
         }
+
 
         return String(value);
     }
@@ -915,13 +1247,16 @@ document.addEventListener("DOMContentLoaded", () => {
        ===================================================== */
 
     function calculateTotalSets(exercises) {
+
         return exercises.reduce(
             (total, exercise) => {
+
                 const sets =
                     parseInt(
                         exercise.sets,
                         10
                     );
+
 
                 return total +
                     (
@@ -931,6 +1266,7 @@ document.addEventListener("DOMContentLoaded", () => {
                             ? sets
                             : 0
                     );
+
             },
             0
         );
@@ -942,30 +1278,37 @@ document.addEventListener("DOMContentLoaded", () => {
        ===================================================== */
 
     function calculateDuration(exercises) {
+
         if (!exercises.length) {
             return 0;
         }
 
+
         /*
            Approximate:
+
            • 5 min warm-up / transition
            • 3.5 min per set
         */
 
         let totalMinutes = 5;
 
+
         exercises.forEach(
             (exercise) => {
+
                 const sets =
                     parseInt(
                         exercise.sets,
                         10
                     ) || 3;
 
+
                 totalMinutes +=
                     sets * 3.5;
             }
         );
+
 
         return Math.round(
             totalMinutes
@@ -978,27 +1321,37 @@ document.addEventListener("DOMContentLoaded", () => {
        ===================================================== */
 
     function getWorkoutDuration(workout) {
+
         if (!workout) {
             return null;
         }
 
+
         const possibleValues = [
+
             workout.duration_minutes,
+
             workout.duration,
+
             workout.estimated_duration,
+
             workout.estimated_duration_minutes
         ];
+
 
         for (
             const value of possibleValues
         ) {
+
             if (
                 value === null ||
                 value === undefined ||
                 value === ""
             ) {
+
                 continue;
             }
+
 
             const numeric =
                 parseInt(
@@ -1006,15 +1359,18 @@ document.addEventListener("DOMContentLoaded", () => {
                     10
                 );
 
+
             if (
                 Number.isFinite(
                     numeric
                 ) &&
                 numeric > 0
             ) {
+
                 return numeric;
             }
         }
+
 
         return null;
     }
@@ -1028,19 +1384,23 @@ document.addEventListener("DOMContentLoaded", () => {
         workout,
         apiData
     ) {
+
         if (!workout) {
             return;
         }
+
 
         const rawExercises =
             getExerciseArray(
                 workout
             );
 
+
         const exercises =
             rawExercises.map(
                 normalizeExercise
             );
+
 
         /*
            --------------------------------------------------
@@ -1049,11 +1409,13 @@ document.addEventListener("DOMContentLoaded", () => {
         */
 
         if (resultTitle) {
+
             resultTitle.textContent =
                 workout.title ||
                 workout.name ||
                 `${currentFocus || "Full Body"} Workout`;
         }
+
 
         /*
            --------------------------------------------------
@@ -1062,11 +1424,13 @@ document.addEventListener("DOMContentLoaded", () => {
         */
 
         if (resultDescription) {
+
             resultDescription.textContent =
                 workout.description ||
                 workout.summary ||
                 "A personalized workout created by FitLyfe AI.";
         }
+
 
         /*
            --------------------------------------------------
@@ -1075,6 +1439,7 @@ document.addEventListener("DOMContentLoaded", () => {
         */
 
         if (exerciseCount) {
+
             exerciseCount.textContent =
                 `${exercises.length} ${
                     exercises.length === 1
@@ -1083,6 +1448,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 }`;
         }
 
+
         /*
            --------------------------------------------------
            TOTAL SETS
@@ -1090,10 +1456,12 @@ document.addEventListener("DOMContentLoaded", () => {
         */
 
         if (setCount) {
+
             const totalSets =
                 calculateTotalSets(
                     exercises
                 );
+
 
             setCount.textContent =
                 `${totalSets} ${
@@ -1103,6 +1471,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 }`;
         }
 
+
         /*
            --------------------------------------------------
            INTENSITY
@@ -1110,12 +1479,14 @@ document.addEventListener("DOMContentLoaded", () => {
         */
 
         if (workoutIntensity) {
+
             workoutIntensity.textContent =
                 workout.intensity ||
                 workout.training_intensity ||
                 workout.difficulty ||
                 "Personalized";
         }
+
 
         /*
            --------------------------------------------------
@@ -1124,10 +1495,12 @@ document.addEventListener("DOMContentLoaded", () => {
         */
 
         if (workoutDuration) {
+
             const aiDuration =
                 getWorkoutDuration(
                     workout
                 );
+
 
             const duration =
                 aiDuration !== null
@@ -1136,9 +1509,11 @@ document.addEventListener("DOMContentLoaded", () => {
                         exercises
                     );
 
+
             workoutDuration.textContent =
                 `${duration} min`;
         }
+
 
         /*
            --------------------------------------------------
@@ -1150,24 +1525,33 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
+
         exerciseList.innerHTML = "";
 
+
         if (!exercises.length) {
+
             exerciseList.innerHTML = `
+
                 <div class="exercise-empty">
+
                     <i class="fa-solid fa-dumbbell"></i>
+
                     <p>
                         No exercises were returned by the AI.
                     </p>
+
                 </div>
+
             `;
 
             return;
         }
 
+
         /*
            --------------------------------------------------
-           Render each exercise
+           RENDER EACH EXERCISE
            --------------------------------------------------
         */
 
@@ -1176,15 +1560,18 @@ document.addEventListener("DOMContentLoaded", () => {
                 exercise,
                 index
             ) => {
+
                 const card =
                     createExerciseCard(
                         exercise,
                         index
                     );
 
+
                 exerciseList.appendChild(
                     card
                 );
+
 
                 /*
                    Staggered entrance.
@@ -1193,13 +1580,17 @@ document.addEventListener("DOMContentLoaded", () => {
                 const delay =
                     index * 90;
 
+
                 requestAnimationFrame(
                     () => {
+
                         window.setTimeout(
                             () => {
+
                                 card.classList.add(
                                     "exercise-visible"
                                 );
+
                             },
                             delay
                         );
@@ -1208,9 +1599,10 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         );
 
+
         /*
            --------------------------------------------------
-           Optional fallback detection
+           OPTIONAL FALLBACK DETECTION
            --------------------------------------------------
         */
 
@@ -1218,15 +1610,18 @@ document.addEventListener("DOMContentLoaded", () => {
             apiData &&
             apiData.ai_generated === false
         ) {
+
             console.warn(
                 "FitLyfe AI was unavailable. A fallback workout was used.",
                 apiData.ai_error || ""
             );
         }
 
+
         /*
            --------------------------------------------------
-           Store exercise names locally for UI/debugging.
+           STORE EXERCISE NAMES LOCALLY FOR UI/DEBUGGING
+
            The database remains authoritative.
            --------------------------------------------------
         */
@@ -1236,9 +1631,11 @@ document.addEventListener("DOMContentLoaded", () => {
                 workout
             );
 
+
         console.info(
             "FITLYFE WORKOUT GENERATED",
             {
+
                 focus:
                     currentFocus,
 
@@ -1265,18 +1662,22 @@ document.addEventListener("DOMContentLoaded", () => {
         exercise,
         index
     ) {
+
         const card =
             document.createElement(
                 "article"
             );
 
+
         card.className =
             "exercise-card ai-exercise-card";
+
 
         card.style.setProperty(
             "--exercise-index",
             index
         );
+
 
         const number =
             String(
@@ -1286,12 +1687,14 @@ document.addEventListener("DOMContentLoaded", () => {
                 "0"
             );
 
+
         const sets =
             escapeHTML(
                 String(
                     exercise.sets
                 )
             );
+
 
         const reps =
             escapeHTML(
@@ -1300,6 +1703,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 )
             );
 
+
         const rest =
             escapeHTML(
                 String(
@@ -1307,12 +1711,14 @@ document.addEventListener("DOMContentLoaded", () => {
                 )
             );
 
+
         const name =
             escapeHTML(
                 String(
                     exercise.exercise
                 )
             );
+
 
         const notes =
             escapeHTML(
@@ -1322,7 +1728,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 )
             );
 
+
         card.innerHTML = `
+
             <div class="exercise-number">
                 ${number}
             </div>
@@ -1332,10 +1740,13 @@ document.addEventListener("DOMContentLoaded", () => {
                 <div class="exercise-heading">
 
                     <div class="exercise-icon">
+
                         <i class="fa-solid fa-dumbbell"></i>
+
                     </div>
 
                     <div>
+
                         <span class="exercise-label">
                             EXERCISE ${number}
                         </span>
@@ -1343,6 +1754,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         <h3>
                             ${name}
                         </h3>
+
                     </div>
 
                 </div>
@@ -1356,6 +1768,7 @@ document.addEventListener("DOMContentLoaded", () => {
             <div class="exercise-stats">
 
                 <div class="exercise-stat">
+
                     <span class="stat-label">
                         SETS
                     </span>
@@ -1363,9 +1776,12 @@ document.addEventListener("DOMContentLoaded", () => {
                     <strong>
                         ${sets}
                     </strong>
+
                 </div>
 
+
                 <div class="exercise-stat">
+
                     <span class="stat-label">
                         REPS
                     </span>
@@ -1373,9 +1789,12 @@ document.addEventListener("DOMContentLoaded", () => {
                     <strong>
                         ${reps}
                     </strong>
+
                 </div>
 
+
                 <div class="exercise-stat">
+
                     <span class="stat-label">
                         REST
                     </span>
@@ -1383,10 +1802,13 @@ document.addEventListener("DOMContentLoaded", () => {
                     <strong>
                         ${rest}
                     </strong>
+
                 </div>
 
             </div>
+
         `;
+
 
         return card;
     }
@@ -1397,25 +1819,31 @@ document.addEventListener("DOMContentLoaded", () => {
        ===================================================== */
 
     function escapeHTML(value) {
+
         return String(
             value ?? ""
         )
+
             .replace(
                 /&/g,
                 "&amp;"
             )
+
             .replace(
                 /</g,
                 "&lt;"
             )
+
             .replace(
                 />/g,
                 "&gt;"
             )
+
             .replace(
                 /"/g,
                 "&quot;"
             )
+
             .replace(
                 /'/g,
                 "&#039;"
@@ -1428,9 +1856,11 @@ document.addEventListener("DOMContentLoaded", () => {
        ===================================================== */
 
     function setWorkoutInput(workout) {
+
         if (!workoutInput || !workout) {
             return;
         }
+
 
         workoutInput.value =
             `Give me a ${workout} workout`;
@@ -1447,23 +1877,29 @@ document.addEventListener("DOMContentLoaded", () => {
         )
         .forEach(
             (button) => {
+
                 button.addEventListener(
                     "click",
                     () => {
+
                         if (isGenerating) {
                             return;
                         }
 
+
                         const workout =
                             button.dataset.workout;
+
 
                         if (!workout) {
                             return;
                         }
 
+
                         setWorkoutInput(
                             workout
                         );
+
 
                         generateWorkout(
                             workout
@@ -1484,23 +1920,29 @@ document.addEventListener("DOMContentLoaded", () => {
         )
         .forEach(
             (button) => {
+
                 button.addEventListener(
                     "click",
                     () => {
+
                         if (isGenerating) {
                             return;
                         }
 
+
                         const workout =
                             button.dataset.workout;
+
 
                         if (!workout) {
                             return;
                         }
 
+
                         setWorkoutInput(
                             workout
                         );
+
 
                         generateWorkout(
                             workout
@@ -1521,23 +1963,29 @@ document.addEventListener("DOMContentLoaded", () => {
         )
         .forEach(
             (button) => {
+
                 button.addEventListener(
                     "click",
                     () => {
+
                         if (isGenerating) {
                             return;
                         }
 
+
                         const workout =
                             button.dataset.workout;
+
 
                         if (!workout) {
                             return;
                         }
 
+
                         setWorkoutInput(
                             workout
                         );
+
 
                         generateWorkout(
                             workout
@@ -1553,20 +2001,25 @@ document.addEventListener("DOMContentLoaded", () => {
        ===================================================== */
 
     if (splitCard) {
+
         splitCard.addEventListener(
             "click",
             () => {
+
                 if (isGenerating) {
                     return;
                 }
+
 
                 hideElement(
                     targetSection
                 );
 
+
                 showElement(
                     splitSection
                 );
+
 
                 scrollToElement(
                     splitSection
@@ -1574,13 +2027,16 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         );
 
+
         splitCard.addEventListener(
             "keydown",
             (event) => {
+
                 if (
                     event.key === "Enter" ||
                     event.key === " "
                 ) {
+
                     event.preventDefault();
 
                     splitCard.click();
@@ -1595,20 +2051,25 @@ document.addEventListener("DOMContentLoaded", () => {
        ===================================================== */
 
     if (targetCard) {
+
         targetCard.addEventListener(
             "click",
             () => {
+
                 if (isGenerating) {
                     return;
                 }
+
 
                 hideElement(
                     splitSection
                 );
 
+
                 showElement(
                     targetSection
                 );
+
 
                 scrollToElement(
                     targetSection
@@ -1616,13 +2077,16 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         );
 
+
         targetCard.addEventListener(
             "keydown",
             (event) => {
+
                 if (
                     event.key === "Enter" ||
                     event.key === " "
                 ) {
+
                     event.preventDefault();
 
                     targetCard.click();
@@ -1637,9 +2101,11 @@ document.addEventListener("DOMContentLoaded", () => {
        ===================================================== */
 
     if (closeSplit) {
+
         closeSplit.addEventListener(
             "click",
             () => {
+
                 hideElement(
                     splitSection
                 );
@@ -1653,9 +2119,11 @@ document.addEventListener("DOMContentLoaded", () => {
        ===================================================== */
 
     if (closeTarget) {
+
         closeTarget.addEventListener(
             "click",
             () => {
+
                 hideElement(
                     targetSection
                 );
@@ -1669,47 +2137,61 @@ document.addEventListener("DOMContentLoaded", () => {
        ===================================================== */
 
     if (generateButton) {
+
         generateButton.addEventListener(
             "click",
             () => {
+
                 if (isGenerating) {
                     return;
                 }
+
 
                 const input =
                     workoutInput
                         ? workoutInput.value.trim()
                         : "";
 
+
                 const workout =
                     findWorkout(
                         input
                     );
 
+
                 if (!workout) {
+
                     showGenerationError(
                         "Tell FitLyfe what you want to train. Try Chest, Lats, Push, Pull, Legs or another muscle group."
                     );
 
+
                     if (workoutInput) {
+
                         workoutInput.focus();
+
 
                         workoutInput.classList.add(
                             "input-error"
                         );
 
+
                         window.setTimeout(
                             () => {
+
                                 workoutInput.classList.remove(
                                     "input-error"
                                 );
+
                             },
                             500
                         );
                     }
 
+
                     return;
                 }
+
 
                 generateWorkout(
                     workout
@@ -1724,17 +2206,22 @@ document.addEventListener("DOMContentLoaded", () => {
        ===================================================== */
 
     if (workoutInput) {
+
         workoutInput.addEventListener(
             "keydown",
             (event) => {
+
                 if (
                     event.key === "Enter"
                 ) {
+
                     event.preventDefault();
+
 
                     if (
                         !isGenerating
                     ) {
+
                         generateButton?.click();
                     }
                 }
@@ -1748,18 +2235,22 @@ document.addEventListener("DOMContentLoaded", () => {
        ===================================================== */
 
     if (workoutInput) {
+
         workoutInput.addEventListener(
             "focus",
             () => {
+
                 workoutInput.classList.add(
                     "search-focused"
                 );
             }
         );
 
+
         workoutInput.addEventListener(
             "blur",
             () => {
+
                 workoutInput.classList.remove(
                     "search-focused"
                 );
@@ -1773,19 +2264,24 @@ document.addEventListener("DOMContentLoaded", () => {
        ===================================================== */
 
     if (regenerateButton) {
+
         regenerateButton.addEventListener(
             "click",
             async () => {
+
                 if (
                     !currentWorkoutKey ||
                     isGenerating
                 ) {
+
                     return;
                 }
+
 
                 regenerateButton.classList.add(
                     "rotating"
                 );
+
 
                 /*
                    IMPORTANT:
@@ -1798,6 +2294,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 */
 
                 try {
+
                     await generateWorkout(
                         currentWorkoutKey,
                         {
@@ -1805,12 +2302,16 @@ document.addEventListener("DOMContentLoaded", () => {
                                 true
                         }
                     );
+
                 } finally {
+
                     window.setTimeout(
                         () => {
+
                             regenerateButton.classList.remove(
                                 "rotating"
                             );
+
                         },
                         350
                     );
@@ -1825,20 +2326,25 @@ document.addEventListener("DOMContentLoaded", () => {
        ===================================================== */
 
     if (newWorkoutButton) {
+
         newWorkoutButton.addEventListener(
             "click",
             () => {
+
                 if (isGenerating) {
                     return;
                 }
+
 
                 resetWorkoutSession();
 
                 closeSelections();
 
+
                 if (workoutInput) {
                     workoutInput.value = "";
                 }
+
 
                 window.scrollTo({
                     top: 0,
@@ -1862,7 +2368,9 @@ document.addEventListener("DOMContentLoaded", () => {
        ===================================================== */
 
     async function loadLatestWorkout() {
+
         try {
+
             const response =
                 await fetch(
                     "/api/workout/latest",
@@ -1879,25 +2387,31 @@ document.addEventListener("DOMContentLoaded", () => {
                     }
                 );
 
+
             if (!response.ok) {
                 return null;
             }
 
+
             const data =
                 await response.json();
+
 
             if (
                 !data ||
                 data.success !== true
             ) {
+
                 return null;
             }
+
 
             return data.workout ||
                 data.plan ||
                 null;
 
         } catch (error) {
+
             console.warn(
                 "Unable to load latest workout:",
                 error
@@ -1913,16 +2427,20 @@ document.addEventListener("DOMContentLoaded", () => {
        ===================================================== */
 
     try {
+
         if (
             window.matchMedia(
                 "(prefers-reduced-motion: reduce)"
             ).matches
         ) {
+
             document.documentElement.classList.add(
                 "reduce-motion"
             );
         }
+
     } catch (error) {
+
         console.warn(
             "Reduced motion detection unavailable.",
             error
@@ -1936,17 +2454,21 @@ document.addEventListener("DOMContentLoaded", () => {
 
     closeSelections();
 
+
     hideElement(
         loadingSection
     );
+
 
     hideElement(
         resultSection
     );
 
+
     showElement(
         welcomeSection
     );
+
 
     /*
        Make sure buttons start enabled.
@@ -1962,6 +2484,7 @@ document.addEventListener("DOMContentLoaded", () => {
     window.addEventListener(
         "beforeunload",
         () => {
+
             clearGenerationTimer();
         }
     );
@@ -1973,18 +2496,26 @@ document.addEventListener("DOMContentLoaded", () => {
        Useful from browser console:
 
        FitLyfeWorkout.generate("Chest")
+
+       FitLyfeWorkout.generate("Chest and Triceps")
+
+       FitLyfeWorkout.generate("Back + Biceps")
+
+       FitLyfeWorkout.generate("Legs and Abs")
        ===================================================== */
 
     window.FitLyfeWorkout = {
-        generate: (
-            focus
-        ) => {
+
+        generate: (focus) => {
+
             const workout =
                 findWorkout(
                     focus
                 );
 
+
             if (!workout) {
+
                 console.warn(
                     "Unknown workout focus:",
                     focus
@@ -1993,20 +2524,25 @@ document.addEventListener("DOMContentLoaded", () => {
                 return;
             }
 
+
             setWorkoutInput(
                 workout
             );
+
 
             return generateWorkout(
                 workout
             );
         },
 
+
         regenerate: () => {
+
             if (
                 currentWorkoutKey &&
                 !isGenerating
             ) {
+
                 return generateWorkout(
                     currentWorkoutKey,
                     {
@@ -2016,18 +2552,25 @@ document.addEventListener("DOMContentLoaded", () => {
                 );
             }
 
+
             return null;
         },
 
+
         getCurrentWorkout: () => {
+
             return currentWorkout;
         },
 
+
         getCurrentFocus: () => {
+
             return currentFocus;
         },
 
+
         getGenerationNumber: () => {
+
             return generationNumber;
         }
     };

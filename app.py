@@ -1,7 +1,9 @@
 import re
 import json
+
 from datetime import date, timedelta, datetime
 from zoneinfo import ZoneInfo
+
 from flask import (
     Flask,
     render_template,
@@ -12,29 +14,36 @@ from flask import (
     session,
     jsonify,
 )
+
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import func
 from sqlalchemy.exc import IntegrityError
 from werkzeug.security import generate_password_hash, check_password_hash
+
 import config
+
 from ml_utils import (
     predict_next_day,
     predict_next_week,
     predict_weekly_trend,
     calculate_consistency_score,
 )
+
 from diet_ai import generate_diet_plan
 
 # ============================================================
 # WORKOUT AI
 # ============================================================
+
 from workout_ai import generate_workout_plan
 
 # ============================================================
 # APP CONFIGURATION
 # ============================================================
+
 app = Flask(__name__)
 app.config.from_object(config)
+
 db = SQLAlchemy(
     app,
     engine_options=config.SQLALCHEMY_ENGINE_OPTIONS
@@ -44,6 +53,7 @@ db = SQLAlchemy(
 # DATABASE MODELS
 # ============================================================
 
+
 class User(db.Model):
     __tablename__ = "users"
 
@@ -51,34 +61,43 @@ class User(db.Model):
         db.Integer,
         primary_key=True
     )
+
     name = db.Column(
         db.String(120),
         nullable=False
     )
+
     email = db.Column(
         db.String(120),
         unique=True,
         nullable=False
     )
+
     password = db.Column(
         db.String(200),
         nullable=False
     )
+
     age = db.Column(
         db.Integer
     )
+
     height = db.Column(
         db.Float
     )
+
     weight = db.Column(
         db.Float
     )
+
     gender = db.Column(
         db.String(20)
     )
+
     activity_level = db.Column(
         db.String(50)
     )
+
     goal = db.Column(
         db.String(50)
     )
@@ -91,27 +110,33 @@ class WeeklyGoal(db.Model):
         db.Integer,
         primary_key=True
     )
+
     user_id = db.Column(
         db.Integer,
         db.ForeignKey("users.id"),
         nullable=False
     )
+
     week_start = db.Column(
         db.Date,
         nullable=False
     )
+
     workouts_target = db.Column(
         db.Integer,
         default=5
     )
+
     calories_target = db.Column(
         db.Integer,
         default=2000
     )
+
     water_target_l = db.Column(
         db.Float,
         default=2.5
     )
+
     created_at = db.Column(
         db.DateTime,
         server_default=db.func.now()
@@ -133,35 +158,44 @@ class DailyLog(db.Model):
         db.Integer,
         primary_key=True
     )
+
     user_id = db.Column(
         db.Integer,
         db.ForeignKey("users.id"),
         nullable=False
     )
+
     log_date = db.Column(
         db.Date,
         nullable=False
     )
+
     workout_done = db.Column(
         db.Boolean,
         default=False
     )
+
     calories_intake = db.Column(
         db.Integer
     )
+
     water_intake_l = db.Column(
         db.Float
     )
+
     sleep_hours = db.Column(
         db.Float
     )
+
     mood = db.Column(
         db.Integer
     )
+
     notes = db.Column(
         db.Text,
         default=""
     )
+
     created_at = db.Column(
         db.DateTime,
         server_default=db.func.now()
@@ -183,27 +217,33 @@ class DailyGoal(db.Model):
         db.Integer,
         primary_key=True
     )
+
     user_id = db.Column(
         db.Integer,
         db.ForeignKey("users.id"),
         nullable=False
     )
+
     goal_date = db.Column(
         db.Date,
         nullable=False
     )
+
     title = db.Column(
         db.String(255),
         nullable=False
     )
+
     completed = db.Column(
         db.Boolean,
         default=False
     )
+
     description = db.Column(
         db.String(255),
         default=""
     )
+
     created_at = db.Column(
         db.DateTime,
         server_default=db.func.now()
@@ -213,14 +253,41 @@ class DailyGoal(db.Model):
 # ============================================================
 # PERSISTENT USER GOALS
 # ============================================================
+
+
 class UserGoal(db.Model):
     __tablename__ = "user_goals"
-    id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
-    title = db.Column(db.String(255), nullable=False)
-    description = db.Column(db.String(255), default="")
-    active = db.Column(db.Boolean, default=True)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    id = db.Column(
+        db.Integer,
+        primary_key=True
+    )
+
+    user_id = db.Column(
+        db.Integer,
+        db.ForeignKey("users.id"),
+        nullable=False
+    )
+
+    title = db.Column(
+        db.String(255),
+        nullable=False
+    )
+
+    description = db.Column(
+        db.String(255),
+        default=""
+    )
+
+    active = db.Column(
+        db.Boolean,
+        default=True
+    )
+
+    created_at = db.Column(
+        db.DateTime,
+        default=datetime.utcnow
+    )
 
 
 class DietPlan(db.Model):
@@ -230,19 +297,23 @@ class DietPlan(db.Model):
         db.Integer,
         primary_key=True
     )
+
     user_id = db.Column(
         db.Integer,
         db.ForeignKey("users.id"),
         nullable=False
     )
+
     plan_json = db.Column(
         db.Text,
         nullable=False
     )
+
     inputs_json = db.Column(
         db.Text,
         nullable=False
     )
+
     created_at = db.Column(
         db.DateTime,
         server_default=db.func.now()
@@ -253,6 +324,7 @@ class DietPlan(db.Model):
 # WORKOUT PLAN MODEL
 # ============================================================
 
+
 class WorkoutPlan(db.Model):
     __tablename__ = "workout_plans"
 
@@ -260,28 +332,34 @@ class WorkoutPlan(db.Model):
         db.Integer,
         primary_key=True
     )
+
     user_id = db.Column(
         db.Integer,
         db.ForeignKey("users.id"),
         nullable=False
     )
+
     workout_date = db.Column(
         db.Date,
         nullable=False
     )
+
     generation_number = db.Column(
         db.Integer,
         nullable=False,
         default=1
     )
+
     plan_json = db.Column(
         db.Text,
         nullable=False
     )
+
     inputs_json = db.Column(
         db.Text,
         nullable=False
     )
+
     created_at = db.Column(
         db.DateTime,
         server_default=db.func.now()
@@ -293,7 +371,6 @@ class WorkoutPlan(db.Model):
 # ============================================================
 
 with app.app_context():
-
     db.create_all()
 
     def _add_column_if_missing(
@@ -314,7 +391,6 @@ with app.app_context():
             }
 
             if column_name not in existing:
-
                 db.session.execute(
                     db.text(
                         f"ALTER TABLE {table_name} "
@@ -330,7 +406,6 @@ with app.app_context():
                 )
 
         except Exception as exc:
-
             db.session.rollback()
 
             print(
@@ -366,6 +441,7 @@ with app.app_context():
 # HELPER FUNCTIONS
 # ============================================================
 
+
 def india_today():
     return datetime.now(
         ZoneInfo("Asia/Kolkata")
@@ -373,7 +449,6 @@ def india_today():
 
 
 def get_current_user():
-
     user_id = session.get(
         "user_id"
     )
@@ -388,19 +463,16 @@ def get_current_user():
 
 
 def week_start_for(d):
-
     return d - timedelta(
         days=d.weekday()
     )
 
 
 def parse_date(value):
-
     if not value:
         return None
 
     try:
-
         return date.fromisoformat(
             value
         )
@@ -409,12 +481,10 @@ def parse_date(value):
         ValueError,
         TypeError
     ):
-
         return None
 
 
 def get_safe_next_page(value):
-
     if not value:
         return None
 
@@ -426,18 +496,15 @@ def get_safe_next_page(value):
         value.startswith("/")
         and not value.startswith("//")
     ):
-
         return value
 
     return None
 
 
 def login_required_json():
-
     user = get_current_user()
 
     if not user:
-
         return None, (
             jsonify({
                 "success": False,
@@ -450,7 +517,6 @@ def login_required_json():
 
 
 def profile_is_complete(user):
-
     if not user:
         return False
 
@@ -468,7 +534,6 @@ def profile_is_complete(user):
 # ============================================================
 
 GOAL_ALIASES = {
-
     "lose weight": "weight_loss",
     "lose_weight": "weight_loss",
     "weight loss": "weight_loss",
@@ -515,25 +580,19 @@ ALLOWED_GOALS = {
 
 
 ACTIVITY_ALIASES = {
-
     "sedentary": "sedentary",
     "low": "sedentary",
-
     "light": "light",
     "lightly active": "light",
-
     "moderate": "moderate",
     "moderately active": "moderate",
-
     "active": "active",
-
     "very active": "very_active",
     "very_active": "very_active",
 }
 
 
 def normalize_goal(value):
-
     if value is None:
         return None
 
@@ -548,7 +607,6 @@ def normalize_goal(value):
     ).strip("_")
 
     canonical = {
-
         "weight_loss": "weight_loss",
         "lose_weight": "weight_loss",
         "loseweight": "weight_loss",
@@ -604,7 +662,6 @@ def normalize_goal(value):
             "fat"
         )
     ):
-
         return "weight_loss"
 
     if any(
@@ -614,7 +671,6 @@ def normalize_goal(value):
             "build"
         )
     ):
-
         return "muscle_gain"
 
     if any(
@@ -625,7 +681,6 @@ def normalize_goal(value):
             "stamina"
         )
     ):
-
         return "endurance"
 
     if any(
@@ -635,7 +690,6 @@ def normalize_goal(value):
             "bulk"
         )
     ):
-
         return "weight_gain"
 
     if any(
@@ -645,7 +699,6 @@ def normalize_goal(value):
             "maintenance"
         )
     ):
-
         return "maintenance"
 
     if "fitness" in raw:
@@ -655,7 +708,6 @@ def normalize_goal(value):
 
 
 def normalize_activity(value):
-
     if value is None:
         return None
 
@@ -671,17 +723,14 @@ def normalize_activity(value):
 
 
 def get_profile_redirect():
-
     user = get_current_user()
 
     if not user:
-
         return redirect(
             url_for("login")
         )
 
     if not profile_is_complete(user):
-
         flash(
             "⚠️ Please complete your profile first.",
             "warning"
@@ -701,8 +750,8 @@ def get_profile_redirect():
 # STREAK CALCULATION
 # ============================================================
 
-def calculate_current_streak(user_id):
 
+def calculate_current_streak(user_id):
     logs = (
         DailyLog.query
         .filter_by(
@@ -729,26 +778,22 @@ def calculate_current_streak(user_id):
     today = india_today()
 
     if today in completed_dates:
-
         current_day = today
 
     elif (
         today - timedelta(days=1)
     ) in completed_dates:
-
         current_day = (
             today
             - timedelta(days=1)
         )
 
     else:
-
         return 0
 
     streak = 0
 
     while current_day in completed_dates:
-
         streak += 1
 
         current_day -= timedelta(
@@ -762,11 +807,11 @@ def calculate_current_streak(user_id):
 # HISTORICAL WEEKLY PROGRESS
 # ============================================================
 
+
 def get_historical_weekly_progress(
     user_id,
     number_of_weeks=4
 ):
-
     today = india_today()
 
     current_week = week_start_for(
@@ -780,7 +825,6 @@ def get_historical_weekly_progress(
         -1,
         -1
     ):
-
         week_start = (
             current_week
             - timedelta(
@@ -822,7 +866,6 @@ def get_historical_weekly_progress(
         )
 
         if workouts_target:
-
             percentage = round(
                 min(
                     completed
@@ -834,11 +877,9 @@ def get_historical_weekly_progress(
             )
 
         else:
-
             percentage = 0
 
         weekly_progress.append({
-
             "week_start":
                 week_start.isoformat(),
 
@@ -859,8 +900,8 @@ def get_historical_weekly_progress(
 # WORKOUT HELPERS
 # ============================================================
 
-def _safe_json_load(value):
 
+def _safe_json_load(value):
     if not value:
         return None
 
@@ -868,33 +909,27 @@ def _safe_json_load(value):
         value,
         (dict, list)
     ):
-
         return value
 
     try:
-
         return json.loads(
             value
         )
 
     except Exception:
-
         return {
             "raw": str(value)
         }
 
 
 def _extract_exercise_names(plan):
-
     names = []
 
     def walk(value):
-
         if isinstance(
             value,
             dict
         ):
-
             for key, item in value.items():
 
                 key_lower = str(
@@ -912,7 +947,6 @@ def _extract_exercise_names(plan):
                         item,
                         str
                     ):
-
                         cleaned = item.strip()
 
                         if cleaned:
@@ -926,7 +960,6 @@ def _extract_exercise_names(plan):
             value,
             list
         ):
-
             for item in value:
                 walk(item)
 
@@ -936,11 +969,9 @@ def _extract_exercise_names(plan):
     seen = set()
 
     for name in names:
-
         normalized = name.lower()
 
         if normalized not in seen:
-
             seen.add(
                 normalized
             )
@@ -956,7 +987,6 @@ def _serialize_recent_workouts(
     user_id,
     limit=5
 ):
-
     plans = (
         WorkoutPlan.query
         .filter_by(
@@ -972,13 +1002,11 @@ def _serialize_recent_workouts(
     result = []
 
     for item in plans:
-
         plan = _safe_json_load(
             item.plan_json
         )
 
         result.append({
-
             "id":
                 item.id,
 
@@ -1002,7 +1030,6 @@ def _next_workout_generation_number(
     user_id,
     workout_date
 ):
-
     latest = (
         WorkoutPlan.query
         .filter_by(
@@ -1028,9 +1055,9 @@ def _next_workout_generation_number(
 # HOME
 # ============================================================
 
+
 @app.route("/")
 def home():
-
     return render_template(
         "index.html"
     )
@@ -1040,12 +1067,12 @@ def home():
 # LOGIN
 # ============================================================
 
+
 @app.route(
     "/login",
     methods=["GET", "POST"]
 )
 def login():
-
     if request.method == "POST":
 
         email = (
@@ -1075,7 +1102,6 @@ def login():
                 password
             )
         ):
-
             flash(
                 "❌ Invalid email or password.",
                 "danger"
@@ -1090,7 +1116,6 @@ def login():
         session["user_id"] = user.id
 
         if not profile_is_complete(user):
-
             flash(
                 "Welcome to FitLyfe! Complete your profile to continue.",
                 "success"
@@ -1118,12 +1143,12 @@ def login():
 # REGISTER
 # ============================================================
 
+
 @app.route(
     "/register",
     methods=["GET", "POST"]
 )
 def register():
-
     if request.method == "POST":
 
         name = (
@@ -1150,7 +1175,6 @@ def register():
         )
 
         if not name or not email or not password:
-
             flash(
                 "⚠️ Please fill in all required fields.",
                 "warning"
@@ -1166,7 +1190,6 @@ def register():
             r"^[^@\s]+@[^@\s]+\.[^@\s]+$",
             email
         ):
-
             flash(
                 "⚠️ Please enter a valid email address.",
                 "warning"
@@ -1179,7 +1202,6 @@ def register():
             )
 
         if len(password) < 6:
-
             flash(
                 "⚠️ Password must contain at least 6 characters.",
                 "warning"
@@ -1192,7 +1214,6 @@ def register():
             )
 
         if password != confirm_password:
-
             flash(
                 "❌ Passwords do not match.",
                 "danger"
@@ -1217,7 +1238,6 @@ def register():
         )
 
         if existing:
-
             flash(
                 "⚠️ This email is already registered. Please login instead.",
                 "warning"
@@ -1250,7 +1270,6 @@ def register():
         )
 
         try:
-
             db.session.commit()
 
             print(
@@ -1261,7 +1280,6 @@ def register():
             )
 
         except IntegrityError:
-
             db.session.rollback()
 
             print(
@@ -1298,6 +1316,7 @@ def register():
 # CHECK EMAIL
 # ============================================================
 
+
 @app.route(
     "/api/check-email"
 )
@@ -1318,15 +1337,10 @@ def check_email():
     )
 
     if not valid:
-
         return jsonify({
-
             "success": True,
-
             "available": False,
-
             "exists": False,
-
             "valid": False
         })
 
@@ -1344,15 +1358,11 @@ def check_email():
     )
 
     return jsonify({
-
         "success": True,
-
         "available":
             not exists,
-
         "exists":
             exists,
-
         "valid":
             True,
     })
@@ -1361,6 +1371,7 @@ def check_email():
 # ============================================================
 # PROFILE
 # ============================================================
+
 
 @app.route(
     "/profile",
@@ -1371,7 +1382,6 @@ def profile():
     user = get_current_user()
 
     if not user:
-
         return redirect(
             url_for("login")
         )
@@ -1386,11 +1396,9 @@ def profile():
         )
 
         if next_page:
-
             session["profile_next"] = next_page
 
         if not next_page:
-
             next_page = get_safe_next_page(
                 session.get(
                     "profile_next",
@@ -1436,7 +1444,6 @@ def profile():
         new_email
         and new_email != user.email
     ):
-
         existing_email_user = (
             User.query
             .filter(
@@ -1447,7 +1454,6 @@ def profile():
         )
 
         if existing_email_user:
-
             flash(
                 "❌ This email address is already in use.",
                 "danger"
@@ -1471,19 +1477,13 @@ def profile():
     )
 
     if age_value:
-
         try:
-
             user.age = int(
                 age_value
             )
-
         except ValueError:
-
             user.age = None
-
     else:
-
         user.age = None
 
     height_value = (
@@ -1493,19 +1493,13 @@ def profile():
     )
 
     if height_value:
-
         try:
-
             user.height = float(
                 height_value
             )
-
         except ValueError:
-
             user.height = None
-
     else:
-
         user.height = None
 
     weight_value = (
@@ -1515,19 +1509,13 @@ def profile():
     )
 
     if weight_value:
-
         try:
-
             user.weight = float(
                 weight_value
             )
-
         except ValueError:
-
             user.weight = None
-
     else:
-
         user.weight = None
 
     gender_value = (
@@ -1543,11 +1531,8 @@ def profile():
     }
 
     if gender_value in allowed_genders:
-
         user.gender = gender_value
-
     else:
-
         user.gender = None
 
     user.activity_level = normalize_activity(
@@ -1565,11 +1550,9 @@ def profile():
     ) or ""
 
     try:
-
         db.session.commit()
 
     except Exception as e:
-
         db.session.rollback()
 
         print(
@@ -1583,7 +1566,6 @@ def profile():
         )
 
         if next_page:
-
             return redirect(
                 url_for(
                     "profile",
@@ -1601,7 +1583,6 @@ def profile():
     )
 
     if next_page:
-
         session.pop(
             "profile_next",
             None
@@ -1615,7 +1596,6 @@ def profile():
         not was_profile_complete
         and profile_is_complete(user)
     ):
-
         session.pop(
             "profile_next",
             None
@@ -1633,6 +1613,7 @@ def profile():
 # ============================================================
 # LOGOUT
 # ============================================================
+
 
 @app.route("/logout")
 def logout():
@@ -1653,9 +1634,9 @@ def logout():
 # FEATURES
 # ============================================================
 
+
 @app.route("/features")
 def features():
-
     return render_template(
         "features.html"
     )
@@ -1664,6 +1645,7 @@ def features():
 # ============================================================
 # DETAIL
 # ============================================================
+
 
 @app.route("/detail")
 def detail():
@@ -1685,9 +1667,9 @@ def detail():
 # ABOUT
 # ============================================================
 
+
 @app.route("/about")
 def about():
-
     return render_template(
         "about.html"
     )
@@ -1696,6 +1678,7 @@ def about():
 # ============================================================
 # GOAL TRACKER PAGE
 # ============================================================
+
 
 @app.route("/goal-tracker")
 def goal_tracker():
@@ -1717,6 +1700,7 @@ def goal_tracker():
 # BMI CALCULATOR
 # ============================================================
 
+
 @app.route("/bmi-calculator")
 def bmi_calculator():
 
@@ -1737,7 +1721,6 @@ def bmi_calculator():
         and user.height > 0
         and user.weight > 0
     ):
-
         height_m = (
             float(user.height)
             / 100
@@ -1754,7 +1737,6 @@ def bmi_calculator():
         )
 
         if bmi < 18.5:
-
             category = "Underweight"
 
             category_description = (
@@ -1764,7 +1746,6 @@ def bmi_calculator():
             )
 
         elif bmi < 25:
-
             category = "Healthy Weight"
 
             category_description = (
@@ -1774,7 +1755,6 @@ def bmi_calculator():
             )
 
         elif bmi < 30:
-
             category = "Overweight"
 
             category_description = (
@@ -1784,7 +1764,6 @@ def bmi_calculator():
             )
 
         else:
-
             category = "Obesity"
 
             category_description = (
@@ -1806,6 +1785,7 @@ def bmi_calculator():
 # ============================================================
 # AI DIET CHART PAGE
 # ============================================================
+
 
 @app.route("/ai-diet-chart")
 def ai_diet_chart():
@@ -1831,15 +1811,11 @@ def ai_diet_chart():
     plan_data = None
 
     if latest_plan:
-
         try:
-
             plan_data = json.loads(
                 latest_plan.plan_json
             )
-
         except Exception:
-
             plan_data = None
 
     return render_template(
@@ -1852,6 +1828,7 @@ def ai_diet_chart():
 # ============================================================
 # AI DIET PLAN GENERATION API
 # ============================================================
+
 
 @app.route(
     "/api/diet-plan/generate",
@@ -1875,11 +1852,8 @@ def generate_diet_plan_api():
         or not user.activity_level
         or not user.goal
     ):
-
         return jsonify({
-
             "success": False,
-
             "error": (
                 "Please complete your profile before "
                 "generating a diet plan."
@@ -1887,58 +1861,43 @@ def generate_diet_plan_api():
         }), 400
 
     try:
-
         age = int(
             user.age
         )
-
     except (
         ValueError,
         TypeError
     ):
-
         return jsonify({
-
             "success": False,
-
             "error":
                 "Invalid age in profile."
         }), 400
 
     try:
-
         height = float(
             user.height
         )
-
     except (
         ValueError,
         TypeError
     ):
-
         return jsonify({
-
             "success": False,
-
             "error":
                 "Invalid height in profile."
         }), 400
 
     try:
-
         weight = float(
             user.weight
         )
-
     except (
         ValueError,
         TypeError
     ):
-
         return jsonify({
-
             "success": False,
-
             "error":
                 "Invalid weight in profile."
         }), 400
@@ -1950,31 +1909,22 @@ def generate_diet_plan_api():
     )
 
     activity_aliases = {
-
         "sedentary":
             "sedentary",
-
         "low":
             "sedentary",
-
         "light":
             "light",
-
         "lightly active":
             "light",
-
         "moderate":
             "moderate",
-
         "moderately active":
             "moderate",
-
         "active":
             "active",
-
         "very active":
             "very_active",
-
         "very_active":
             "very_active",
     }
@@ -1985,7 +1935,6 @@ def generate_diet_plan_api():
     )
 
     allowed_activity = {
-
         "sedentary",
         "light",
         "moderate",
@@ -1994,11 +1943,8 @@ def generate_diet_plan_api():
     }
 
     if activity_level not in allowed_activity:
-
         return jsonify({
-
             "success": False,
-
             "error":
                 "Invalid activity level in profile."
         }), 400
@@ -2011,28 +1957,21 @@ def generate_diet_plan_api():
         goal in ALLOWED_GOALS
         and user.goal != goal
     ):
-
         user.goal = goal
 
         try:
-
             db.session.commit()
 
         except Exception:
-
             db.session.rollback()
 
     if goal not in ALLOWED_GOALS:
-
         return jsonify({
-
             "success": False,
-
             "error": (
                 "Your saved fitness goal is not recognized. "
                 "Open Profile, select your goal again, and save it."
             ),
-
             "profile_goal": str(
                 user.goal or ""
             ),
@@ -2045,18 +1984,15 @@ def generate_diet_plan_api():
     ).strip().lower()
 
     allowed_sex = {
-
         "male",
         "female",
         "prefer_not_to_say",
     }
 
     if sex_value not in allowed_sex:
-
         sex_value = "prefer_not_to_say"
 
     profile = {
-
         "name":
             user.name,
 
@@ -2092,7 +2028,6 @@ def generate_diet_plan_api():
     )
 
     try:
-
         meals_per_day = int(
             meals_per_day
         )
@@ -2101,7 +2036,6 @@ def generate_diet_plan_api():
         ValueError,
         TypeError
     ):
-
         meals_per_day = 3
 
     if meals_per_day < 2:
@@ -2139,7 +2073,6 @@ def generate_diet_plan_api():
     ).strip().lower()
 
     preferences = {
-
         "diet_type":
             diet_type,
 
@@ -2163,23 +2096,19 @@ def generate_diet_plan_api():
     }
 
     try:
-
         generated_plan = generate_diet_plan(
             profile,
             preferences
         )
 
     except Exception as e:
-
         print(
             "DIET PLAN GENERATION ERROR:",
             e
         )
 
         return jsonify({
-
             "success": False,
-
             "error": (
                 "Unable to generate the diet plan "
                 "right now. Please try again."
@@ -2187,28 +2116,22 @@ def generate_diet_plan_api():
         }), 500
 
     try:
-
         if isinstance(
             generated_plan,
             str
         ):
-
             try:
-
                 plan_json_data = json.loads(
                     generated_plan
                 )
 
             except json.JSONDecodeError:
-
                 plan_json_data = {
-
                     "plan":
                         generated_plan
                 }
 
         else:
-
             plan_json_data = generated_plan
 
         plan_json = json.dumps(
@@ -2217,24 +2140,19 @@ def generate_diet_plan_api():
         )
 
     except Exception as e:
-
         print(
             "DIET PLAN JSON ERROR:",
             e
         )
 
         return jsonify({
-
             "success": False,
-
             "error":
                 "Invalid diet plan response."
         }), 500
 
     try:
-
         saved_plan = DietPlan(
-
             user_id=
                 user.id,
 
@@ -2261,7 +2179,6 @@ def generate_diet_plan_api():
         db.session.commit()
 
     except Exception as e:
-
         db.session.rollback()
 
         print(
@@ -2270,9 +2187,7 @@ def generate_diet_plan_api():
         )
 
         return jsonify({
-
             "success": False,
-
             "error": (
                 "Diet plan was generated but could "
                 "not be saved."
@@ -2280,9 +2195,7 @@ def generate_diet_plan_api():
         }), 500
 
     return jsonify({
-
         "success": True,
-
         "plan":
             plan_json_data,
 
@@ -2290,9 +2203,12 @@ def generate_diet_plan_api():
             "AI diet plan generated successfully."
         )
     })
+
+
 # ============================================================
 # WORKOUT PAGE
 # ============================================================
+
 
 @app.route("/workout")
 def workout():
@@ -2318,7 +2234,6 @@ def workout():
     workout_data = None
 
     if latest_workout:
-
         workout_data = _safe_json_load(
             latest_workout.plan_json
         )
@@ -2334,6 +2249,7 @@ def workout():
 # WORKOUT GENERATOR ALIAS
 # ============================================================
 
+
 @app.route("/workout-generator")
 def workout_generator():
 
@@ -2345,6 +2261,7 @@ def workout_generator():
 # ============================================================
 # API - GENERATE NEW AI WORKOUT
 # ============================================================
+
 
 @app.route(
     "/api/workout/generate",
@@ -2358,11 +2275,8 @@ def generate_workout_api():
         return error_response
 
     if generate_workout_plan is None:
-
         return jsonify({
-
             "success": False,
-
             "error": (
                 "Workout AI is not configured. "
                 "Please make sure workout_ai.py exists "
@@ -2379,11 +2293,8 @@ def generate_workout_api():
     # ========================================================
 
     if not profile_is_complete(user):
-
         return jsonify({
-
             "success": False,
-
             "error": (
                 "Please complete your profile before "
                 "generating a workout."
@@ -2395,7 +2306,6 @@ def generate_workout_api():
     # ========================================================
 
     try:
-
         age = int(
             user.age
         )
@@ -2404,11 +2314,8 @@ def generate_workout_api():
         ValueError,
         TypeError
     ):
-
         return jsonify({
-
             "success": False,
-
             "error": "Invalid age in profile."
         }), 400
 
@@ -2417,7 +2324,6 @@ def generate_workout_api():
     # ========================================================
 
     try:
-
         height = float(
             user.height
         )
@@ -2426,11 +2332,8 @@ def generate_workout_api():
         ValueError,
         TypeError
     ):
-
         return jsonify({
-
             "success": False,
-
             "error": "Invalid height in profile."
         }), 400
 
@@ -2439,7 +2342,6 @@ def generate_workout_api():
     # ========================================================
 
     try:
-
         weight = float(
             user.weight
         )
@@ -2448,11 +2350,8 @@ def generate_workout_api():
         ValueError,
         TypeError
     ):
-
         return jsonify({
-
             "success": False,
-
             "error": "Invalid weight in profile."
         }), 400
 
@@ -2471,11 +2370,8 @@ def generate_workout_api():
         "active",
         "very_active",
     }:
-
         return jsonify({
-
             "success": False,
-
             "error": (
                 "Invalid activity level in profile. "
                 "Please update your profile."
@@ -2491,17 +2387,13 @@ def generate_workout_api():
     )
 
     if goal not in ALLOWED_GOALS:
-
         return jsonify({
-
             "success": False,
-
             "error": (
                 "Your saved fitness goal is not recognized. "
                 "Open Profile, select your goal again, "
                 "and save it."
             ),
-
             "profile_goal": str(
                 user.goal or ""
             ),
@@ -2516,7 +2408,6 @@ def generate_workout_api():
     )
 
     if not workout_date:
-
         workout_date = india_today()
 
     # ========================================================
@@ -2524,7 +2415,6 @@ def generate_workout_api():
     # ========================================================
 
     profile = {
-
         "name":
             user.name,
 

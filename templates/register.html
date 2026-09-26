@@ -25,35 +25,29 @@
     </div>
 
 
-    <!-- Error Toast -->
-    {% if error %}
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        <div id="flashToastContainer">
+            {% for category, message in messages %}
+                <div class="flash-toast" id="flashToast{{ loop.index }}">
+                    <span class="flash-toast-icon">!</span>
 
-    <div
-        class="register-toast"
-        id="registerErrorToast"
-        role="alert"
-        aria-live="assertive"
-        aria-atomic="true"
-    >
+                    <span class="flash-toast-message">
+                        {{ message }}
+                    </span>
 
-        <span class="register-toast-icon">!</span>
-
-        <span class="register-toast-message">
-            {{ error }}
-        </span>
-
-        <button
-            type="button"
-            class="register-toast-close"
-            onclick="closeRegisterToast()"
-            aria-label="Close error message"
-        >
-            &times;
-        </button>
-
-    </div>
-
+                    <button
+                        type="button"
+                        class="flash-toast-close"
+                        onclick="closeFlashToast('flashToast{{ loop.index }}')"
+                    >
+                        &times;
+                    </button>
+                </div>
+            {% endfor %}
+        </div>
     {% endif %}
+{% endwith %}
 
 
     <!-- Main Register Layout -->
